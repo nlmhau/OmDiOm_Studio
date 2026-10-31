@@ -1,10 +1,178 @@
 // ═══════════════════════════════════════════════════════════════
-// OmDiOm Studio - VOICE RECORDER & VAD (UI/js/recorder.js)
+// OmDiOm Studio - VOICE RECORDER & AUDIO VAD ENGINE (UI/js/recorder.js)
 // ═══════════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════════
-// GHI ÂM TRỰC TIẾP + LỌC ĐOẠN GIỌNG SẠCH NHẤT (3–7 GIÂY)
-// ═══════════════════════════════════════════════════════════════
+// ───────────── ENGINE VAD: PHÁT HIỆN GIỌNG NÓI & LỌC ĐOẠN SẠCH (DÙNG CHUNG) ─────────────
+window.AudioVAD = {
+  analyze: async function(blobOrFile, options = {}) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AC();
+    let audioBuf = null;
+    try {
+      const arrBuf = await blobOrFile.arrayBuffer();
+      audioBuf = await ctx.decodeAudioData(arrBuf);
+    } catch(err) {
+      ctx.close();
+      throw new Error('Không thể giải mã tệp âm thanh: ' + err.message);
+    }
+
+    const sr = audioBuf.sampleRate;
+    const rawData = audioBuf.getChannelData(0);
+    const duration = audioBuf.duration;
+
+    const minSeg = options.minSeg || 3.0;
+    const maxSeg = options.maxSeg || 7.0;
+
+    // 1. Tính RMS từng frame 0.05s
+    const frameSize = Math.floor(sr * 0.05);
+    const rmsArr = [];
+    for(let i = 0; i + frameSize <= rawData.length; i += frameSize){
+      let sumSq = 0;
+      for(let j = i; j < i + frameSize; j++) sumSq += rawData[j] * rawData[j];
+      rmsArr.push(Math.sqrt(sumSq / frameSize));
+    }
+
+    if(!rmsArr.length){
+      ctx.close();
+      throw new Error('Dữ liệu âm thanh quá ngắn hoặc rỗng');
+    }
+
+    // 2. Tìm ngưỡng im lặng (Silence threshold)
+    const sortedRms = rmsArr.slice().sort((a,b) => a - b);
+    const silenceThresh = Math.max(sortedRms[Math.floor(sortedRms.length * 0.3)] * 2.5, 0.005);
+
+    // 3. Tìm các vùng có tiếng nói liên tục (RMS > silenceThresh)
+    const voiceRegions = [];
+    let inVoice = false;
+    let regionStart = 0;
+    for(let i = 0; i < rmsArr.length; i++){
+      if(rmsArr[i] > silenceThresh && !inVoice){
+        inVoice = true;
+        regionStart = i;
+      } else if(rmsArr[i] <= silenceThresh && inVoice){
+        inVoice = false;
+        const startSec = regionStart * 0.05;
+        const endSec = i * 0.05;
+        if(endSec - startSec >= 0.4){
+          voiceRegions.push({ start: startSec, end: endSec });
+        }
+      }
+    }
+    if(inVoice){
+      const startSec = regionStart * 0.05;
+      const endSec = rmsArr.length * 0.05;
+      if(endSec - startSec >= 0.4) voiceRegions.push({ start: startSec, end: endSec });
+    }
+
+    // 4. Gộp các đoạn gần nhau (< 0.35s gap)
+    const merged = [];
+    for(const r of voiceRegions){
+      if(merged.length && r.start - merged[merged.length-1].end < 0.35){
+        merged[merged.length-1].end = r.end;
+      } else {
+        merged.push({ start: r.start, end: r.end });
+      }
+    }
+
+    // 5. Tạo candidate segments (3–7s) bằng sliding window
+    const candidates = [];
+    for(const region of merged){
+      const rDur = region.end - region.start;
+      if(rDur >= minSeg && rDur <= maxSeg){
+        candidates.push({ start: region.start, end: region.end, dur: rDur });
+      } else if(rDur > maxSeg){
+        for(let s = region.start; s + minSeg <= region.end; s += 1.0){
+          const e = Math.min(s + maxSeg, region.end);
+          const d = e - s;
+          if(d >= minSeg) candidates.push({ start: s, end: e, dur: d });
+        }
+      }
+    }
+
+    if(!candidates.length && merged.length){
+      const longest = merged.reduce((a,b) => (b.end - b.start) > (a.end - a.start) ? b : a);
+      const d = Math.min(longest.end - longest.start, maxSeg);
+      candidates.push({ start: longest.start, end: longest.start + d, dur: d });
+    }
+
+    if(!candidates.length && duration >= minSeg){
+      const d = Math.min(duration, maxSeg);
+      candidates.push({ start: 0, end: d, dur: d });
+    }
+
+    if(!candidates.length){
+      candidates.push({ start: 0, end: duration, dur: duration });
+    }
+
+    // 6. Chấm điểm chất lượng âm học
+    for(const c of candidates){
+      const fStart = Math.floor(c.start / 0.05);
+      const fEnd = Math.floor(c.end / 0.05);
+      const seg = rmsArr.slice(fStart, fEnd);
+      const mean = seg.reduce((a,b) => a + b, 0) / (seg.length || 1);
+      const variance = seg.reduce((a,b) => a + (b - mean) * (b - mean), 0) / (seg.length || 1);
+      const stability = 1 / (1 + Math.sqrt(variance) / (mean || 0.001));
+      const durationBonus = 1 - Math.abs(c.dur - 5.0) / 5.0;
+      c.score = parseFloat((mean * 10 + stability * 5 + durationBonus * 3).toFixed(1));
+      c.meanRms = mean;
+    }
+
+    candidates.sort((a,b) => b.score - a.score);
+    const topSegments = candidates.slice(0, 5);
+
+    // 7. Hàm trích xuất PCM 16-bit WAV Blob
+    async function createSegmentWavBlob(seg){
+      const startSample = Math.floor(seg.start * sr);
+      const endSample = Math.min(Math.floor(seg.end * sr), rawData.length);
+      const segLen = Math.max(1, endSample - startSample);
+
+      const offCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, segLen, sr);
+      const buf = offCtx.createBuffer(1, segLen, sr);
+      buf.getChannelData(0).set(rawData.slice(startSample, endSample));
+      const srcNode = offCtx.createBufferSource();
+      srcNode.buffer = buf;
+      srcNode.connect(offCtx.destination);
+      srcNode.start();
+      const rendered = await offCtx.startRendering();
+
+      const wavData = rendered.getChannelData(0);
+      const wavBuf = new ArrayBuffer(44 + wavData.length * 2);
+      const view = new DataView(wavBuf);
+      function writeStr(off, s){ for(let i=0;i<s.length;i++) view.setUint8(off+i, s.charCodeAt(i)); }
+      writeStr(0, 'RIFF');
+      view.setUint32(4, 36 + wavData.length * 2, true);
+      writeStr(8, 'WAVE');
+      writeStr(12, 'fmt ');
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sr, true);
+      view.setUint32(28, sr * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeStr(36, 'data');
+      view.setUint32(40, wavData.length * 2, true);
+      for(let i = 0; i < wavData.length; i++){
+        const s16 = Math.max(-1, Math.min(1, wavData[i])) * 32767;
+        view.setInt16(44 + i * 2, s16, true);
+      }
+      return new Blob([wavBuf], { type: 'audio/wav' });
+    }
+
+    try { ctx.close(); } catch(e){}
+
+    return {
+      duration: duration,
+      sampleRate: sr,
+      segments: topSegments,
+      bestSegment: topSegments[0] || null,
+      createWavBlob: createSegmentWavBlob,
+      rawData: rawData
+    };
+  }
+};
+
+
 (function(){
   const MAX_REC_SEC = 30;
   const MIN_SEG = 3;
@@ -224,107 +392,12 @@
     elSegments.innerHTML = '<div class="muted">Đang phân tích độ sạch và tìm đoạn 3–7s tốt nhất...</div>';
 
     try {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AC();
-      const arrBuf = await fullBlob.arrayBuffer();
-      const audioBuf = await ctx.decodeAudioData(arrBuf);
-      const sr = audioBuf.sampleRate;
-      const rawData = audioBuf.getChannelData(0);
-
-      // Tính RMS theo từng frame 0.05s
-      const frameSize = Math.floor(sr * 0.05);
-      const rmsArr = [];
-      for(let i = 0; i + frameSize <= rawData.length; i += frameSize){
-        let sumSq = 0;
-        for(let j = i; j < i + frameSize; j++) sumSq += rawData[j] * rawData[j];
-        rmsArr.push(Math.sqrt(sumSq / frameSize));
-      }
-
-      // Tìm ngưỡng phân biệt giọng nói vs im lặng
-      const sortedRms = rmsArr.slice().sort(function(a,b){return a - b;});
-      const silenceThresh = sortedRms[Math.floor(sortedRms.length * 0.3)] * 2.5;
-
-      // Tìm các đoạn liên tục có giọng nói (RMS > ngưỡng)
-      const voiceRegions = [];
-      let inVoice = false;
-      let regionStart = 0;
-      for(let i = 0; i < rmsArr.length; i++){
-        if(rmsArr[i] > silenceThresh && !inVoice){
-          inVoice = true;
-          regionStart = i;
-        } else if(rmsArr[i] <= silenceThresh && inVoice){
-          inVoice = false;
-          const startSec = regionStart * 0.05;
-          const endSec = i * 0.05;
-          if(endSec - startSec >= 0.5){
-            voiceRegions.push({start: startSec, end: endSec});
-          }
-        }
-      }
-      if(inVoice){
-        const startSec = regionStart * 0.05;
-        const endSec = rmsArr.length * 0.05;
-        if(endSec - startSec >= 0.5) voiceRegions.push({start: startSec, end: endSec});
-      }
-
-      // Gộp các đoạn gần nhau (< 0.35s gap)
-      const merged = [];
-      for(const r of voiceRegions){
-        if(merged.length && r.start - merged[merged.length-1].end < 0.35){
-          merged[merged.length-1].end = r.end;
-        } else {
-          merged.push({start: r.start, end: r.end});
-        }
-      }
-
-      // Tạo candidate segments 3-7s bằng cửa sổ trượt
-      const candidates = [];
-      for(const region of merged){
-        const rDur = region.end - region.start;
-        if(rDur >= MIN_SEG && rDur <= MAX_SEG){
-          candidates.push({start: region.start, end: region.end, dur: rDur});
-        } else if(rDur > MAX_SEG){
-          // Cửa sổ trượt
-          for(let s = region.start; s + MIN_SEG <= region.end; s += 1.0){
-            const e = Math.min(s + MAX_SEG, region.end);
-            const d = e - s;
-            if(d >= MIN_SEG) candidates.push({start: s, end: e, dur: d});
-          }
-        }
-      }
-
-      // Nếu không đủ đoạn dài, lấy đoạn dài nhất có thể
-      if(!candidates.length && merged.length){
-        const longest = merged.reduce(function(a,b){return (b.end-b.start) > (a.end-a.start) ? b : a;});
-        candidates.push({start: longest.start, end: Math.min(longest.start + MAX_SEG, longest.end), dur: Math.min(longest.end - longest.start, MAX_SEG)});
-      }
-
-      // Nếu người nói đều cả đoạn 30s mà không có khoảng lặng ngắt rõ rệt
-      if(!candidates.length && audioBuf.duration >= MIN_SEG){
-        const maxD = Math.min(audioBuf.duration, MAX_SEG);
-        candidates.push({start: 0, end: maxD, dur: maxD});
-      }
-
-      // Chấm điểm: ưu tiên RMS cao đều + ít biến thiên + thời lượng gần 5s
-      for(const c of candidates){
-        const fStart = Math.floor(c.start / 0.05);
-        const fEnd = Math.floor(c.end / 0.05);
-        const seg = rmsArr.slice(fStart, fEnd);
-        const mean = seg.reduce(function(a,b){return a+b;}, 0) / (seg.length || 1);
-        const variance = seg.reduce(function(a,b){return a + (b - mean) * (b - mean);}, 0) / (seg.length || 1);
-        const stability = 1 / (1 + Math.sqrt(variance) / (mean || 0.001));
-        const durationBonus = 1 - Math.abs(c.dur - 5) / 5;
-        c.score = (mean * 10 + stability * 5 + durationBonus * 3);
-        c.meanRms = mean;
-      }
-
-      candidates.sort(function(a,b){return b.score - a.score;});
-      segments = candidates.slice(0, 5);
+      const vadRes = await window.AudioVAD.analyze(fullBlob, { minSeg: MIN_SEG, maxSeg: MAX_SEG });
+      segments = vadRes.segments;
 
       if(!segments.length){
         elResultInfo.textContent = 'Không tìm được đoạn giọng nói rõ ràng. Hãy thử ghi lại.';
         elSegments.innerHTML = '';
-        ctx.close();
         return;
       }
 
@@ -343,51 +416,9 @@
       elSegments.innerHTML = html;
       btnUse.disabled = false;
 
-      // Mặc định chọn segment tốt nhất
       let selectedIdx = 0;
 
-      // Tạo blob WAV cho segment đã chọn
-      async function taoSegBlob(idx){
-        const seg = segments[idx];
-        const startSample = Math.floor(seg.start * sr);
-        const endSample = Math.min(Math.floor(seg.end * sr), rawData.length);
-        const segLen = endSample - startSample;
-
-        const offCtx = new OfflineAudioContext(1, segLen, sr);
-        const buf = offCtx.createBuffer(1, segLen, sr);
-        buf.getChannelData(0).set(rawData.slice(startSample, endSample));
-        const src2 = offCtx.createBufferSource();
-        src2.buffer = buf;
-        src2.connect(offCtx.destination);
-        src2.start();
-        const rendered = await offCtx.startRendering();
-
-        // Encode WAV 16-bit PCM
-        const wavData = rendered.getChannelData(0);
-        const wavBuf = new ArrayBuffer(44 + wavData.length * 2);
-        const view = new DataView(wavBuf);
-        function writeStr(off, s){for(let i=0;i<s.length;i++) view.setUint8(off+i, s.charCodeAt(i));}
-        writeStr(0, 'RIFF');
-        view.setUint32(4, 36 + wavData.length * 2, true);
-        writeStr(8, 'WAVE');
-        writeStr(12, 'fmt ');
-        view.setUint32(16, 16, true);
-        view.setUint16(20, 1, true);
-        view.setUint16(22, 1, true);
-        view.setUint32(24, sr, true);
-        view.setUint32(28, sr * 2, true);
-        view.setUint16(32, 2, true);
-        view.setUint16(34, 16, true);
-        writeStr(36, 'data');
-        view.setUint32(40, wavData.length * 2, true);
-        for(let i = 0; i < wavData.length; i++){
-          const s16 = Math.max(-1, Math.min(1, wavData[i])) * 32767;
-          view.setInt16(44 + i * 2, s16, true);
-        }
-        return new Blob([wavBuf], {type: 'audio/wav'});
-      }
-
-      // Gán sự kiện click chọn segment
+      // Click select segment
       elSegments.querySelectorAll('.rec-seg').forEach(function(el){
         el.addEventListener('click', function(e){
           if(e.target.tagName === 'BUTTON') return;
@@ -397,26 +428,25 @@
         });
       });
 
-      // Gán sự kiện nghe thử segment
+      // Play segment with window.AudioManager
       elSegments.querySelectorAll('[data-seg-play]').forEach(function(btn){
         btn.addEventListener('click', async function(e){
           e.stopPropagation();
           const idx = parseInt(btn.dataset.segPlay);
-          const segBlob = await taoSegBlob(idx);
+          const segBlob = await vadRes.createWavBlob(segments[idx]);
           const url = URL.createObjectURL(segBlob);
           const a = new Audio(url);
-          a.onended = function(){URL.revokeObjectURL(url);};
-          window.AudioManager.play(a);
+          a.onended = function(){ URL.revokeObjectURL(url); };
+          window.AudioManager.play(a, btn);
         });
       });
 
-      // Nút "Dùng đoạn sạch nhất"
+      // Button "Dùng đoạn sạch nhất"
       btnUse.onclick = async function(){
         btnUse.disabled = true;
         btnUse.innerHTML = '⏳ Đang nạp clip...';
-        bestSegBlob = await taoSegBlob(selectedIdx);
+        bestSegBlob = await vadRes.createWavBlob(segments[selectedIdx]);
 
-        // Gán vào input file của tab Clone
         const cloneSection = document.getElementById('clone');
         const fileInput = cloneSection.querySelector('[data-file]');
         const dropMain = cloneSection.querySelector('[data-dropmain]');
@@ -437,8 +467,6 @@
         btnUse.innerHTML = '✓ Đã nạp clip mẫu từ ghi âm!';
         toast('Đã nạp đoạn sạch nhất (' + segments[selectedIdx].dur.toFixed(1) + 's) làm clip mẫu');
       };
-
-      ctx.close();
     } catch(e){
       elResultInfo.textContent = 'Lỗi phân tích: ' + e.message;
       console.error('Lỗi phân tích ghi âm:', e);

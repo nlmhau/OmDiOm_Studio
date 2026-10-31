@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/rosette-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/logo/rosette-16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/rosette-180.png">
-  <link rel="stylesheet" href="css/style.css?v=2.2">
+  <link rel="stylesheet" href="css/style.css?v=2.3">
 
 </head>
 
@@ -504,7 +504,49 @@
             <div class="drop" data-drop tabindex="0" role="button" aria-label="Chọn tệp âm thanh mẫu"><b
                 data-dropmain>Chọn hoặc kéo thả tệp audio</b><small data-dropsub>WAV / MP3 · nên là giọng rõ, ít tạp
                 âm</small></div>
-            <input type="file" accept="audio/*" data-file hidden>
+                        <input type="file" accept="audio/*" data-file hidden>
+            
+            <!-- KHUNG XEM TRƯỚC, NGHE THỬ VÀ TỰ ĐỘNG CHỌN ĐOẠN SẠCH (VAD) CHO FILE TẢI LÊN -->
+            <div class="upload-vad-panel" id="uploadVadPanel" style="display:none;margin-top:10px;padding:12px;border:2px solid #111;border-radius:8px;background:#fefce8;box-shadow:2px 2px 0 #111">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:18px">🎵</span>
+                  <div>
+                    <b id="uploadFileName" style="font-size:12.5px;color:#171717;display:block">ten_file.wav</b>
+                    <span class="muted" id="uploadFileMeta" style="font-size:11px">1.2 MB · 14.5s · 44.1 kHz</span>
+                  </div>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <button type="button" class="btn small" id="btnPlayOriginal" style="background:var(--yellow);font-weight:700" title="Nghe toàn bộ file gốc tải lên">▶ Nghe file gốc</button>
+                  <button type="button" class="btn small" id="btnReanalyzeVad" style="background:#fff" title="Phân tích lại VAD">↻ Quét lại</button>
+                </div>
+              </div>
+
+              <!-- KẾT QUẢ VAD CHO TỆP TẢI LÊN -->
+              <div id="uploadVadStatus" style="margin-top:10px;padding:8px 10px;border-radius:6px;background:#f0fdf4;border:1.5px solid #86efac;font-size:11.5px;line-height:1.4">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+                  <b style="color:#166534" id="uploadVadTitle">⭐ Tự động chọn đoạn sạch nhất (VAD):</b>
+                  <span class="badge" id="uploadVadScoreBadge" style="background:#dcfce7;color:#15803d;padding:2px 6px;font-size:10.5px">Điểm: 9.8</span>
+                </div>
+                <div id="uploadVadDetails" style="color:#166534;margin-top:3px;font-family:monospace;font-size:11px">
+                  0.8s → 5.2s (Thời lượng: 4.4s) · Tối ưu cho AI nhân bản
+                </div>
+                <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center">
+                  <button type="button" class="btn small" id="btnPlayCleanSeg" style="background:#22c55e;color:#fff;border-color:#15803d;font-weight:700">
+                    ▶ Nghe đoạn sạch
+                  </button>
+                  <button type="button" class="btn small" id="btnToggleAllSegs" style="background:#fff;font-size:11px">
+                    📑 Chọn đoạn khác (3 đoạn)
+                  </button>
+                  <button type="button" class="btn small" id="btnToggleUseMode" style="background:#fff;margin-left:auto;font-size:11px" title="Chuyển đổi giữa dùng đoạn sạch và file gốc">
+                    Dùng cả file gốc
+                  </button>
+                </div>
+              </div>
+
+              <!-- DANH SÁCH CÁC ĐOẠN KHÁC (ẨN MẶC ĐỊNH, BẬT KHI BẤM XEM THÊM) -->
+              <div id="uploadVadSegsList" style="display:none;margin-top:8px" class="rec-segments"></div>
+            </div>
             <div class="ref-audio" data-fileinfo></div>
             <div class="rec-or">── hoặc ──</div>
             <div class="rec-panel" id="recPanel">
@@ -1407,7 +1449,7 @@
   <script src="js/config.js"></script>
   <script src="js/audio-dsp.js"></script>
   <script src="js/file-manager.js"></script>
-  <script src="js/recorder.js"></script>
+  <script src="js/recorder.js?v=2.3"></script>
   <script src="js/tts-engine.js"></script>
   <script src="js/voice-library.js"></script>
   <script src="js/dialogue-studio.js"></script>
@@ -1415,7 +1457,7 @@
   <script src="js/editor-modal.js"></script>
   <script src="js/terminal-modal.js"></script>
   <script src="js/kinetic-motion.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=2.3"></script>
 </body>
 
 </html>

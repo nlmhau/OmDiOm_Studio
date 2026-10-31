@@ -451,14 +451,187 @@ if(drop&&fileInput){
   ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
   drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)dungTep(f)});
   fileInput.addEventListener('change',()=>{if(fileInput.files[0])dungTep(fileInput.files[0])});
-  function dungTep(f){
-    if(!f.type.startsWith('audio/')&&!/\.(wav|mp3|m4a|ogg|flac)$/i.test(f.name)){toast('Tệp không phải audio.',true);return}
-    if(f.size>20*1024*1024){toast('Tệp quá lớn (>20 MB).',true);return}
-    khoi._file=f;
-    drop.querySelector('[data-dropmain]').textContent=f.name;
-    drop.querySelector('[data-dropsub]').textContent='bấm để chọn tệp khác';
-    drop.style.background='#bdeeea';
-    khoi.querySelector('[data-fileinfo]').textContent=(f.size/1024/1024).toFixed(2)+' MB · '+f.type;
+  async function dungTep(f){
+    if(!f.type.startsWith('audio/') && !/\.(wav|mp3|m4a|ogg|flac|aac|webm)$/i.test(f.name)){
+      toast('Tệp không phải định dạng âm thanh hợp lệ.', true);
+      return;
+    }
+    if(f.size > 30*1024*1024){
+      toast('Tệp quá lớn (>30 MB).', true);
+      return;
+    }
+
+    khoi._originalFile = f;
+    khoi._file = f;
+    khoi._cleanFile = null;
+    khoi._useMode = 'original';
+
+    drop.querySelector('[data-dropmain]').textContent = '🎵 ' + f.name;
+    drop.querySelector('[data-dropsub]').textContent = 'Bấm để đổi tệp khác · Đang quét VAD...';
+    drop.style.background = '#bdeeea';
+    khoi.querySelector('[data-fileinfo]').textContent = (f.size/1024/1024).toFixed(2) + ' MB · ' + (f.type || 'audio');
+
+    // Kích hoạt bảng xem trước và phân tích VAD
+    const panel = document.getElementById('uploadVadPanel');
+    const elName = document.getElementById('uploadFileName');
+    const elMeta = document.getElementById('uploadFileMeta');
+    const elStatus = document.getElementById('uploadVadStatus');
+    const elTitle = document.getElementById('uploadVadTitle');
+    const elScore = document.getElementById('uploadVadScoreBadge');
+    const elDetails = document.getElementById('uploadVadDetails');
+    const btnPlayOrig = document.getElementById('btnPlayOriginal');
+    const btnPlayClean = document.getElementById('btnPlayCleanSeg');
+    const btnToggleSegs = document.getElementById('btnToggleAllSegs');
+    const btnToggleMode = document.getElementById('btnToggleUseMode');
+    const btnReanalyze = document.getElementById('btnReanalyzeVad');
+    const elSegsList = document.getElementById('uploadVadSegsList');
+
+    if(!panel) return;
+    panel.style.display = 'block';
+    elName.textContent = f.name;
+    elMeta.textContent = (f.size / (1024*1024)).toFixed(2) + ' MB · Đang giải mã và phân tích VAD...';
+    elDetails.textContent = '⏳ Đang quét phát hiện giọng nói và khoảng lặng...';
+    btnPlayClean.style.display = 'none';
+    btnToggleSegs.style.display = 'none';
+    elSegsList.style.display = 'none';
+    elSegsList.innerHTML = '';
+
+    // 1. Cài đặt nút nghe file gốc
+    const origUrl = URL.createObjectURL(f);
+    btnPlayOrig.onclick = function(){
+      const a = new Audio(origUrl);
+      window.AudioManager.play(a, btnPlayOrig);
+    };
+
+    // 2. Chạy thuật toán VAD
+    async function chayPhanTichVad(){
+      elDetails.textContent = '⏳ Đang phân tích năng lượng RMS và lọc đoạn sạch...';
+      try {
+        if(!window.AudioVAD){
+          elDetails.textContent = 'Đã nạp file gốc thành công.';
+          return;
+        }
+
+        const vadRes = await window.AudioVAD.analyze(f, { minSeg: 3.0, maxSeg: 7.0 });
+        elMeta.textContent = (f.size / (1024*1024)).toFixed(2) + ' MB · ' + vadRes.duration.toFixed(1) + 's · ' + vadRes.sampleRate + ' Hz';
+
+        if(vadRes.bestSegment){
+          const cleanBlob = await vadRes.createWavBlob(vadRes.bestSegment);
+          const cleanFile = new File([cleanBlob], 'clean_' + f.name.replace(/\.[^.]+$/, '') + '.wav', { type: 'audio/wav' });
+          khoi._cleanFile = cleanFile;
+          
+          // MẶC ĐỊNH: Tự động dùng đoạn sạch nhất cho AI nhân bản
+          khoi._file = cleanFile;
+          khoi._useMode = 'clean';
+
+          elTitle.innerHTML = '⭐ Đã tự động chọn đoạn sạch nhất (VAD):';
+          elScore.textContent = 'Điểm sạch: ' + vadRes.bestSegment.score.toFixed(1);
+          elDetails.textContent = vadRes.bestSegment.start.toFixed(1) + 's → ' + vadRes.bestSegment.end.toFixed(1) + 's (Thời lượng: ' + vadRes.bestSegment.dur.toFixed(1) + 's) · Tối ưu cho AI nhân bản';
+          
+          btnPlayClean.style.display = 'inline-block';
+          const cleanUrl = URL.createObjectURL(cleanBlob);
+          btnPlayClean.onclick = function(){
+            const a = new Audio(cleanUrl);
+            window.AudioManager.play(a, btnPlayClean);
+          };
+
+          // Nút chuyển đổi dùng file gốc vs đoạn sạch
+          btnToggleMode.style.display = 'inline-block';
+          btnToggleMode.textContent = 'Dùng cả file gốc';
+          btnToggleMode.onclick = function(){
+            if(khoi._useMode === 'clean'){
+              khoi._file = khoi._originalFile;
+              khoi._useMode = 'original';
+              btnToggleMode.textContent = '✓ Dùng đoạn sạch';
+              btnToggleMode.style.background = '#dcfce7';
+              toast('Đang dùng: Toàn bộ file gốc (' + vadRes.duration.toFixed(1) + 's)');
+            } else {
+              khoi._file = khoi._cleanFile;
+              khoi._useMode = 'clean';
+              btnToggleMode.textContent = 'Dùng cả file gốc';
+              btnToggleMode.style.background = '#fff';
+              toast('Đang dùng: Đoạn sạch nhất (' + vadRes.bestSegment.dur.toFixed(1) + 's)');
+            }
+          };
+
+          // Render danh sách các đoạn khác nếu có
+          if(vadRes.segments.length > 1){
+            btnToggleSegs.style.display = 'inline-block';
+            btnToggleSegs.textContent = '📑 Chọn đoạn khác (' + vadRes.segments.length + ' đoạn)';
+            btnToggleSegs.onclick = function(){
+              elSegsList.style.display = (elSegsList.style.display === 'none') ? 'grid' : 'none';
+            };
+
+            let segHtml = '';
+            for(let i = 0; i < vadRes.segments.length; i++){
+              const s = vadRes.segments[i];
+              segHtml += '<div class="rec-seg' + (i === 0 ? ' best' : '') + '" data-upseg-idx="' + i + '">' +
+                '<span class="seg-info">' + (i === 0 ? '⭐ ' : '') + 'Đoạn ' + (i+1) + ': ' + s.start.toFixed(1) + 's → ' + s.end.toFixed(1) + 's (' + s.dur.toFixed(1) + 's)</span>' +
+                '<span class="seg-score">Điểm: ' + s.score.toFixed(1) + '</span>' +
+                '<button type="button" class="mini" data-upseg-play="' + i + '" title="Nghe thử đoạn này">▶</button>' +
+                '</div>';
+            }
+            elSegsList.innerHTML = segHtml;
+
+            // Gán sự kiện click chọn segment khác trong danh sách
+            elSegsList.querySelectorAll('.rec-seg').forEach(item => {
+              item.addEventListener('click', async function(e){
+                if(e.target.tagName === 'BUTTON') return;
+                const idx = parseInt(item.dataset.upsegIdx);
+                const chosenSeg = vadRes.segments[idx];
+                const chosenBlob = await vadRes.createWavBlob(chosenSeg);
+                const chosenFile = new File([chosenBlob], 'clean_seg' + (idx+1) + '_' + f.name.replace(/\.[^.]+$/, '') + '.wav', { type: 'audio/wav' });
+                
+                khoi._cleanFile = chosenFile;
+                khoi._file = chosenFile;
+                khoi._useMode = 'clean';
+
+                elSegsList.querySelectorAll('.rec-seg').forEach(s => s.classList.remove('best'));
+                item.classList.add('best');
+
+                elTitle.innerHTML = '✓ Đã chọn Đoạn ' + (idx+1) + ':';
+                elScore.textContent = 'Điểm: ' + chosenSeg.score.toFixed(1);
+                elDetails.textContent = chosenSeg.start.toFixed(1) + 's → ' + chosenSeg.end.toFixed(1) + 's (' + chosenSeg.dur.toFixed(1) + 's)';
+
+                const newCleanUrl = URL.createObjectURL(chosenBlob);
+                btnPlayClean.onclick = function(){
+                  const a = new Audio(newCleanUrl);
+                  window.AudioManager.play(a, btnPlayClean);
+                };
+
+                toast('Đã chọn Đoạn ' + (idx+1) + ' (' + chosenSeg.dur.toFixed(1) + 's) làm clip mẫu');
+              });
+            });
+
+            // Gán sự kiện nghe từng đoạn
+            elSegsList.querySelectorAll('[data-upseg-play]').forEach(pBtn => {
+              pBtn.addEventListener('click', async function(e){
+                e.stopPropagation();
+                const idx = parseInt(pBtn.dataset.upsegPlay);
+                const b = await vadRes.createWavBlob(vadRes.segments[idx]);
+                const u = URL.createObjectURL(b);
+                const a = new Audio(u);
+                a.onended = function(){ URL.revokeObjectURL(u); };
+                window.AudioManager.play(a, pBtn);
+              });
+            });
+          }
+
+          toast('✓ Đã tải file & tự động chọn đoạn sạch nhất (' + vadRes.bestSegment.dur.toFixed(1) + 's)!');
+        } else {
+          elTitle.textContent = '✓ Âm thanh chuẩn:';
+          elDetails.textContent = 'Thời lượng: ' + vadRes.duration.toFixed(1) + 's · Sẵn sàng nhân bản giọng';
+          toast('✓ Đã nạp clip mẫu thành công!');
+        }
+      } catch(err){
+        console.error('Lỗi phân tích VAD:', err);
+        elDetails.textContent = 'Đã nạp file gốc (không thể trích VAD: ' + err.message + ')';
+        toast('Đã nhận clip mẫu.');
+      }
+    }
+
+    btnReanalyze.onclick = chayPhanTichVad;
+    chayPhanTichVad();
   }
 }
 

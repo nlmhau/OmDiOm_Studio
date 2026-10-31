@@ -629,3 +629,17 @@ textarea:focus, input[type=text]:focus, select:focus {
   object-fit: cover !important;
   display: block !important;
 }
+
+/* ── Upload VAD Panel Animation & Polish ── */
+.upload-vad-panel {
+  animation: spatialSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.upload-vad-panel .rec-seg {
+  border-width: 1.5px;
+  background: #fff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.upload-vad-panel .rec-seg:hover {
+  transform: translateX(4px);
+  border-color: #10b981;
+}
