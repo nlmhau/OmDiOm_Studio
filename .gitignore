@@ -1,0 +1,44 @@
+# ==============================================================================
+# BẢO VỆ DỮ LIỆU & BẢN QUYỀN CỐT LÕI (GIỮ LẠI CỤC BỘ - KHÔNG PUBLIC GITHUB)
+# ==============================================================================
+
+# 1. Trọng số mô hình AI & Checkpoint
+models/
+*.safetensors
+*.bin
+*.onnx
+
+# 2. Dữ liệu huấn luyện, âm thanh & tập mẫu
+data/
+/ket_qua/
+*.wav
+*.mp3
+*.tar.gz
+*.zip
+
+# 3. Dấu giọng người thật (Biometric Voiceprints) & Notebook Kaggle chứa key
+voices/*.pt
+voices/*.part
+voices/README.md
+kaggle/
+
+# 4. Tệp mô tả, báo cáo, đặc tả học thuật & hồ sơ đề tài (Giữ lại cục bộ)
+AGENTS.md
+docs/
+phieu/
+qc/
+CAU/
+notebook/
+eval/
+tools/
+
+# 5. Hệ thống, môi trường & Tệp tạm
+.gemini/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.log
+.ipynb_checkpoints/
+*.env
+scratch/
