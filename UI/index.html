@@ -4,7 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OmDiOm — STUDIO</title>
+  <title>OmDiOm STUDIO</title>
+    <link rel="icon" type="image/x-icon" href="assets/logo/rosette.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/rosette-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/logo/rosette-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/rosette-180.png">
   <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -13,10 +17,9 @@
   <div class="wrap">
     <header class="top">
       <div class="brand">
-        <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="2" width="6" height="12" rx="3" />
-            <path d="M5 10a7 7 0 0 0 14 0M12 17v4m-4 0h8" />
-          </svg></div>
+        <div class="logo brand-logo" title="OmDiOm Studio Logo">
+          <img src="assets/logo/rosette-128.png" alt="OmDiOm Logo" class="brand-logo-img">
+        </div>
         <h1>OmDiOm</h1>
         <div class="divider"></div><strong>VOICE STUDIO. TIẾNG VIỆT</strong>
       </div>
@@ -48,7 +51,8 @@
                 <h2>Văn bản → Giọng nói</h2>
               </div>
               <div style="display:flex;align-items:center;gap:10px">
-                <button type="button" class="btn small" id="btnExpandTtsEditor" title="Mở rộng khung soạn thảo toàn màn hình để dễ dàng nhìn rõ và chỉnh sửa chi tiết"
+                <button type="button" class="btn small" id="btnExpandTtsEditor"
+                  title="Mở rộng khung soạn thảo toàn màn hình để dễ dàng nhìn rõ và chỉnh sửa chi tiết"
                   style="padding:3px 10px;font-size:11.5px;background:#fef08a;color:#854d0e;border:1.5px solid #ca8a04;font-weight:700;display:inline-flex;align-items:center;gap:5px;cursor:pointer">
                   <span>⛶</span> Mở rộng soạn thảo
                 </button>
@@ -143,8 +147,10 @@
             <!-- TAB ẨN TERMINAL CONSOLE LOG THEO THỜI GIAN THỰC -->
             <details class="adv-settings" id="ttsTerminalDetails" style="margin-top:12px">
               <summary style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-                <span style="display:flex;align-items:center;gap:6px"><span>📟</span> <b>Bảng lệnh quy trình xử lý chi tiết (Console Terminal Log)</b></span>
-                <button type="button" class="btn small" id="btnExpandTtsTerminal" title="Mở rộng Console Log toàn màn hình để xem quy trình chi tiết nhất"
+                <span style="display:flex;align-items:center;gap:6px"><span>📟</span> <b>Bảng lệnh quy trình xử lý chi
+                    tiết (Console Terminal Log)</b></span>
+                <button type="button" class="btn small" id="btnExpandTtsTerminal"
+                  title="Mở rộng Console Log toàn màn hình để xem quy trình chi tiết nhất"
                   style="padding:3px 10px;font-size:11.5px;background:#fef08a;color:#854d0e;border:1.5px solid #ca8a04;font-weight:700;display:inline-flex;align-items:center;gap:5px;cursor:pointer">
                   <span>⛶</span> Mở rộng
                 </button>
@@ -160,7 +166,8 @@
               <summary style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
                 <span style="display:flex;align-items:center;gap:6px"><span>📑</span> <b>Xem văn bản (.TXT) &amp;
                     Phụ đề (.SRT) khớp thời gian</b></span>
-                <button type="button" class="btn small" id="btnExpandTtsPreview" title="Mở rộng toàn màn hình để xem tổng quát và chi tiết hơn giống như tab hướng dẫn"
+                <button type="button" class="btn small" id="btnExpandTtsPreview"
+                  title="Mở rộng toàn màn hình để xem tổng quát và chi tiết hơn giống như tab hướng dẫn"
                   style="padding:3px 10px;font-size:11.5px;background:#fef08a;color:#854d0e;border:1.5px solid #ca8a04;font-weight:700;display:inline-flex;align-items:center;gap:5px;cursor:pointer">
                   <span>⛶</span> Mở rộng
                 </button>
@@ -290,7 +297,8 @@
                 <h2>📝 Soạn thảo kịch bản đối thoại</h2>
               </div>
               <div style="display:flex;align-items:center;gap:10px">
-                <button type="button" class="btn small" id="btnExpandDlgEditor" title="Mở rộng khung kịch bản toàn màn hình để dễ dàng nhìn rõ và chỉnh sửa chi tiết"
+                <button type="button" class="btn small" id="btnExpandDlgEditor"
+                  title="Mở rộng khung kịch bản toàn màn hình để dễ dàng nhìn rõ và chỉnh sửa chi tiết"
                   style="padding:3px 10px;font-size:11.5px;background:#fef08a;color:#854d0e;border:1.5px solid #ca8a04;font-weight:700;display:inline-flex;align-items:center;gap:5px;cursor:pointer">
                   <span>⛶</span> Mở rộng kịch bản
                 </button>
@@ -416,8 +424,10 @@
             <!-- TERMINAL CONSOLE LOG KỊCH BẢN -->
             <details class="adv-settings" id="dlgTerminalDetails" style="margin-top:12px" open>
               <summary style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-                <span style="display:flex;align-items:center;gap:6px"><span>📟</span> <b>Bảng điều khiển tiến trình phân vai (Console Log)</b></span>
-                <button type="button" class="btn small" id="btnExpandDlgTerminal" title="Mở rộng Console Log toàn màn hình để xem quy trình chi tiết nhất"
+                <span style="display:flex;align-items:center;gap:6px"><span>📟</span> <b>Bảng điều khiển tiến trình phân
+                    vai (Console Log)</b></span>
+                <button type="button" class="btn small" id="btnExpandDlgTerminal"
+                  title="Mở rộng Console Log toàn màn hình để xem quy trình chi tiết nhất"
                   style="padding:3px 10px;font-size:11.5px;background:#fef08a;color:#854d0e;border:1.5px solid #ca8a04;font-weight:700;display:inline-flex;align-items:center;gap:5px;cursor:pointer">
                   <span>⛶</span> Mở rộng
                 </button>
@@ -433,7 +443,8 @@
               <summary style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
                 <span style="display:flex;align-items:center;gap:6px"><span>📑</span> <b>Xem kịch bản (.TXT)
                     &amp; Phụ đề phân vai (.SRT)</b></span>
-                <button type="button" class="btn small" id="btnExpandDlgPreview" title="Mở rộng toàn màn hình để xem tổng quát và chi tiết hơn giống như tab hướng dẫn"
+                <button type="button" class="btn small" id="btnExpandDlgPreview"
+                  title="Mở rộng toàn màn hình để xem tổng quát và chi tiết hơn giống như tab hướng dẫn"
                   style="padding:3px 10px;font-size:11.5px;background:#fef08a;color:#854d0e;border:1.5px solid #ca8a04;font-weight:700;display:inline-flex;align-items:center;gap:5px;cursor:pointer">
                   <span>⛶</span> Mở rộng
                 </button>
@@ -1061,7 +1072,7 @@
                 nói cao nhất. Tùy chọn trên máy cá nhân tạm thời được bảo lưu.
               </div>
             </div>
-          
+
             <!-- Ô NHỎ CHUYỂN ĐỔI MODEL: OMDIOM (VIỆT HÓA) HOẶC OMNIVOICE (GỐC) -->
             <div class="model-selector" id="boxModelSelector"
               style="margin-top:14px;padding:12px 14px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc">
@@ -1071,7 +1082,8 @@
                   <span>🎯</span> MÔ HÌNH AI ĐANG SỬ DỤNG (ACTIVE MODEL):
                 </strong>
                 <span class="badge" id="badgeActiveModel"
-                  style="font-size:10.5px;padding:2px 8px;background:#fef3c7;color:#92400e;font-weight:600">ĐANG DÙNG: OMDIOM</span>
+                  style="font-size:10.5px;padding:2px 8px;background:#fef3c7;color:#92400e;font-weight:600">ĐANG DÙNG:
+                  OMDIOM</span>
               </div>
 
               <div class="model-options" id="modelOptionsGroup"
@@ -1112,11 +1124,12 @@
                   </div>
                 </label>
               </div>
-              <div id="modelSwitchStatus" style="display:none;margin-top:8px;padding:6px 10px;background:#e0f2fe;border-radius:4px;font-size:11.5px;color:#0369a1;font-weight:500">
+              <div id="modelSwitchStatus"
+                style="display:none;margin-top:8px;padding:6px 10px;background:#e0f2fe;border-radius:4px;font-size:11.5px;color:#0369a1;font-weight:500">
                 ⏳ Đang hoán đổi trọng số mô hình trong bộ nhớ, vui lòng đợi...
               </div>
             </div>
-</section>
+          </section>
           <section class="card">
             <div class="card-title">
               <div>
@@ -1164,11 +1177,13 @@
 
     <!-- MODAL HƯỚNG DẪN SỬ DỤNG ẨN -->
     <dialog class="modal" id="helpModal" style="width:min(680px,94vw);max-height:85vh;overflow-y:auto">
-      <div class="card-title">
+      <div class="card-title" style="display:flex;align-items:center;gap:14px">
+        <img src="assets/logo/rosette-128.png" alt="OmDiOm Logo" style="width:46px;height:46px;border-radius:12px;border:2px solid #111;box-shadow:2px 2px 0 #111;flex-shrink:0">
         <div>
           <h2>📖 Cẩm Nang Hướng Dẫn Sử Dụng</h2>
           <div class="muted">Tài liệu chi tiết các tính năng của OmDiOm Studio</div>
-        </div><button class="btn small" id="btnCloseHelp">✕ Đóng</button>
+        </div>
+        <button class="btn small" id="btnCloseHelp" style="margin-left:auto">✕ Đóng</button>
       </div>
       <div style="margin-top:14px;display:grid;gap:14px">
         <section class="card" style="box-shadow:none;border-color:#b2aa8d">
@@ -1212,7 +1227,8 @@
 
     <!-- MODAL XEM CHI TIẾT VĂN BẢN VÀ PHỤ ĐỀ SRT (MỞ RỘNG TỔNG QUÁT) -->
     <dialog class="modal" id="previewModal" style="width:min(980px,95vw);max-height:88vh;overflow-y:auto;padding:22px">
-      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #171717;padding-bottom:12px;margin-bottom:14px">
+      <div class="card-title"
+        style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #171717;padding-bottom:12px;margin-bottom:14px">
         <div>
           <h2 style="margin:0;display:flex;align-items:center;gap:8px;font-size:17px">
             <span>📑</span> <span id="modalPreviewTitle">Xem Chi Tiết Văn Bản &amp; Phụ Đề (.SRT)</span>
@@ -1222,16 +1238,21 @@
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" class="btn small" id="btnModalCopy" style="background:#eff6ff;color:#1e40af;border-color:#3b82f6;font-weight:600">📋 Sao chép</button>
-          <button type="button" class="btn small" id="btnModalDownload" style="background:#f0fdf4;color:#166534;border-color:#22c55e;font-weight:600">⬇ Tải tệp</button>
+          <button type="button" class="btn small" id="btnModalCopy"
+            style="background:#eff6ff;color:#1e40af;border-color:#3b82f6;font-weight:600">📋 Sao chép</button>
+          <button type="button" class="btn small" id="btnModalDownload"
+            style="background:#f0fdf4;color:#166534;border-color:#22c55e;font-weight:600">⬇ Tải tệp</button>
           <button type="button" class="btn small" id="btnModalClose">✕ Thu nhỏ</button>
         </div>
       </div>
 
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
         <div class="segmented" style="margin-bottom:0">
-          <button type="button" class="segment selected" id="btnModalTabTxt" style="padding:6px 16px;font-weight:700">📄 Nội dung văn bản (.TXT)</button>
-          <button type="button" class="segment" id="btnModalTabSrt" style="padding:6px 16px;font-weight:700">⏱ Phụ đề khớp thời gian (.SRT)</button>
+          <button type="button" class="segment selected" id="btnModalTabTxt" style="padding:6px 16px;font-weight:700">📄
+            Nội dung văn bản (.TXT)</button>
+          <button type="button" class="segment" id="btnModalTabSrt" style="padding:6px 16px;font-weight:700">⏱ Phụ đề
+            khớp thời gian (.SRT)</button>
         </div>
         <div class="muted" id="modalPreviewStats" style="font-size:12px;font-weight:600">
           📊 Đang xem nội dung
@@ -1252,14 +1273,16 @@
       </div>
 
       <div class="modal-actions" style="margin-top:16px;display:flex;align-items:center;justify-content:space-between">
-        <span class="muted" style="font-size:11.5px">💡 Phím tắt: Bấm phím <b>Esc</b> hoặc nút <b>Thu nhỏ lại</b> để quay lại kích thước nhỏ như ban đầu.</span>
+        <span class="muted" style="font-size:11.5px">💡 Phím tắt: Bấm phím <b>Esc</b> hoặc nút <b>Thu nhỏ lại</b> để
+          quay lại kích thước nhỏ như ban đầu.</span>
         <button type="button" class="btn primary" id="btnModalClose2">Thu nhỏ lại</button>
       </div>
     </dialog>
 
     <!-- MODAL SOẠN THẢO VĂN BẢN & KỊCH BẢN TOÀN MÀN HÌNH (FOCUS ZEN EDITOR) -->
     <dialog class="modal" id="editorModal" style="width:min(1080px,96vw);max-height:90vh;overflow-y:auto;padding:22px">
-      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #171717;padding-bottom:12px;margin-bottom:12px">
+      <div class="card-title"
+        style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #171717;padding-bottom:12px;margin-bottom:12px">
         <div>
           <h2 style="margin:0;display:flex;align-items:center;gap:8px;font-size:17.5px">
             <span>📝</span> <span id="editorModalTitle">Trình Soạn Thảo Toàn Màn Hình</span>
@@ -1269,13 +1292,19 @@
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <div style="display:flex;align-items:center;background:#ede5c9;border:1.5px solid #171717;border-radius:6px;padding:2px 4px;gap:2px" title="Điều chỉnh kích cỡ phông chữ">
-            <button type="button" class="btn small" id="btnEditorFontDec" style="padding:2px 7px;font-size:11px;background:#fffdf4">A-</button>
+          <div
+            style="display:flex;align-items:center;background:#ede5c9;border:1.5px solid #171717;border-radius:6px;padding:2px 4px;gap:2px"
+            title="Điều chỉnh kích cỡ phông chữ">
+            <button type="button" class="btn small" id="btnEditorFontDec"
+              style="padding:2px 7px;font-size:11px;background:#fffdf4">A-</button>
             <span id="editorFontSizeLabel" style="font-size:11.5px;font-weight:700;padding:0 4px">15px</span>
-            <button type="button" class="btn small" id="btnEditorFontInc" style="padding:2px 7px;font-size:11px;background:#fffdf4">A+</button>
+            <button type="button" class="btn small" id="btnEditorFontInc"
+              style="padding:2px 7px;font-size:11px;background:#fffdf4">A+</button>
           </div>
-          <button type="button" class="btn small" id="btnEditorCopy" style="background:#eff6ff;color:#1e40af;border-color:#3b82f6;font-weight:600">📋 Sao chép</button>
-          <button type="button" class="btn small" id="btnEditorClear" style="background:#fff1f2;color:#be123c;border-color:#fb7185">🗑️ Xóa</button>
+          <button type="button" class="btn small" id="btnEditorCopy"
+            style="background:#eff6ff;color:#1e40af;border-color:#3b82f6;font-weight:600">📋 Sao chép</button>
+          <button type="button" class="btn small" id="btnEditorClear"
+            style="background:#fff1f2;color:#be123c;border-color:#fb7185">🗑️ Xóa</button>
           <button type="button" class="btn small" id="btnEditorClose">✕ Thu nhỏ</button>
         </div>
       </div>
@@ -1288,15 +1317,25 @@
         </div>
         <div class="emotion-tags" id="editorEmotionTags">
           <button type="button" class="btn-emotion" data-tag="[cười]" title="Chèn thẻ [cười]">😆 Cười</button>
-          <button type="button" class="btn-emotion" data-tag="[thở dài]" title="Chèn thẻ [thở dài]">😮‍💨 Thở dài</button>
-          <button type="button" class="btn-emotion" data-tag="[ngạc nhiên]" title="Chèn thẻ [ngạc nhiên]">😲 Ngạc nhiên</button>
-          <button type="button" class="btn-emotion" data-tag="[trầm trồ]" title="Chèn thẻ [trầm trồ]">🤩 Trầm trồ</button>
-          <button type="button" class="btn-emotion" data-tag="[nghi vấn]" title="Chèn thẻ [nghi vấn]">❓ Nghi vấn</button>
-          <button type="button" class="btn-emotion" data-tag="[thắc mắc]" title="Chèn thẻ [thắc mắc]">🤔 Thắc mắc</button>
-          <button type="button" class="btn-emotion" data-tag="[đồng tình]" title="Chèn thẻ [đồng tình]">👍 Đồng tình</button>
+          <button type="button" class="btn-emotion" data-tag="[thở dài]" title="Chèn thẻ [thở dài]">😮‍💨 Thở
+            dài</button>
+          <button type="button" class="btn-emotion" data-tag="[ngạc nhiên]" title="Chèn thẻ [ngạc nhiên]">😲 Ngạc
+            nhiên</button>
+          <button type="button" class="btn-emotion" data-tag="[trầm trồ]" title="Chèn thẻ [trầm trồ]">🤩 Trầm
+            trồ</button>
+          <button type="button" class="btn-emotion" data-tag="[nghi vấn]" title="Chèn thẻ [nghi vấn]">❓ Nghi
+            vấn</button>
+          <button type="button" class="btn-emotion" data-tag="[thắc mắc]" title="Chèn thẻ [thắc mắc]">🤔 Thắc
+            mắc</button>
+          <button type="button" class="btn-emotion" data-tag="[đồng tình]" title="Chèn thẻ [đồng tình]">👍 Đồng
+            tình</button>
           <button type="button" class="btn-emotion" data-tag="[bất mãn]" title="Chèn thẻ [bất mãn]">😤 Bất mãn</button>
-          <button type="button" class="btn-pause-tag" data-tag="[nghỉ: 0.5s]" title="Chèn khoảng lặng 0.5 giây" style="background:#e0e7ff;color:#3730a3;border:1.5px solid #818cf8;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;cursor:pointer">⏱️ Nghỉ 0.5s</button>
-          <button type="button" class="btn-pause-tag" data-tag="[nghỉ: 1.0s]" title="Chèn khoảng lặng 1.0 giây" style="background:#e0e7ff;color:#3730a3;border:1.5px solid #818cf8;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;cursor:pointer">⏱️ Nghỉ 1.0s</button>
+          <button type="button" class="btn-pause-tag" data-tag="[nghỉ: 0.5s]" title="Chèn khoảng lặng 0.5 giây"
+            style="background:#e0e7ff;color:#3730a3;border:1.5px solid #818cf8;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;cursor:pointer">⏱️
+            Nghỉ 0.5s</button>
+          <button type="button" class="btn-pause-tag" data-tag="[nghỉ: 1.0s]" title="Chèn khoảng lặng 1.0 giây"
+            style="background:#e0e7ff;color:#3730a3;border:1.5px solid #818cf8;border-radius:4px;padding:2px 7px;font-size:11px;font-weight:700;cursor:pointer">⏱️
+            Nghỉ 1.0s</button>
         </div>
       </div>
 
@@ -1311,7 +1350,8 @@
           📊 0 từ · 0 ký tự · ~0s ước tính thời lượng
         </div>
         <div style="display:flex;gap:8px">
-          <button type="button" class="btn primary" id="btnEditorApply" style="margin-top:0;padding:8px 20px;font-size:13.5px;font-weight:800">
+          <button type="button" class="btn primary" id="btnEditorApply"
+            style="margin-top:0;padding:8px 20px;font-size:13.5px;font-weight:800">
             ✓ Áp dụng &amp; Thu nhỏ lại
           </button>
         </div>
@@ -1319,8 +1359,10 @@
     </dialog>
 
     <!-- MODAL XEM CHI TIẾT CONSOLE TERMINAL LOG TOÀN MÀN HÌNH -->
-    <dialog class="modal" id="terminalModal" style="width:min(1080px,96vw);max-height:90vh;overflow-y:auto;padding:22px">
-      <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #171717;padding-bottom:12px;margin-bottom:12px">
+    <dialog class="modal" id="terminalModal"
+      style="width:min(1080px,96vw);max-height:90vh;overflow-y:auto;padding:22px">
+      <div class="card-title"
+        style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #171717;padding-bottom:12px;margin-bottom:12px">
         <div>
           <h2 style="margin:0;display:flex;align-items:center;gap:8px;font-size:17.5px">
             <span>📟</span> <span id="terminalModalTitle">Bảng Lệnh Quy Trình Xử Lý Chi Tiết (Full Terminal Log)</span>
@@ -1330,22 +1372,28 @@
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
-          <button type="button" class="btn small" id="btnTerminalAutoScroll" style="background:#e0f2fe;color:#0369a1;border-color:#38bdf8;font-weight:700">⬇ Tự cuộn: BẬT</button>
-          <button type="button" class="btn small" id="btnTerminalCopy" style="background:#eff6ff;color:#1e40af;border-color:#3b82f6;font-weight:600">📋 Sao chép log</button>
-          <button type="button" class="btn small" id="btnTerminalClear" style="background:#fff1f2;color:#be123c;border-color:#fb7185">🗑️ Xóa log</button>
+          <button type="button" class="btn small" id="btnTerminalAutoScroll"
+            style="background:#e0f2fe;color:#0369a1;border-color:#38bdf8;font-weight:700">⬇ Tự cuộn: BẬT</button>
+          <button type="button" class="btn small" id="btnTerminalCopy"
+            style="background:#eff6ff;color:#1e40af;border-color:#3b82f6;font-weight:600">📋 Sao chép log</button>
+          <button type="button" class="btn small" id="btnTerminalClear"
+            style="background:#fff1f2;color:#be123c;border-color:#fb7185">🗑️ Xóa log</button>
           <button type="button" class="btn small" id="btnTerminalClose">✕ Thu nhỏ</button>
         </div>
       </div>
 
       <div style="flex:1;display:flex;flex-direction:column;min-height:440px">
-        <div class="term-panel" id="modalTerminalPanel" style="height:460px;max-height:460px;overflow-y:auto;font-size:12.5px;line-height:1.7;padding:16px;border:2px solid #171717;box-shadow:inset 2px 2px 0 #000">
+        <div class="term-panel" id="modalTerminalPanel"
+          style="height:460px;max-height:460px;overflow-y:auto;font-size:12.5px;line-height:1.7;padding:16px;border:2px solid #171717;box-shadow:inset 2px 2px 0 #000">
           <!-- Logs render tự động tại đây -->
         </div>
       </div>
 
       <div class="modal-actions" style="margin-top:14px;display:flex;align-items:center;justify-content:space-between">
-        <span class="muted" style="font-size:11.5px">🟢 Trạng thái: Đang theo dõi thời gian thực · Nhấn phím <b>Esc</b> hoặc nút <b>Thu nhỏ lại</b> để đóng.</span>
-        <button type="button" class="btn primary" id="btnTerminalClose2" style="margin-top:0;padding:8px 20px;font-size:13.5px">Thu nhỏ lại</button>
+        <span class="muted" style="font-size:11.5px">🟢 Trạng thái: Đang theo dõi thời gian thực · Nhấn phím <b>Esc</b>
+          hoặc nút <b>Thu nhỏ lại</b> để đóng.</span>
+        <button type="button" class="btn primary" id="btnTerminalClose2"
+          style="margin-top:0;padding:8px 20px;font-size:13.5px">Thu nhỏ lại</button>
       </div>
     </dialog>
 

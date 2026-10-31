@@ -569,3 +569,31 @@ textarea:focus, input[type=text]:focus, select:focus {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.08); box-shadow: 2px 2px 0 #111, 0 0 16px rgba(239, 68, 68, 0.85); }
 }
+
+/* ── Brand Logo Styling ── */
+.logo.brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 0;
+  background: #fdfbf7;
+  border: 2px solid #111;
+  box-shadow: 2.5px 2.5px 0 #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.logo.brand-logo:hover {
+  transform: scale(1.08) rotate(-3deg);
+  box-shadow: 4px 4px 0 #111;
+}
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

@@ -69,10 +69,21 @@ async def _startup() -> None:
 _ui_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "UI"))
 _css_dir = os.path.join(_ui_dir, "css")
 _js_dir = os.path.join(_ui_dir, "js")
+_assets_dir = os.path.join(_ui_dir, "assets")
 if os.path.isdir(_css_dir):
     app.mount("/css", StaticFiles(directory=_css_dir), name="css")
 if os.path.isdir(_js_dir):
     app.mount("/js", StaticFiles(directory=_js_dir), name="js")
+if os.path.isdir(_assets_dir):
+    app.mount("/assets", StaticFiles(directory=_assets_dir), name="assets")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    f_path = os.path.join(_ui_dir, "assets", "logo", "rosette.ico")
+    if os.path.exists(f_path):
+        return FileResponse(f_path, media_type="image/x-icon")
+    return Response(status_code=404)
 
 
 @app.get("/")

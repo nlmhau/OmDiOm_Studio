@@ -1,6 +1,7 @@
 # 🎙️ OmDiOm Studio — Hệ Thống Tổng Hợp & Nhân Bản Giọng Nói Tiếng Việt Zero-Shot
 
 <p align="center">
+  <img src="UI/assets/logo/rosette-256.png" width="120" height="120" alt="OmDiOm Studio Logo" style="border-radius:26px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);"><br>
   <b>Nền Tảng AI Tổng Hợp, Nhân Bản & Thiết Kế Giọng Nói Tiếng Việt Chuyên Nghiệp</b><br>
   <i>Trang bị mô hình học sâu <b>OmDiOm</b> được huấn luyện lại chuyên sâu (Retrained / Fine-tuned) trên tập dữ liệu tiếng Việt quy mô lớn.</i>
 </p>
