@@ -458,6 +458,7 @@ class TTSEngine:
         if voice_id:
             kwargs["voice_clone_prompt"] = self.nap_prompt(voice_id)
         elif mode == "clone":
+            ref_audio_bytes = self._chuan_hoa_audio_clone(ref_audio_bytes)
             tmp_path = self._write_temp(ref_audio_bytes)
             clone_prompt = self.model.create_voice_clone_prompt(
                 ref_audio=tmp_path,
@@ -567,6 +568,36 @@ class TTSEngine:
         )
 
     # ------------------------------------------------------------------ utils
+    def _chuan_hoa_audio_clone(self, data: bytes) -> bytes:
+        """Đảm bảo âm thanh mẫu đưa vào model luôn là định dạng WAV 16-bit PCM mà soundfile đọc được 100%."""
+        import io, soundfile as sf
+        try:
+            sf.read(io.BytesIO(data))
+            return data
+        except Exception:
+            try:
+                import av, wave
+                container = av.open(io.BytesIO(data))
+                stream = container.streams.audio[0]
+                sr = stream.rate or 24000
+                resampler = av.AudioResampler(format="s16", layout="mono", rate=sr)
+                chunks = []
+                for frame in container.decode(stream):
+                    for rf in resampler.resample(frame):
+                        chunks.append(rf.to_ndarray().tobytes())
+                pcm_bytes = b"".join(chunks)
+                buf = io.BytesIO()
+                with wave.open(buf, "wb") as w:
+                    w.setnchannels(1)
+                    w.setsampwidth(2)
+                    w.setframerate(sr)
+                    w.writeframes(pcm_bytes)
+                log.info("Đã tự động chuyển đổi file audio mẫu sang chuẩn WAV 16-bit PCM (%d bytes)", len(pcm_bytes))
+                return buf.getvalue()
+            except Exception as e:
+                log.warning("Không thể chuyển đổi audio bằng PyAV: %s", e)
+                return data
+
     def _write_temp(self, data: bytes) -> str:
         import tempfile
         fd, path = tempfile.mkstemp(suffix=".wav")

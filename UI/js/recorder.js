@@ -2,7 +2,47 @@
 // OmDiOm Studio - VOICE RECORDER & AUDIO VAD ENGINE (UI/js/recorder.js)
 // ═══════════════════════════════════════════════════════════════
 
-// ───────────── ENGINE VAD: PHÁT HIỆN GIỌNG NÓI & LỌC ĐOẠN SẠCH (DÙNG CHUNG) ─────────────
+// ───────────── CHUẨN HÓA ENCODE FLOAT32 SANG WAV 16-BIT PCM ─────────────
+function encodeFloat32ToWav(samples, sampleRate) {
+  const numChannels = 1;
+  const bytesPerSample = 2;
+  const blockAlign = numChannels * bytesPerSample;
+  const byteRate = sampleRate * blockAlign;
+  const dataSize = samples.length * bytesPerSample;
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  function writeString(offset, string) {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
+    }
+  }
+
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM format
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, 16, true); // 16-bit
+  writeString(36, 'data');
+  view.setUint32(40, dataSize, true);
+
+  let offset = 44;
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+    offset += 2;
+  }
+
+  return new Blob([buffer], { type: 'audio/wav' });
+}
+
+// ───────────── ENGINE VAD: PHÁT HIỆN GIỌNG NÓI & LỌC ĐOẠN SẠCH ─────────────
 window.AudioVAD = {
   analyze: async function(blobOrFile, options = {}) {
     const AC = window.AudioContext || window.webkitAudioContext;
@@ -37,11 +77,16 @@ window.AudioVAD = {
       throw new Error('Dữ liệu âm thanh quá ngắn hoặc rỗng');
     }
 
-    // 2. Tìm ngưỡng im lặng (Silence threshold)
+    // 2. Ước lượng ngưỡng im lặng thông minh (Noise Floor Estimation)
     const sortedRms = rmsArr.slice().sort((a,b) => a - b);
-    const silenceThresh = Math.max(sortedRms[Math.floor(sortedRms.length * 0.3)] * 2.5, 0.005);
+    const noiseFloor = sortedRms[Math.max(0, Math.floor(sortedRms.length * 0.08))];
+    const maxRms = Math.max(...rmsArr);
+    const meanRms = rmsArr.reduce((a,b)=>a+b, 0) / rmsArr.length;
 
-    // 3. Tìm các vùng có tiếng nói liên tục (RMS > silenceThresh)
+    let silenceThresh = Math.max(noiseFloor * 2.0, maxRms * 0.08, 0.005);
+    silenceThresh = Math.min(silenceThresh, meanRms * 0.4);
+
+    // 3. Tìm các vùng có tiếng nói (RMS > silenceThresh)
     const voiceRegions = [];
     let inVoice = false;
     let regionStart = 0;
@@ -53,7 +98,7 @@ window.AudioVAD = {
         inVoice = false;
         const startSec = regionStart * 0.05;
         const endSec = i * 0.05;
-        if(endSec - startSec >= 0.4){
+        if(endSec - startSec >= 0.3){
           voiceRegions.push({ start: startSec, end: endSec });
         }
       }
@@ -61,13 +106,13 @@ window.AudioVAD = {
     if(inVoice){
       const startSec = regionStart * 0.05;
       const endSec = rmsArr.length * 0.05;
-      if(endSec - startSec >= 0.4) voiceRegions.push({ start: startSec, end: endSec });
+      if(endSec - startSec >= 0.3) voiceRegions.push({ start: startSec, end: endSec });
     }
 
-    // 4. Gộp các đoạn gần nhau (< 0.35s gap)
+    // 4. Gộp các đoạn gần nhau (< 0.45s gap)
     const merged = [];
     for(const r of voiceRegions){
-      if(merged.length && r.start - merged[merged.length-1].end < 0.35){
+      if(merged.length && r.start - merged[merged.length-1].end < 0.45){
         merged[merged.length-1].end = r.end;
       } else {
         merged.push({ start: r.start, end: r.end });
@@ -81,14 +126,16 @@ window.AudioVAD = {
       if(rDur >= minSeg && rDur <= maxSeg){
         candidates.push({ start: region.start, end: region.end, dur: rDur });
       } else if(rDur > maxSeg){
-        for(let s = region.start; s + minSeg <= region.end; s += 1.0){
+        let s = region.start;
+        while(s + minSeg <= region.end){
           const e = Math.min(s + maxSeg, region.end);
-          const d = e - s;
-          if(d >= minSeg) candidates.push({ start: s, end: e, dur: d });
+          candidates.push({ start: s, end: e, dur: e - s });
+          s += 1.0;
         }
       }
     }
 
+    // Nếu không có candidate đạt chuẩn 3–7s: lấy đoạn dài nhất trong merged hoặc toàn bộ audio
     if(!candidates.length && merged.length){
       const longest = merged.reduce((a,b) => (b.end - b.start) > (a.end - a.start) ? b : a);
       const d = Math.min(longest.end - longest.start, maxSeg);
@@ -112,7 +159,7 @@ window.AudioVAD = {
       const mean = seg.reduce((a,b) => a + b, 0) / (seg.length || 1);
       const variance = seg.reduce((a,b) => a + (b - mean) * (b - mean), 0) / (seg.length || 1);
       const stability = 1 / (1 + Math.sqrt(variance) / (mean || 0.001));
-      const durationBonus = 1 - Math.abs(c.dur - 5.0) / 5.0;
+      const durationBonus = 1 - Math.abs(c.dur - 5.5) / 5.5;
       c.score = parseFloat((mean * 10 + stability * 5 + durationBonus * 3).toFixed(1));
       c.meanRms = mean;
     }
@@ -121,42 +168,15 @@ window.AudioVAD = {
     const topSegments = candidates.slice(0, 5);
 
     // 7. Hàm trích xuất PCM 16-bit WAV Blob
-    async function createSegmentWavBlob(seg){
+    function createSegmentWavBlob(seg){
       const startSample = Math.floor(seg.start * sr);
       const endSample = Math.min(Math.floor(seg.end * sr), rawData.length);
-      const segLen = Math.max(1, endSample - startSample);
+      const slice = rawData.subarray(startSample, endSample);
+      return encodeFloat32ToWav(slice, sr);
+    }
 
-      const offCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, segLen, sr);
-      const buf = offCtx.createBuffer(1, segLen, sr);
-      buf.getChannelData(0).set(rawData.slice(startSample, endSample));
-      const srcNode = offCtx.createBufferSource();
-      srcNode.buffer = buf;
-      srcNode.connect(offCtx.destination);
-      srcNode.start();
-      const rendered = await offCtx.startRendering();
-
-      const wavData = rendered.getChannelData(0);
-      const wavBuf = new ArrayBuffer(44 + wavData.length * 2);
-      const view = new DataView(wavBuf);
-      function writeStr(off, s){ for(let i=0;i<s.length;i++) view.setUint8(off+i, s.charCodeAt(i)); }
-      writeStr(0, 'RIFF');
-      view.setUint32(4, 36 + wavData.length * 2, true);
-      writeStr(8, 'WAVE');
-      writeStr(12, 'fmt ');
-      view.setUint32(16, 16, true);
-      view.setUint16(20, 1, true);
-      view.setUint16(22, 1, true);
-      view.setUint32(24, sr, true);
-      view.setUint32(28, sr * 2, true);
-      view.setUint16(32, 2, true);
-      view.setUint16(34, 16, true);
-      writeStr(36, 'data');
-      view.setUint32(40, wavData.length * 2, true);
-      for(let i = 0; i < wavData.length; i++){
-        const s16 = Math.max(-1, Math.min(1, wavData[i])) * 32767;
-        view.setInt16(44 + i * 2, s16, true);
-      }
-      return new Blob([wavBuf], { type: 'audio/wav' });
+    function createFullWavBlob(){
+      return encodeFloat32ToWav(rawData, sr);
     }
 
     try { ctx.close(); } catch(e){}
@@ -167,6 +187,7 @@ window.AudioVAD = {
       segments: topSegments,
       bestSegment: topSegments[0] || null,
       createWavBlob: createSegmentWavBlob,
+      createFullWavBlob: createFullWavBlob,
       rawData: rawData
     };
   }

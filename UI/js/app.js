@@ -461,21 +461,14 @@ if(drop&&fileInput){
       return;
     }
 
-    khoi._originalFile = f;
-    khoi._file = f;
-    khoi._cleanFile = null;
-    khoi._useMode = 'original';
-
     drop.querySelector('[data-dropmain]').textContent = '🎵 ' + f.name;
     drop.querySelector('[data-dropsub]').textContent = 'Bấm để đổi tệp khác · Đang quét VAD...';
     drop.style.background = '#bdeeea';
     khoi.querySelector('[data-fileinfo]').textContent = (f.size/1024/1024).toFixed(2) + ' MB · ' + (f.type || 'audio');
 
-    // Kích hoạt bảng xem trước và phân tích VAD
     const panel = document.getElementById('uploadVadPanel');
     const elName = document.getElementById('uploadFileName');
     const elMeta = document.getElementById('uploadFileMeta');
-    const elStatus = document.getElementById('uploadVadStatus');
     const elTitle = document.getElementById('uploadVadTitle');
     const elScore = document.getElementById('uploadVadScoreBadge');
     const elDetails = document.getElementById('uploadVadDetails');
@@ -496,29 +489,34 @@ if(drop&&fileInput){
     elSegsList.style.display = 'none';
     elSegsList.innerHTML = '';
 
-    // 1. Cài đặt nút nghe file gốc
-    const origUrl = URL.createObjectURL(f);
-    btnPlayOrig.onclick = function(){
-      const a = new Audio(origUrl);
-      window.AudioManager.play(a, btnPlayOrig);
-    };
-
-    // 2. Chạy thuật toán VAD
     async function chayPhanTichVad(){
       elDetails.textContent = '⏳ Đang phân tích năng lượng RMS và lọc đoạn sạch...';
       try {
         if(!window.AudioVAD){
-          elDetails.textContent = 'Đã nạp file gốc thành công.';
+          elDetails.textContent = 'Đã nạp file thành công.';
           return;
         }
 
         const vadRes = await window.AudioVAD.analyze(f, { minSeg: 3.0, maxSeg: 7.0 });
         elMeta.textContent = (f.size / (1024*1024)).toFixed(2) + ' MB · ' + vadRes.duration.toFixed(1) + 's · ' + vadRes.sampleRate + ' Hz';
 
+        // 1. Tạo file WAV chuẩn cho toàn bộ file gốc (để soundfile trên backend luôn đọc được)
+        const fullWavBlob = vadRes.createFullWavBlob();
+        const fullWavFile = new File([fullWavBlob], f.name.replace(/\.[^.]+$/, '') + '.wav', { type: 'audio/wav' });
+        khoi._originalWavFile = fullWavFile;
+
+        // Cài đặt nút nghe file gốc
+        const fullUrl = URL.createObjectURL(fullWavBlob);
+        btnPlayOrig.onclick = function(){
+          const a = new Audio(fullUrl);
+          window.AudioManager.play(a, btnPlayOrig);
+        };
+
+        // 2. Tạo đoạn sạch nhất
         if(vadRes.bestSegment){
-          const cleanBlob = await vadRes.createWavBlob(vadRes.bestSegment);
+          const cleanBlob = vadRes.createWavBlob(vadRes.bestSegment);
           const cleanFile = new File([cleanBlob], 'clean_' + f.name.replace(/\.[^.]+$/, '') + '.wav', { type: 'audio/wav' });
-          khoi._cleanFile = cleanFile;
+          khoi._cleanWavFile = cleanFile;
           
           // MẶC ĐỊNH: Tự động dùng đoạn sạch nhất cho AI nhân bản
           khoi._file = cleanFile;
@@ -538,15 +536,16 @@ if(drop&&fileInput){
           // Nút chuyển đổi dùng file gốc vs đoạn sạch
           btnToggleMode.style.display = 'inline-block';
           btnToggleMode.textContent = 'Dùng cả file gốc';
+          btnToggleMode.style.background = '#fff';
           btnToggleMode.onclick = function(){
             if(khoi._useMode === 'clean'){
-              khoi._file = khoi._originalFile;
+              khoi._file = khoi._originalWavFile;
               khoi._useMode = 'original';
               btnToggleMode.textContent = '✓ Dùng đoạn sạch';
               btnToggleMode.style.background = '#dcfce7';
               toast('Đang dùng: Toàn bộ file gốc (' + vadRes.duration.toFixed(1) + 's)');
             } else {
-              khoi._file = khoi._cleanFile;
+              khoi._file = khoi._cleanWavFile;
               khoi._useMode = 'clean';
               btnToggleMode.textContent = 'Dùng cả file gốc';
               btnToggleMode.style.background = '#fff';
@@ -575,14 +574,14 @@ if(drop&&fileInput){
 
             // Gán sự kiện click chọn segment khác trong danh sách
             elSegsList.querySelectorAll('.rec-seg').forEach(item => {
-              item.addEventListener('click', async function(e){
+              item.addEventListener('click', function(e){
                 if(e.target.tagName === 'BUTTON') return;
                 const idx = parseInt(item.dataset.upsegIdx);
                 const chosenSeg = vadRes.segments[idx];
-                const chosenBlob = await vadRes.createWavBlob(chosenSeg);
+                const chosenBlob = vadRes.createWavBlob(chosenSeg);
                 const chosenFile = new File([chosenBlob], 'clean_seg' + (idx+1) + '_' + f.name.replace(/\.[^.]+$/, '') + '.wav', { type: 'audio/wav' });
                 
-                khoi._cleanFile = chosenFile;
+                khoi._cleanWavFile = chosenFile;
                 khoi._file = chosenFile;
                 khoi._useMode = 'clean';
 
@@ -605,10 +604,10 @@ if(drop&&fileInput){
 
             // Gán sự kiện nghe từng đoạn
             elSegsList.querySelectorAll('[data-upseg-play]').forEach(pBtn => {
-              pBtn.addEventListener('click', async function(e){
+              pBtn.addEventListener('click', function(e){
                 e.stopPropagation();
                 const idx = parseInt(pBtn.dataset.upsegPlay);
-                const b = await vadRes.createWavBlob(vadRes.segments[idx]);
+                const b = vadRes.createWavBlob(vadRes.segments[idx]);
                 const u = URL.createObjectURL(b);
                 const a = new Audio(u);
                 a.onended = function(){ URL.revokeObjectURL(u); };
@@ -619,14 +618,16 @@ if(drop&&fileInput){
 
           toast('✓ Đã tải file & tự động chọn đoạn sạch nhất (' + vadRes.bestSegment.dur.toFixed(1) + 's)!');
         } else {
+          khoi._file = fullWavFile;
+          khoi._useMode = 'original';
           elTitle.textContent = '✓ Âm thanh chuẩn:';
           elDetails.textContent = 'Thời lượng: ' + vadRes.duration.toFixed(1) + 's · Sẵn sàng nhân bản giọng';
           toast('✓ Đã nạp clip mẫu thành công!');
         }
       } catch(err){
         console.error('Lỗi phân tích VAD:', err);
-        elDetails.textContent = 'Đã nạp file gốc (không thể trích VAD: ' + err.message + ')';
-        toast('Đã nhận clip mẫu.');
+        elDetails.textContent = 'Lỗi phân tích: ' + err.message;
+        toast('Lỗi phân tích VAD: ' + err.message, true);
       }
     }
 
