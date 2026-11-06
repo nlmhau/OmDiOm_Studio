@@ -41,3 +41,4 @@ python tools/tai_model.py
 Lệnh này sẽ tự động tải toàn bộ trọng số từ kho Hugging Face chính thức về đặt đúng vị trí trong `models/OmniVoice` và `models/omdiom`.
 
 Sau khi tải xong, bạn chỉ cần click đúp vào file `chay_local.bat` (Windows) hoặc chạy `bash chay_local.sh` (Linux/Mac) là hệ thống sẽ tự nạp model cục bộ và mở giao diện Studio.
+

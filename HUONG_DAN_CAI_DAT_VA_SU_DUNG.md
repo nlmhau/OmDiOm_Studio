@@ -216,3 +216,4 @@ Mở file `UI/index.html` trên trình duyệt. Trong mục **⚙ Cấu hình**,
   <b>OmDiOm Studio — Vietnamese Voice AI Platform</b><br>
   <i>Đồ án chuyên đề Trí tuệ nhân tạo · Phân hiệu Trường Đại học Thủy Lợi · Năm 2026</i>
 </p>
+
