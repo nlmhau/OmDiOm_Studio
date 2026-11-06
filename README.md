@@ -14,6 +14,10 @@
   <img src="https://img.shields.io/badge/License-Apache%202.0-green" alt="License">
 </p>
 
+<p align="center">
+  👉 <b><a href="HUONG_DAN_CAI_DAT_VA_SU_DUNG.md">BẤM VÀO ĐÂY ĐỂ XEM HƯỚNG DẪN CÀI ĐẶT & CHẠY TỪ A-Z (CLOUD GPU & LOCAL)</a></b> 👈
+</p>
+
 ---
 
 ## 🌟 Giới thiệu

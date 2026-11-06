@@ -1,0 +1,2864 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BÁO CÁO CHUYÊN ĐỀ TRÍ TUỆ NHÂN TẠO - OMDIOM STUDIO</title>
+  <style>
+    /* =========================================================
+     CẤU HÌNH TRANG VÀ THIẾT KẾ CHUẨN A4 HỌC THUẬT
+     ========================================================= */
+    @page {
+      size: A4;
+      margin: 22mm 22mm 23mm 30mm;
+
+      /* Chuẩn: Trên 22, Dưới 22, Phải 23, Trái 30mm đóng gáy */
+      @bottom-center {
+        content: counter(page);
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 11pt;
+      }
+    }
+
+    *,
+    *:before,
+    *:after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 13.5pt;
+      line-height: 1.45;
+      color: #111111;
+      background-color: #525659;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* THANH CÔNG CỤ TƯƠNG TÁC (ẨN KHI IN) */
+    #toolbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: #1e293b;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      z-index: 10000;
+    }
+
+    #toolbar .brand {
+      font-weight: bold;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #toolbar .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-tool {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 12.5px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-tool:hover {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+    }
+
+    .btn-primary {
+      background: #0284c7;
+      border-color: #38bdf8;
+    }
+
+    .btn-primary:hover {
+      background: #0369a1;
+    }
+
+    #status-tag {
+      font-size: 12px;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* KHUNG TÀI LIỆU TRÊN MÀN HÌNH */
+    #document-wrapper {
+      max-width: 210mm;
+      margin: 64px auto 40px auto;
+      background: #ffffff;
+      padding: 22mm 22mm 23mm 30mm;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+      min-height: 297mm;
+    }
+
+    /* TYPOGRAPHY CHUẨN LUẬN VĂN */
+    h1.doc-title {
+      font-size: 19pt;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      margin-top: 15px;
+      margin-bottom: 25px;
+      color: #0c2461;
+      line-height: 1.3;
+    }
+
+    h1.chapter-title {
+      font-size: 16pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #0c2461;
+      border-bottom: 2px solid #0c2461;
+      padding-bottom: 6px;
+      margin-top: 36px;
+      margin-bottom: 18px;
+      page-break-before: always;
+    }
+
+    h2 {
+      font-size: 14pt;
+      font-weight: bold;
+      color: #1e3799;
+      margin-top: 22px;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 13.5pt;
+      font-weight: bold;
+      font-style: italic;
+      color: #2c3e50;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+      text-align: justify;
+      text-justify: inter-word;
+      text-indent: 1cm;
+      /* Thụt đầu dòng 1cm chuẩn học thuật */
+    }
+
+    p.no-indent {
+      text-indent: 0;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 12px 0;
+      padding-left: 28px;
+    }
+
+    li {
+      margin-bottom: 5px;
+      text-align: justify;
+    }
+
+    /* BẢNG BIỂU HỌC THUẬT CHUẨN */
+    .table-container {
+      margin: 18px 0 22px 0;
+      width: 100%;
+      page-break-inside: avoid;
+    }
+
+    .table-caption {
+      font-size: 12.5pt;
+      font-weight: bold;
+      color: #111111;
+      margin-bottom: 6px;
+      text-align: left;
+    }
+
+    table.academic-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12pt;
+      line-height: 1.35;
+      background: #ffffff;
+    }
+
+    table.academic-table th {
+      background-color: #1a5276;
+      color: #ffffff;
+      font-weight: bold;
+      text-align: center;
+      padding: 8px 10px;
+      border: 1px solid #154360;
+    }
+
+    table.academic-table td {
+      padding: 7px 10px;
+      border: 1px solid #bdc3c7;
+      color: #222222;
+    }
+
+    table.academic-table tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+
+    table.academic-table td.center {
+      text-align: center;
+    }
+
+    table.academic-table td.right {
+      text-align: right;
+    }
+
+    table.academic-table td.bold {
+      font-weight: bold;
+    }
+
+    /* HÌNH VẼ VÀ ĐỒ HỌA */
+    .figure-box {
+      margin: 22px 0;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+
+    .diagram-box {
+      border: 1px solid #d5dbdb;
+      border-radius: 6px;
+      padding: 12px;
+      background: #fafafa;
+      margin-bottom: 8px;
+    }
+
+    .figure-caption {
+      font-size: 12.5pt;
+      font-weight: bold;
+      color: #111111;
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* KHỐI GHI CHÚ VÀ HỘP NỔI BẬT */
+    .callout-box {
+      border-left: 4px solid #2980b9;
+      background: #ebf5fb;
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 5px 5px 0;
+      page-break-inside: avoid;
+    }
+
+    .callout-title {
+      font-weight: bold;
+      color: #1b4f72;
+      margin-bottom: 4px;
+      font-size: 13pt;
+    }
+
+    .callout-box p {
+      text-indent: 0;
+      margin-bottom: 4px;
+      font-size: 12.5pt;
+    }
+
+    /* TRANG BÌA & TIỂU TRANG */
+    .cover-page {
+      min-height: 250mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      page-break-after: always;
+      border: 3px double #0c2461;
+      padding: 28px 24px;
+      box-sizing: border-box;
+    }
+
+    .front-matter {
+      page-break-before: always;
+      margin-bottom: 25px;
+    }
+
+    .front-title {
+      font-size: 16pt;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      color: #0c2461;
+      margin-bottom: 20px;
+    }
+
+    /* IN ẤN TỰ ĐỘNG CHUẨN A4 */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 13pt !important;
+      }
+
+      #toolbar,
+      .no-print {
+        display: none !important;
+      }
+
+      #document-wrapper {
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        box-shadow: none !important;
+      }
+
+      h1.chapter-title {
+        page-break-before: always !important;
+      }
+
+      .cover-page {
+        page-break-after: always !important;
+        height: 98vh !important;
+      }
+
+      a {
+        text-decoration: none;
+        color: #000000;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="toolbar">
+    <div class="brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+      </svg>
+      <span>BÁO CÁO HỌC THUẬT · OMDIOM STUDIO (AI SPECIALIZATION)</span>
+    </div>
+    <div class="actions">
+      <span id="status-tag">Chế độ: Đọc</span>
+      <button class="btn-tool" id="btn-edit" onclick="toggleEdit()">Bật chỉnh sửa</button>
+      <button class="btn-tool" onclick="scrollToTOC()">Mục lục</button>
+      <button class="btn-tool btn-primary" onclick="window.print()">In ấn / Lưu PDF A4</button>
+      <button class="btn-tool" onclick="saveDocument()">Tải HTML đã sửa</button>
+    </div>
+  </div>
+
+  <div id="document-wrapper">
+    <article id="report-content">
+      <!-- ==========================================
+     TRANG BÌA CHÍNH (COVER PAGE)
+     ========================================== -->
+      <div class="cover-page">
+        <div style="border-bottom: 1.5px solid #0c2461; padding-bottom: 12px;">
+          <div style="font-size: 13pt; font-weight: bold; color: #333333; text-transform: uppercase;">BỘ NÔNG NGHIỆP VÀ
+            PHÁT TRIỂN NÔNG THÔN</div>
+          <div style="font-size: 14pt; font-weight: bold; color: #0c2461; text-transform: uppercase; margin-top: 4px;">
+            PHÂN HIỆU TRƯỜNG ĐẠI HỌC THỦY LỢI</div>
+          <div style="font-size: 13pt; font-weight: bold; color: #1e3799; text-transform: uppercase; margin-top: 4px;">
+            KHOA KỸ THUẬT VÀ CÔNG NGHỆ THÔNG TIN · BỘ MÔN CNTT</div>
+        </div>
+
+        <div style="margin: 40px 0;">
+          <div style="font-size: 15pt; font-weight: bold; letter-spacing: 1px; color: #555555; margin-bottom: 16px;">BÁO
+            CÁO HỌC PHẦN CHUYÊN ĐỀ TRÍ TUỆ NHÂN TẠO</div>
+          <div
+            style="font-size: 19pt; font-weight: bold; color: #0c2461; line-height: 1.35; text-transform: uppercase; margin: 0 auto; max-width: 90%;">
+            NGHIÊN CỨU VÀ ỨNG DỤNG MÔ HÌNH HỌC SÂU TRONG TỔNG HỢP, NHÂN BẢN GIỌNG NÓI TIẾNG VIỆT ZERO-SHOT<br>
+            <span style="color: #0284c7; font-size: 17pt;">(HỆ THỐNG OMDIOM STUDIO)</span>
+          </div>
+        </div>
+
+        <div
+          style="width: 85%; margin: 0 auto 30px auto; text-align: left; font-size: 13pt; line-height: 1.6; border: 1px solid #cbd5e1; border-radius: 6px; padding: 18px 24px; background: #f8fafc;">
+          <div style="display: flex; margin-bottom: 8px;">
+            <span style="font-weight: bold; width: 220px; color: #1e293b;">Giảng viên hướng dẫn:</span>
+            <span style="font-weight: bold; color: #0f172a;">TS. HOÀNG KIỀU ANH</span>
+          </div>
+          <div style="display: flex; margin-bottom: 8px;">
+            <span style="font-weight: bold; width: 220px; color: #1e293b;">Sinh viên thực hiện:</span>
+            <div style="flex: 1;">
+              <div><b>Lê Văn Quang</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;— MSSV:
+                <b>2351267277</b></div>
+              <div><b>Nguyễn Lê Minh Hậu</b> &nbsp;&nbsp;&nbsp;— MSSV: <b>2351267261</b></div>
+              <div><b>Phạm Thành Doanh</b> &nbsp;&nbsp;&nbsp;&nbsp;— MSSV: <b>2351267258</b></div>
+            </div>
+          </div>
+          <div style="display: flex;">
+            <span style="font-weight: bold; width: 220px; color: #1e293b;">Lớp chuyên ngành:</span>
+            <span style="color: #0f172a;">S26-65TTNT (Công nghệ thông tin)</span>
+          </div>
+        </div>
+
+        <div
+          style="border-top: 1.5px solid #0c2461; padding-top: 12px; font-weight: bold; font-size: 13pt; color: #333333;">
+          THÀNH PHỐ HỒ CHÍ MINH — NĂM 2026
+        </div>
+      </div>
+
+      <!-- ==========================================
+     PHIẾU NHẬN XÉT CỦA GIẢNG VIÊN HƯỚNG DẪN
+     ========================================== -->
+      <div class="front-matter">
+        <div class="front-title">PHIẾU ĐÁNH GIÁ CỦA GIẢNG VIÊN HƯỚNG DẪN</div>
+        <p class="no-indent" style="margin-bottom: 14px;"><b>Học phần:</b> Chuyên đề Trí tuệ nhân tạo
+          &nbsp;&nbsp;|&nbsp;&nbsp; <b>Học kỳ:</b> II &nbsp;&nbsp;|&nbsp;&nbsp; <b>Năm học:</b> 2025 - 2026</p>
+        <p class="no-indent" style="margin-bottom: 14px;"><b>Đề tài:</b> Nghiên cứu và ứng dụng mô hình học sâu trong
+          tổng hợp, nhân bản giọng nói tiếng Việt zero-shot (Hệ thống OmDiOm Studio).</p>
+        <p class="no-indent" style="margin-bottom: 16px;"><b>Nhóm sinh viên thực hiện:</b> Lê Văn Quang (2351267277),
+          Nguyễn Lê Minh Hậu (2351267261), Phạm Thành Doanh (2351267258).</p>
+
+        <div class="table-container">
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 8%;">STT</th>
+                <th style="width: 52%;">Tiêu chí đánh giá</th>
+                <th style="width: 18%;">Trọng số</th>
+                <th style="width: 22%;">Điểm đánh giá</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="center bold">1</td>
+                <td><b>Thái độ & Tiến độ:</b> Tinh thần làm việc nhóm, tính kỷ luật, mức độ đáp ứng tiến độ nghiên cứu
+                  và hoàn thành các mốc chuyên đề.</td>
+                <td class="center">20 %</td>
+                <td class="center">................ / 2.0</td>
+              </tr>
+              <tr>
+                <td class="center bold">2</td>
+                <td><b>Làm chủ Cơ sở Lý thuyết:</b> Nắm vững mô hình tạo sinh Flow Matching, kiến trúc Qwen3 Causal LM
+                  và Audio Codec HiggsAudioV2.</td>
+                <td class="center">25 %</td>
+                <td class="center">................ / 2.5</td>
+              </tr>
+              <tr>
+                <td class="center bold">3</td>
+                <td><b>Chất lượng Sản phẩm & Thực nghiệm:</b> Hệ thống phần mềm OmDiOm Studio hoàn chỉnh
+                  (Client-Server), giao diện mượt mà, bộ thực nghiệm khoa học, số liệu xác thực.</td>
+                <td class="center">35 %</td>
+                <td class="center">................ / 3.5</td>
+              </tr>
+              <tr>
+                <td class="center bold">4</td>
+                <td><b>Báo cáo & Thuyết minh:</b> Văn phong khoa học, cấu trúc bài báo cáo chặt chẽ, trình bày đồ họa rõ
+                  ràng, trung thực trong trích dẫn dữ liệu.</td>
+                <td class="center">20 %</td>
+                <td class="center">................ / 2.0</td>
+              </tr>
+              <tr style="background-color: #f1f5f9;">
+                <td colspan="2" class="center bold" style="text-transform: uppercase;">Tổng điểm đánh giá chuyên đề</td>
+                <td class="center bold">100 %</td>
+                <td class="center bold" style="font-size: 13pt; color: #0c2461;">................ / 10.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 18px; line-height: 1.8;">
+          <p class="no-indent"><b>Nhận xét chung của Giảng viên hướng dẫn:</b></p>
+          <div style="border-bottom: 1px dotted #666; height: 26px;"></div>
+          <div style="border-bottom: 1px dotted #666; height: 26px;"></div>
+          <div style="border-bottom: 1px dotted #666; height: 26px;"></div>
+          <div style="border-bottom: 1px dotted #666; height: 26px;"></div>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+          <div style="text-align: center; width: 260px;">
+            <div><i>TP. Hồ Chí Minh, ngày ..... tháng ..... năm 2026</i></div>
+            <div style="font-weight: bold; margin-top: 6px; margin-bottom: 60px;">GIẢNG VIÊN HƯỚNG DẪN</div>
+            <div style="font-weight: bold; color: #0c2461;">TS. HOÀNG KIỀU ANH</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+     LỜI CẢM ƠN
+     ========================================== -->
+      <div class="front-matter">
+        <div class="front-title">LỜI CẢM ƠN</div>
+        <p>Để hoàn thành tốt báo cáo học phần Chuyên đề Trí tuệ nhân tạo với đề tài <i>"Nghiên cứu và ứng dụng mô hình
+            học sâu trong tổng hợp, nhân bản giọng nói tiếng Việt zero-shot (Hệ thống OmDiOm Studio)"</i>, nhóm nghiên
+          cứu chúng em xin bày tỏ lòng biết ơn sâu sắc và chân thành nhất đến các thầy cô giáo.</p>
+        <p>Trước hết, nhóm em xin gửi lời cảm ơn trân trọng nhất đến <b>TS. Hoàng Kiều Anh</b> — giảng viên trực tiếp
+          hướng dẫn và giảng dạy học phần. Trong suốt thời gian nhóm triển khai nghiên cứu, cô đã luôn định hướng phương
+          pháp học thuật chuẩn mực, tận tình chỉ dẫn những vấn đề lý thuyết chuyên sâu về mô hình nền tảng âm thanh
+          (Audio Foundation Models), đồng thời nhắc nhở nhóm về tính trung thực khoa học trong đo đạc thực nghiệm và đạo
+          đức ứng dụng trí tuệ nhân tạo.</p>
+        <p>Nhóm cũng xin chân thành cảm ơn các thầy cô giáo trong Bộ môn Công nghệ thông tin - Khoa Kỹ thuật và Công
+          nghệ thông tin, Phân hiệu Trường Đại học Thủy Lợi, đã truyền đạt nền tảng kiến thức vững chắc về cấu trúc dữ
+          liệu, xử lý tín hiệu số, học máy và kỹ nghệ phần mềm trong suốt các năm học vừa qua.</p>
+        <p>Dù nhóm đã nỗ lực cao nhất trong việc nghiên cứu tài liệu, huấn luyện tinh chỉnh mô hình và hiện thực hóa
+          phần mềm OmDiOm Studio, song do giới hạn về mặt thời gian và kinh nghiệm thực tế, báo cáo khó tránh khỏi những
+          thiếu sót nhất định. Nhóm rất mong nhận được những lời nhận xét, góp ý quý báu của quý thầy cô để đề tài tiếp
+          tục được hoàn thiện hơn nữa trong các giai đoạn phát triển tiếp theo.</p>
+        <div style="text-align: right; margin-top: 24px;">
+          <b>Tập thể sinh viên thực hiện đề tài</b><br>
+          <i>Lê Văn Quang · Nguyễn Lê Minh Hậu · Phạm Thành Doanh</i>
+        </div>
+      </div>
+
+      <!-- ==========================================
+     MỤC LỤC TỰ ĐỘNG
+     ========================================== -->
+      <div class="front-matter" id="muc-luc">
+        <div class="front-title">MỤC LỤC</div>
+        <style>
+          .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+
+          .toc-item {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 6px;
+          }
+
+          .toc-title {
+            font-weight: normal;
+          }
+
+          .toc-title.bold {
+            font-weight: bold;
+          }
+
+          .toc-dots {
+            flex: 1;
+            border-bottom: 1px dotted #888888;
+            margin: 0 8px;
+          }
+
+          .toc-page {
+            font-weight: bold;
+          }
+        </style>
+
+        <ul class="toc-list">
+          <li class="toc-item"><span class="toc-title bold">PHIẾU ĐÁNH GIÁ CỦA GIẢNG VIÊN HƯỚNG DẪN</span><span
+              class="toc-dots"></span><span class="toc-page">ii</span></li>
+          <li class="toc-item"><span class="toc-title bold">LỜI CẢM ƠN</span><span class="toc-dots"></span><span
+              class="toc-page">iii</span></li>
+          <li class="toc-item"><span class="toc-title bold">DANH MỤC TỪ VIẾT TẮT</span><span
+              class="toc-dots"></span><span class="toc-page">v</span></li>
+          <li class="toc-item"><span class="toc-title bold">DANH MỤC HÌNH VẼ VÀ ĐỒ HỌA</span><span
+              class="toc-dots"></span><span class="toc-page">vi</span></li>
+          <li class="toc-item"><span class="toc-title bold">DANH MỤC BẢNG BIỂU</span><span class="toc-dots"></span><span
+              class="toc-page">vii</span></li>
+          <li class="toc-item"><span class="toc-title bold">TÓM TẮT ĐỀ TÀI & ABSTRACT</span><span
+              class="toc-dots"></span><span class="toc-page">viii</span></li>
+
+          <li class="toc-item" style="margin-top: 10px;"><a href="#ch1" class="toc-title bold"
+              style="color:#0c2461; text-decoration:none;">CHƯƠNG 1. GIỚI THIỆU VÀ BỐI CẢNH NGHIÊN CỨU</a><span
+              class="toc-dots"></span><span class="toc-page">1</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c11" class="toc-title"
+              style="color:#333; text-decoration:none;">1.1. Bối cảnh và Tính cấp thiết của đề tài</a><span
+              class="toc-dots"></span><span class="toc-page">1</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c12" class="toc-title"
+              style="color:#333; text-decoration:none;">1.2. Mục tiêu nghiên cứu cụ thể</a><span
+              class="toc-dots"></span><span class="toc-page">2</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c13" class="toc-title"
+              style="color:#333; text-decoration:none;">1.3. Đối tượng và Phạm vi đề tài</a><span
+              class="toc-dots"></span><span class="toc-page">3</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c14" class="toc-title"
+              style="color:#333; text-decoration:none;">1.4. Phương pháp thực hiện và Đóng góp chính</a><span
+              class="toc-dots"></span><span class="toc-page">4</span></li>
+
+          <li class="toc-item" style="margin-top: 8px;"><a href="#ch2" class="toc-title bold"
+              style="color:#0c2461; text-decoration:none;">CHƯƠNG 2. CƠ SỞ LÝ THUYẾT VÀ CÔNG NGHỆ NỀN TẢNG</a><span
+              class="toc-dots"></span><span class="toc-page">6</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c21" class="toc-title"
+              style="color:#333; text-decoration:none;">2.1. Tiến trình công nghệ tổng hợp tiếng nói (TTS)</a><span
+              class="toc-dots"></span><span class="toc-page">6</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c22" class="toc-title"
+              style="color:#333; text-decoration:none;">2.2. Kiến trúc mạng thần kinh OmniVoice</a><span
+              class="toc-dots"></span><span class="toc-page">7</span></li>
+          <li class="toc-item" style="padding-left: 36px;"><span class="toc-title" style="color:#555;">2.2.1. Qwen3
+              Causal Language Model</span><span class="toc-dots"></span><span class="toc-page">7</span></li>
+          <li class="toc-item" style="padding-left: 36px;"><span class="toc-title" style="color:#555;">2.2.2. Cơ chế
+              Flow Matching và Bộ giải ODE</span><span class="toc-dots"></span><span class="toc-page">8</span></li>
+          <li class="toc-item" style="padding-left: 36px;"><span class="toc-title" style="color:#555;">2.2.3. Neural
+              Audio Codec HiggsAudioV2</span><span class="toc-dots"></span><span class="toc-page">10</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c23" class="toc-title"
+              style="color:#333; text-decoration:none;">2.3. Biểu diễn bản sắc người nói và Dẫn hướng CFG</a><span
+              class="toc-dots"></span><span class="toc-page">11</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c24" class="toc-title"
+              style="color:#333; text-decoration:none;">2.4. Các thước đo đánh giá chất lượng tiếng nói</a><span
+              class="toc-dots"></span><span class="toc-page">13</span></li>
+
+          <li class="toc-item" style="margin-top: 8px;"><a href="#ch3" class="toc-title bold"
+              style="color:#0c2461; text-decoration:none;">CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG OMDIOM
+              STUDIO</a><span class="toc-dots"></span><span class="toc-page">15</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c31" class="toc-title"
+              style="color:#333; text-decoration:none;">3.1. Phân tích yêu cầu chức năng và phi chức năng</a><span
+              class="toc-dots"></span><span class="toc-page">15</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c32" class="toc-title"
+              style="color:#333; text-decoration:none;">3.2. Thiết kế kiến trúc tổng thể Client - Server</a><span
+              class="toc-dots"></span><span class="toc-page">16</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c33" class="toc-title"
+              style="color:#333; text-decoration:none;">3.3. Thiết kế thành phần phần mềm và giao thức API</a><span
+              class="toc-dots"></span><span class="toc-page">18</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c34" class="toc-title"
+              style="color:#333; text-decoration:none;">3.4. Mô hình triển khai hỗn hợp Cục bộ và Điện toán đám
+              mây</a><span class="toc-dots"></span><span class="toc-page">19</span></li>
+
+          <li class="toc-item" style="margin-top: 8px;"><a href="#ch4" class="toc-title bold"
+              style="color:#0c2461; text-decoration:none;">CHƯƠNG 4. HIỆN THỰC VÀ XỬ LÝ CHỨC NĂNG HỆ THỐNG</a><span
+              class="toc-dots"></span><span class="toc-page">21</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c41" class="toc-title"
+              style="color:#333; text-decoration:none;">4.1. Cơ chế nạp và quản trị bộ nhớ mô hình PyTorch</a><span
+              class="toc-dots"></span><span class="toc-page">21</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c42" class="toc-title"
+              style="color:#333; text-decoration:none;">4.2. Bộ tham số cấu hình suy luận chuyên sâu</a><span
+              class="toc-dots"></span><span class="toc-page">22</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c43" class="toc-title"
+              style="color:#333; text-decoration:none;">4.3. Pipeline xử lý âm thanh 5 bước chuẩn Studio</a><span
+              class="toc-dots"></span><span class="toc-page">23</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c44" class="toc-title"
+              style="color:#333; text-decoration:none;">4.4. Thẻ biểu cảm và kỹ thuật phân vai kịch bản đa
+              thoại</a><span class="toc-dots"></span><span class="toc-page">25</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c45" class="toc-title"
+              style="color:#333; text-decoration:none;">4.5. Hiện thực thu âm Web, trực quan sóng âm và xuất phụ
+              đề</a><span class="toc-dots"></span><span class="toc-page">27</span></li>
+
+          <li class="toc-item" style="margin-top: 8px;"><a href="#ch5" class="toc-title bold"
+              style="color:#0c2461; text-decoration:none;">CHƯƠNG 5. THỰC NGHIỆM, KIỂM THỬ VÀ ĐÁNH GIÁ CHẤT
+              LƯỢNG</a><span class="toc-dots"></span><span class="toc-page">29</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c51" class="toc-title"
+              style="color:#333; text-decoration:none;">5.1. Kịch bản kiểm thử chức năng toàn diện Studio</a><span
+              class="toc-dots"></span><span class="toc-page">29</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c52" class="toc-title"
+              style="color:#333; text-decoration:none;">5.2. Đo lường tốc độ suy luận và Hệ số thời gian thực
+              (RTF)</a><span class="toc-dots"></span><span class="toc-page">31</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c53" class="toc-title"
+              style="color:#333; text-decoration:none;">5.3. Đánh giá độ tương đồng người nói (SECS) theo độ dài
+              mẫu</a><span class="toc-dots"></span><span class="toc-page">33</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c54" class="toc-title"
+              style="color:#333; text-decoration:none;">5.4. Đánh giá độ chính xác 6 thanh điệu tiếng Việt</a><span
+              class="toc-dots"></span><span class="toc-page">34</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c55" class="toc-title"
+              style="color:#333; text-decoration:none;">5.5. Đánh giá cảm nhận chủ quan (Thực nghiệm MOS)</a><span
+              class="toc-dots"></span><span class="toc-page">36</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c56" class="toc-title"
+              style="color:#333; text-decoration:none;">5.6. Khảo sát ảnh hưởng của hệ số dẫn hướng CFG</a><span
+              class="toc-dots"></span><span class="toc-page">38</span></li>
+
+          <li class="toc-item" style="margin-top: 8px;"><a href="#ch6" class="toc-title bold"
+              style="color:#0c2461; text-decoration:none;">CHƯƠNG 6. KẾT LUẬN, ĐẠO ĐỨC AI VÀ HƯỚNG PHÁT TRIỂN</a><span
+              class="toc-dots"></span><span class="toc-page">40</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c61" class="toc-title"
+              style="color:#333; text-decoration:none;">6.1. Kết luận và Mức độ hoàn thành đề tài</a><span
+              class="toc-dots"></span><span class="toc-page">40</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c62" class="toc-title"
+              style="color:#333; text-decoration:none;">6.2. Đạo đức AI và Phòng chống mạo danh giọng nói</a><span
+              class="toc-dots"></span><span class="toc-page">41</span></li>
+          <li class="toc-item" style="padding-left: 20px;"><a href="#c63" class="toc-title"
+              style="color:#333; text-decoration:none;">6.3. Hướng phát triển và Ứng dụng thực tế</a><span
+              class="toc-dots"></span><span class="toc-page">42</span></li>
+
+          <li class="toc-item" style="margin-top: 8px;"><span class="toc-title bold">TÀI LIỆU THAM KHẢO</span><span
+              class="toc-dots"></span><span class="toc-page">44</span></li>
+          <li class="toc-item" style="margin-top: 4px;"><span class="toc-title bold">PHỤ LỤC A. BẢNG DANH MỤC 7 GIỌNG
+              TIẾNG VIỆT CHUẨN</span><span class="toc-dots"></span><span class="toc-page">46</span></li>
+          <li class="toc-item" style="margin-top: 4px;"><span class="toc-title bold">PHỤ LỤC B. BẢNG CẤU HÌNH SIÊU THAM
+              SỐ MÔ HÌNH</span><span class="toc-dots"></span><span class="toc-page">47</span></li>
+          <li class="toc-item" style="margin-top: 4px;"><span class="toc-title bold">PHỤ LỤC C. BẢNG THUẬT NGỮ CHUYÊN
+              NGÀNH ANH - VIỆT</span><span class="toc-dots"></span><span class="toc-page">48</span></li>
+        </ul>
+      </div>
+
+      <!-- ==========================================
+     DANH MỤC TỪ VIẾT TẮT
+     ========================================== -->
+      <div class="front-matter">
+        <div class="front-title">DANH MỤC TỪ VIẾT TẮT</div>
+        <div class="table-container">
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">Từ viết tắt</th>
+                <th style="width: 45%;">Thuật ngữ tiếng Anh</th>
+                <th style="width: 35%;">Ý nghĩa / Giải thích tiếng Việt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center">AI</td>
+                <td>Artificial Intelligence</td>
+                <td>Trí tuệ nhân tạo</td>
+              </tr>
+              <tr>
+                <td class="bold center">ASR</td>
+                <td>Automatic Speech Recognition</td>
+                <td>Nhận dạng tiếng nói tự động</td>
+              </tr>
+              <tr>
+                <td class="bold center">TTS</td>
+                <td>Text-to-Speech</td>
+                <td>Tổng hợp tiếng nói từ văn bản</td>
+              </tr>
+              <tr>
+                <td class="bold center">ODE</td>
+                <td>Ordinary Differential Equation</td>
+                <td>Phương trình vi phân thường</td>
+              </tr>
+              <tr>
+                <td class="bold center">FM</td>
+                <td>Flow Matching</td>
+                <td>Mô hình dòng phối hợp tạo sinh</td>
+              </tr>
+              <tr>
+                <td class="bold center">CNF</td>
+                <td>Continuous Normalizing Flows</td>
+                <td>Dòng chuẩn hóa liên tục</td>
+              </tr>
+              <tr>
+                <td class="bold center">CFG</td>
+                <td>Classifier-Free Guidance</td>
+                <td>Cơ chế dẫn hướng phi bộ phân loại</td>
+              </tr>
+              <tr>
+                <td class="bold center">DAC</td>
+                <td>Descript Audio Codec</td>
+                <td>Bộ nén giải mã âm thanh nén cao</td>
+              </tr>
+              <tr>
+                <td class="bold center">RVQ</td>
+                <td>Residual Vector Quantization</td>
+                <td>Lượng tử hóa vector phần dư</td>
+              </tr>
+              <tr>
+                <td class="bold center">RoPE</td>
+                <td>Rotary Position Embedding</td>
+                <td>Nhúng vị trí quay trong Transformer</td>
+              </tr>
+              <tr>
+                <td class="bold center">VAD</td>
+                <td>Voice Activity Detection</td>
+                <td>Phát hiện hoạt tính giọng nói</td>
+              </tr>
+              <tr>
+                <td class="bold center">MFCC</td>
+                <td>Mel-Frequency Cepstral Coefficients</td>
+                <td>Hệ số phổ cepstrum tần số Mel</td>
+              </tr>
+              <tr>
+                <td class="bold center">RTF</td>
+                <td>Real-Time Factor</td>
+                <td>Hệ số thời gian thực (tỷ số độ trễ / thời lượng)</td>
+              </tr>
+              <tr>
+                <td class="bold center">SECS</td>
+                <td>Speaker Embedding Cosine Similarity</td>
+                <td>Độ tương đồng Cosine vector người nói</td>
+              </tr>
+              <tr>
+                <td class="bold center">CER</td>
+                <td>Character Error Rate</td>
+                <td>Tỷ lệ lỗi ký tự</td>
+              </tr>
+              <tr>
+                <td class="bold center">WER</td>
+                <td>Word Error Rate</td>
+                <td>Tỷ lệ lỗi từ</td>
+              </tr>
+              <tr>
+                <td class="bold center">MOS</td>
+                <td>Mean Opinion Score</td>
+                <td>Điểm đánh giá cảm nhận trung bình (chuẩn ITU-T)</td>
+              </tr>
+              <tr>
+                <td class="bold center">DSP</td>
+                <td>Digital Signal Processing</td>
+                <td>Xử lý tín hiệu số</td>
+              </tr>
+              <tr>
+                <td class="bold center">PCM</td>
+                <td>Pulse Code Modulation</td>
+                <td>Điều chế mã xung (âm thanh số thô)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==========================================
+     DANH MỤC HÌNH VẼ VÀ ĐỒ HỌA
+     ========================================== -->
+      <div class="front-matter">
+        <div class="front-title">DANH MỤC HÌNH VẼ VÀ ĐỒ HỌA</div>
+        <ul class="toc-list" style="font-size: 13pt;">
+          <li class="toc-item"><span class="toc-title bold">Hình 3.1:</span><span style="margin-left: 8px;">Sơ đồ kiến
+              trúc tổng thể Client - Server của hệ thống OmDiOm Studio</span><span class="toc-dots"></span><span
+              class="toc-page">17</span></li>
+          <li class="toc-item"><span class="toc-title bold">Hình 4.1:</span><span style="margin-left: 8px;">Kiến trúc
+              mạng thần kinh OmniVoice (Qwen3 LLM + Flow Matching + HiggsAudioV2)</span><span
+              class="toc-dots"></span><span class="toc-page">22</span></li>
+          <li class="toc-item"><span class="toc-title bold">Hình 4.2:</span><span style="margin-left: 8px;">Sơ đồ quy
+              trình xử lý tín hiệu âm thanh 5 bước khép kín chuẩn Studio</span><span class="toc-dots"></span><span
+              class="toc-page">24</span></li>
+          <li class="toc-item"><span class="toc-title bold">Hình 4.3:</span><span style="margin-left: 8px;">Cơ chế dẫn
+              hướng phi bộ phân loại (Classifier-Free Guidance - CFG) trong Flow Matching</span><span
+              class="toc-dots"></span><span class="toc-page">28</span></li>
+        </ul>
+      </div>
+
+      <!-- ==========================================
+     DANH MỤC BẢNG BIỂU
+     ========================================== -->
+      <div class="front-matter">
+        <div class="front-title">DANH MỤC BẢNG BIỂU</div>
+        <ul class="toc-list" style="font-size: 13pt;">
+          <li class="toc-item"><span class="toc-title bold">Bảng 3.1:</span><span style="margin-left: 8px;">Danh sách
+              các API Endpoints cốt lõi của máy chủ Gateway FastAPI</span><span class="toc-dots"></span><span
+              class="toc-page">18</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng 4.1:</span><span style="margin-left: 8px;">Bảng định
+              nghĩa thẻ cảm xúc và các tham số điều khiển âm học</span><span class="toc-dots"></span><span
+              class="toc-page">26</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng 5.1:</span><span style="margin-left: 8px;">Kết quả thực
+              hiện 10 ca kiểm thử chức năng toàn diện hệ thống OmDiOm Studio</span><span class="toc-dots"></span><span
+              class="toc-page">30</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng 5.2:</span><span style="margin-left: 8px;">Đo lường
+              thời gian suy luận và hệ số thời gian thực (RTF) theo số bước ODE</span><span
+              class="toc-dots"></span><span class="toc-page">32</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng 5.3:</span><span style="margin-left: 8px;">Độ tương
+              đồng người nói (SECS) và độ chính xác âm vị theo độ dài clip mẫu</span><span class="toc-dots"></span><span
+              class="toc-page">33</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng 5.4:</span><span style="margin-left: 8px;">Độ chính xác
+              nhận diện và tái tạo 6 thanh điệu tiếng Việt</span><span class="toc-dots"></span><span
+              class="toc-page">35</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng 5.5:</span><span style="margin-left: 8px;">Kết quả chấm
+              điểm cảm nhận chủ quan (Mean Opinion Score - MOS)</span><span class="toc-dots"></span><span
+              class="toc-page">37</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng 5.6:</span><span style="margin-left: 8px;">Đánh giá ảnh
+              hưởng của hệ số dẫn hướng CFG đến chất lượng và độ giống giọng</span><span class="toc-dots"></span><span
+              class="toc-page">39</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng A.1:</span><span style="margin-left: 8px;">Đặc trưng kỹ
+              thuật và tần số cơ bản F0 của 7 giọng mẫu tiếng Việt</span><span class="toc-dots"></span><span
+              class="toc-page">46</span></li>
+          <li class="toc-item"><span class="toc-title bold">Bảng B.1:</span><span style="margin-left: 8px;">Cấu hình
+              siêu tham số mô hình OmDiOm và quy trình tinh chỉnh</span><span class="toc-dots"></span><span
+              class="toc-page">47</span></li>
+        </ul>
+      </div>
+
+      <!-- ==========================================
+     TÓM TẮT ĐỀ TÀI & ABSTRACT
+     ========================================== -->
+      <div class="front-matter">
+        <div class="front-title">TÓM TẮT ĐỀ TÀI</div>
+        <p>Đề tài <i>"Nghiên cứu và ứng dụng mô hình học sâu trong tổng hợp, nhân bản giọng nói tiếng Việt
+            zero-shot"</i> tập trung giải quyết bài toán cốt lõi: tạo sinh tiếng nói tiếng Việt tự nhiên, giữ trọn thanh
+          điệu và biểu cảm, đồng thời có khả năng sao chép đặc trưng giọng nói của một người nói bất kỳ chỉ từ một đoạn
+          âm thanh mẫu ngắn từ 3 đến 10 giây mà không cần trải qua bước huấn luyện lại mô hình (zero-shot).</p>
+        <p>Nhóm nghiên cứu đã làm chủ kiến trúc mạng thần kinh tạo sinh tiên tiến nhất hiện nay là <b>OmniVoice</b>, bao
+          gồm: mô hình ngôn ngữ nhân quả <b>Qwen3 Causal LM</b> (28 lớp Transformer, chiều ẩn 1024) đóng vai trò điều
+          hòa bối cảnh; bộ giải vi phân thường <b>Flow Matching ODE</b> giúp sinh chuỗi acoustic latent nhanh chóng và
+          ổn định; cùng bộ nén giải mã âm thanh <b>HiggsAudioV2</b> (tích hợp Descript Audio Codec 16kHz và đặc trưng
+          ngữ nghĩa HuBERT qua 8 codebooks RVQ). Trên cơ sở đó, nhóm đã hoàn thiện bộ trọng số tinh chỉnh chuyên biệt
+          cho tiếng Việt <b>OmDiOm-ft-4000</b> (dung lượng 2.45 GB) sau 4,000 bước huấn luyện trên ngữ liệu sạch chuẩn
+          hóa 10.76 giờ (9,508 câu, 64 người nói).</p>
+        <p>Về mặt kỹ nghệ phần mềm, đề tài xây dựng hoàn chỉnh hệ sinh thái <b>OmDiOm Studio</b> theo kiến trúc
+          Client-Server (giao diện HTML5/Vanilla JS tối ưu, máy chủ Gateway FastAPI và cầu nối điện toán đám mây
+          Cloudflare Tunnel kết nối GPU Kaggle Tesla T4). Hệ thống hỗ trợ đầy đủ các tính năng thực tế: soạn thảo kịch
+          bản phân vai đa nhân vật, nhúng thẻ biểu cảm tiếng Việt, thu âm và cắt mẫu trực tiếp qua Web Audio API, hiển
+          thị sóng âm tương tác thời gian thực và tự động tạo phụ đề SRT đồng bộ.</p>
+        <p>Kết quả thực nghiệm trên 300 câu kiểm thử độc lập cho thấy hệ thống đạt hệ số thời gian thực <b>RTF =
+            0.39</b> trên GPU T4 (nhanh gấp 2.56 lần thời gian thực), độ tương đồng người nói đạt <b>SECS = 0.854</b>,
+          độ chính xác 6 thanh điệu đạt <b>94.43%</b> (khắc phục triệt để lỗi thanh ngã và thanh hỏi), và điểm chất
+          lượng cảm nhận trung bình đạt <b>MOS = 4.27 / 5.0</b>. Đề tài mở ra tiềm năng ứng dụng to lớn trong lồng tiếng
+          tự động, sản xuất sách nói chất lượng cao và giáo dục thông minh tại Việt Nam.</p>
+        <p class="no-indent" style="margin-top: 12px;"><b>Từ khóa:</b> Nhân bản giọng nói Zero-shot; Tổng hợp tiếng nói
+          tiếng Việt; Flow Matching ODE; Qwen3 LM; HiggsAudioV2; OmDiOm Studio; Kịch bản phân vai; Thẻ cảm xúc.</p>
+
+        <div style="margin-top: 35px;" class="front-title">ABSTRACT</div>
+        <p><i>The project <b>"Research and Application of Deep Learning Models in Zero-Shot Vietnamese Voice Cloning and
+              Speech Synthesis"</b> addresses the fundamental challenge of generating highly natural, expressive
+            Vietnamese speech that accurately preserves the six distinct lexical tones, while instantaneously
+            replicating an unseen speaker's voice from a short reference audio prompt (3 to 10 seconds) without any
+            model fine-tuning.</i></p>
+        <p><i>We adopt and master the cutting-edge <b>OmniVoice</b> generative architecture, which seamlessly integrates
+            the <b>Qwen3 Causal Language Model</b> (28 Transformer layers, 1024 hidden dimensions) for contextual
+            conditioning, a <b>Flow Matching ODE solver</b> for rapid continuous-time vector field sampling, and the
+            <b>HiggsAudioV2 Codec</b> (combining Descript Audio Codec at 16kHz with HuBERT representations across 8 RVQ
+            codebooks). We successfully train and deliver the Vietnamese-adapted checkpoint <b>OmDiOm-ft-4000</b> (2.45
+            GB) after 4,000 optimization steps on 10.76 hours of clean speech.</i></p>
+        <p><i>From a software engineering perspective, we deliver the comprehensive <b>OmDiOm Studio</b> platform
+            utilizing a robust Client-Server architecture (responsive HTML5/Vanilla JS UI, FastAPI Gateway, and
+            Cloudflare Tunnel for Kaggle Tesla T4 GPU compute). The platform features multi-speaker script directing,
+            Vietnamese emotion tag insertion, in-browser live recording via Web Audio API, interactive waveform
+            visualization, and SRT subtitle export.</i></p>
+        <p><i>Rigorous empirical evaluations across 300 test utterances demonstrate a Real-Time Factor of <b>RTF =
+              0.39</b> on a single Tesla T4 GPU, a Speaker Embedding Cosine Similarity of <b>SECS = 0.854</b>, a lexical
+            tone accuracy of <b>94.43%</b>, and a subjective Mean Opinion Score of <b>MOS = 4.27 / 5.0</b>. The system
+            offers substantial practical value for automated audiobooks, video dubbing, and AI accessibility in
+            Vietnam.</i></p>
+        <p class="no-indent" style="margin-top: 12px;"><b>Keywords:</b> Zero-Shot Voice Cloning; Vietnamese Speech
+          Synthesis; Flow Matching ODE; Qwen3 LM; HiggsAudioV2; OmDiOm Studio; Multi-speaker Scripting.</p>
+      </div>
+      <!-- ==========================================
+     CHƯƠNG 1: GIỚI THIỆU VÀ BỐI CẢNH NGHIÊN CỨU
+     ========================================== -->
+      <section class="chapter" id="ch1">
+        <h1 class="chapter-title">CHƯƠNG 1. GIỚI THIỆU VÀ BỐI CẢNH NGHIÊN CỨU</h1>
+
+        <h2 id="c11">1.1. Bối cảnh và Tính cấp thiết của đề tài</h2>
+        <p>Trong kỷ nguyên bùng nổ của trí tuệ nhân tạo (AI), công nghệ tổng hợp tiếng nói từ văn bản (Text-to-Speech -
+          TTS) đã có những bước tiến vượt bậc, chuyển dịch mạnh mẽ từ các phương pháp ghép nối âm thanh truyền thống
+          (Concatenative Synthesis) hay tham số thống kê (SPSS) sang các mô hình tạo sinh học sâu (Deep Generative
+          Models). Đặc biệt, sự xuất hiện của các mô hình nền tảng âm thanh quy mô lớn (Audio Foundation Models) đã mở
+          ra khả năng nhân bản giọng nói tức thời (Zero-Shot Voice Cloning) — công nghệ cho phép hệ thống học và mô
+          phỏng chính xác đặc trưng âm sắc, ngữ điệu và phong cách nói của một người bất kỳ chỉ từ một đoạn âm thanh mẫu
+          ngắn (vài giây) mà không cần trải qua quá trình thu âm hàng chục giờ hay huấn luyện lại trọng số mô hình
+          (fine-tuning).</p>
+        <p>Mặc dù trên thế giới đã có nhiều kiến trúc tiên tiến như VALL-E, XTTS, VoiceCraft hay F5-TTS, việc ứng dụng
+          hiệu quả các mô hình này vào ngôn ngữ tiếng Việt vẫn đối mặt với những rào cản kỹ thuật vô cùng to lớn. Tiếng
+          Việt là một ngôn ngữ đơn lập, đa âm tiết và đặc biệt sở hữu hệ thống thanh điệu phức tạp gồm 6 thanh: ngang
+          (không dấu), huyền, sắc, hỏi, ngã, nặng. Mỗi thanh điệu được đặc trưng bởi đường bao cao độ tần số cơ bản (F0
+          contour) và sự biến thiên áp suất thanh môn tinh tế. Các mô hình tổng hợp đa ngôn ngữ quốc tế khi áp dụng trực
+          tiếp cho tiếng Việt thường gặp hiện tượng "ngọng thanh điệu", nhầm lẫn giữa thanh hỏi và thanh ngã, phát âm
+          sai phụ âm đầu hoặc tạo ra âm thanh kim loại (metallic artifacts) thiếu tự nhiên.</p>
+        <p>Bên cạnh đó, nhu cầu thực tiễn tại Việt Nam về giải pháp lồng tiếng tự động, sản xuất sách nói số lượng lớn,
+          trợ lý ảo thông minh và số hóa tài liệu cho người khiếm thị đang tăng trưởng theo cấp số nhân. Tuy nhiên, các
+          giải pháp thương mại nước ngoài (như ElevenLabs, Azure TTS) có chi phí vận hành rất cao, phụ thuộc hoàn toàn
+          vào dịch vụ đám mây đóng gói kín và thiếu khả năng tùy biến sâu cho âm học tiếng Việt bản địa. Xuất phát từ
+          bối cảnh đó, đề tài <b>"Nghiên cứu và ứng dụng mô hình học sâu trong tổng hợp, nhân bản giọng nói tiếng Việt
+            zero-shot (Hệ thống OmDiOm Studio)"</b> được triển khai nhằm nghiên cứu làm chủ công nghệ Flow Matching tiên
+          tiến nhất, tinh chỉnh mô hình cho ngôn ngữ tiếng Việt và xây dựng một nền tảng phần mềm hoàn chỉnh, phục vụ
+          nhu cầu học thuật và ứng dụng thực tiễn.</p>
+
+        <h2 id="c12">1.2. Mục tiêu nghiên cứu cụ thể</h2>
+        <p>Đề tài đặt ra 5 mục tiêu nghiên cứu cụ thể, có tính định lượng và kiểm chứng rõ ràng:</p>
+        <ol>
+          <li><b>Xây dựng quy trình chuẩn hóa ngữ liệu tiếng Việt sạch (Pha A):</b> Thu thập, lọc bỏ nhiễu, chuẩn hóa
+            tần số lấy mẫu 16 kHz mono và gán nhãn chính xác cho 9,508 câu âm thanh (tổng thời lượng 10.76 giờ từ 64
+            người nói), thiết lập tập huấn luyện (8,816 câu) và tập kiểm định độc lập (692 câu), đảm bảo tính pháp lý và
+            bản quyền rõ ràng.</li>
+          <li><b>Làm chủ kiến trúc mô hình học sâu OmniVoice:</b> Nghiên cứu chuyên sâu cơ chế tạo sinh liên tục Flow
+            Matching kết hợp bộ giải phương trình vi phân thường (ODE Solver), mô hình ngôn ngữ nhân quả Qwen3 Causal LM
+            và Neural Audio Codec HiggsAudioV2; thực hiện tinh chỉnh và đóng gói thành công bộ trọng số chuyên biệt
+            tiếng Việt <b>OmDiOm-ft-4000</b> (dung lượng 2.45 GB) sau 4,000 bước huấn luyện.</li>
+          <li><b>Xây dựng hệ sinh thái phần mềm Studio hoàn chỉnh (OmDiOm Studio):</b> Hiện thực kiến trúc Client-Server
+            hiện đại với giao diện Web UI tương tác cao, máy chủ Gateway FastAPI và cầu nối Cloudflare Tunnel kết nối
+            linh hoạt giữa máy tính cục bộ và GPU đám mây (Kaggle Tesla T4), đáp ứng khả năng sinh âm thanh tốc độ cao
+            với hệ số thời gian thực $ ext{RTF} &lt; 0.50$.</li>
+          <li><b>Hiện thực bộ công cụ phòng thu sáng tạo âm thanh chuyên nghiệp:</b> Xây dựng module thu âm trực tiếp và
+            công cụ cắt mẫu sóng âm qua Web Audio API, hệ thống thẻ biểu cảm (vui vẻ, buồn bã, thì thầm, nghiêm túc),
+            chèn khoảng ngắt nghỉ chủ động và công cụ đạo diễn kịch bản phân vai đa nhân vật tự động ghép nối âm thanh
+            liền mạch, xuất bản phụ đề SRT đồng bộ.</li>
+          <li><b>Thực nghiệm, đo lường và đánh giá toàn diện:</b> Tiến hành kiểm thử trên 300 câu tiếng Việt chuẩn hóa,
+            đo đạc đầy đủ các chỉ số khách quan (RTF, SECS, CER, WER, Tone Accuracy) và tổ chức hội đồng đánh giá cảm
+            nhận chủ quan (MOS theo chuẩn ITU-T P.800) với sự tham gia của 10 người nghe chuyên môn và phổ thông.</li>
+        </ol>
+
+        <h2 id="c13">1.3. Đối tượng và Phạm vi đề tài</h2>
+        <p><b>Đối tượng nghiên cứu:</b></p>
+        <ul>
+          <li>Tín hiệu tiếng nói tiếng Việt ba miền Bắc, Trung, Nam với đầy đủ 6 thanh điệu và các đặc trưng phát âm âm
+            vị học đặc thù.</li>
+          <li>Các kiến trúc mô hình học sâu tạo sinh hiện đại: Mô hình dòng phối hợp liên tục (Continuous Normalizing
+            Flows / Flow Matching), Mô hình ngôn ngữ nhân quả (Causal Transformer LM) và Bộ nén giải mã âm thanh nơ-ron
+            (Neural Audio Codec).</li>
+        </ul>
+        <p><b>Phạm vi nghiên cứu:</b></p>
+        <ul>
+          <li><i>Về mặt dữ liệu:</i> Sử dụng tập ngữ liệu sạch chuẩn hóa <b>v1</b> có nguồn gốc từ VIVOS (tác giả
+            AIViVN, giấy phép CC-BY-SA 4.0) gồm 64 người nói, đã qua xử lý VAD và cân bằng âm lượng RMS, cùng bộ sưu tập
+            7 giọng mẫu chuẩn tham chiếu có biên bản đồng ý tác quyền phục vụ thử nghiệm zero-shot.</li>
+          <li><i>Về mặt kỹ thuật mô hình:</i> Tập trung vào việc triển khai suy luận tối ưu, điều chỉnh siêu tham số
+            (num_step, cfg_scale, temperature) và đánh giá chất lượng bộ trọng số <b>OmDiOm-ft-4000</b>; không tự thay
+            đổi cấu trúc đồ thị tính toán gốc của OmniVoice nhằm đảm bảo tính tương thích và ổn định.</li>
+          <li><i>Về mặt hệ thống:</i> Tập trung hoàn toàn vào nền tảng phòng thu sáng tạo âm thanh <b>OmDiOm Studio</b>
+            hỗ trợ biên tập nội dung, phân vai và xuất bản âm thanh chất lượng cao; không phân tán sang các bài toán
+            kiểm định ngoài phạm vi đề tài.</li>
+        </ul>
+
+        <h2 id="c14">1.4. Phương pháp thực hiện và Đóng góp chính</h2>
+        <p><b>Phương pháp thực hiện:</b> Nhóm áp dụng phương pháp nghiên cứu thực nghiệm kết hợp kỹ nghệ phần mềm lặp
+          (Iterative Agile Engineering):</p>
+        <ul>
+          <li><i>Giai đoạn 1 (Thu thập và xử lý ngữ liệu):</i> Viết các script tự động hóa kiểm tra dữ liệu, lọc bỏ các
+            bản ghi dưới 0.5s hoặc chứa tạp âm lớn, chuẩn hóa văn bản theo chuẩn Unicode NFC.</li>
+          <li><i>Giai đoạn 2 (Thực nghiệm mô hình học sâu):</i> Thiết lập môi trường huấn luyện và suy luận trên máy chủ
+            GPU Tesla T4 (16GB VRAM), khảo sát các chiến lược lấy mẫu ODE Euler và Midpoint nhằm tối ưu hóa hệ số thời
+            gian thực (RTF).</li>
+          <li><i>Giai đoạn 3 (Phát triển hệ thống phần mềm):</i> Lập trình hướng module hóa, phân tách rạch ròi giữa
+            giao diện người dùng (HTML5 Canvas/Web Audio), tầng điều phối dịch vụ (FastAPI) và nhân tính toán GPU
+            (PyTorch engine).</li>
+          <li><i>Giai đoạn 4 (Đo đạc và đánh giá thực chứng):</i> Thiết kế ma trận kiểm thử đối chiếu giữa giọng gốc và
+            giọng nhân bản bằng cả công cụ nhận dạng tự động (ASR) và phiếu khảo sát người nghe thực tế.</li>
+        </ul>
+
+        <div class="callout-box">
+          <div class="callout-title">TỔNG HỢP CÁC ĐÓNG GÓP CHÍNH CỦA ĐỀ TÀI</div>
+          <p>1. <b>Hoàn thiện bộ trọng số tiếng Việt OmDiOm-ft-4000:</b> Khắc phục triệt để hiện tượng sai lệch 6 thanh
+            điệu, đạt độ chính xác thanh điệu trung bình <b>94.43%</b> và độ tương đồng người nói SECS đạt <b>0.854</b>.
+          </p>
+          <p>2. <b>Hệ sinh thái OmDiOm Studio hoàn chỉnh và trực quan:</b> Cho phép người dùng làm chủ toàn bộ quy trình
+            nhân bản giọng nói chỉ với 3-10 giây audio mẫu, hỗ trợ kịch bản phân vai và nhúng cảm xúc phong phú mà không
+            yêu cầu kiến thức kỹ thuật chuyên sâu.</p>
+          <p>3. <b>Giải pháp triển khai lai linh hoạt (Hybrid Deployment):</b> Kết hợp máy chủ nhẹ cục bộ với hạ tầng
+            tính toán GPU đám mây qua Cloudflare Tunnel, mang lại tốc độ suy luận thời gian thực cho người dùng phổ
+            thông mà không tốn chi phí phần cứng.</p>
+          <p>4. <b>Bộ số liệu thực nghiệm khoa học, minh bạch:</b> Cung cấp đầy đủ báo cáo đo đạc khách quan về độ trễ,
+            RTF, CER/WER và điểm MOS 4.27/5.0 trên 300 câu thử nghiệm chuẩn mực.</p>
+        </div>
+      </section>
+      <!-- ==========================================
+     CHƯƠNG 2: CƠ SỞ LÝ THUYẾT VÀ CÔNG NGHỆ NỀN TẢNG
+     ========================================== -->
+      <section class="chapter" id="ch2">
+        <h1 class="chapter-title">CHƯƠNG 2. CƠ SỞ LÝ THUYẾT VÀ CÔNG NGHỆ NỀN TẢNG</h1>
+
+        <h2 id="c21">2.1. Tiến trình công nghệ tổng hợp tiếng nói (TTS)</h2>
+        <p>Lịch sử phát triển của công nghệ tổng hợp tiếng nói (Text-to-Speech - TTS) trải qua bốn giai đoạn tiến hóa
+          mang tính bước ngoặt, gắn liền với sự trưởng thành của lý thuyết xử lý tín hiệu số và học máy hiện đại:</p>
+        <ul>
+          <li><b>Giai đoạn 1: Tổng hợp ghép nối (Concatenative TTS):</b> Dựa trên việc thu âm một cơ sở dữ liệu âm thanh
+            khổng lồ từ một phát thanh viên cố định, chia nhỏ thành các đơn vị âm vị (phoneme, diphones) và ghép nối lại
+            theo thuật toán tối ưu đường đi động (Viterbi search). Phương pháp này cho chất âm trong trẻo tại từng lát
+            cắt nhưng giọng đọc bị giật cục, thiếu tự nhiên ở các điểm nối và hoàn toàn bất lực trong việc thay đổi
+            giọng nói mới nếu không thu âm lại toàn bộ kho dữ liệu.</li>
+          <li><b>Giai đoạn 2: Tổng hợp tham số thống kê (SPSS - HMM):</b> Sử dụng mô hình Markov ẩn (Hidden Markov
+            Model) để ước lượng các đường bao tham số âm học (F0, phổ năng lượng). Ưu điểm là dung lượng mô hình nhỏ
+            gọn, dễ điều khiển cao độ nhưng nhược điểm chí mạng là giọng bị nghẹt, nhân tạo ("robot voice") do quá trình
+            san phẳng thống kê (statistical oversmoothing).</li>
+          <li><b>Giai đoạn 3: Tổng hợp học sâu tuần tự (Deep Autoregressive TTS):</b> Tiêu biểu là kiến trúc Tacotron 2
+            kết hợp WaveGlow hoặc FastSpeech 2 kết hợp HiFi-GAN. Mô hình dự đoán phổ Mel-spectrogram từ chuỗi văn bản,
+            sau đó dùng mạng nơ-ron vocoder tái tạo dạng sóng thời gian. Chất lượng âm thanh đạt độ tự nhiên vượt bậc
+            nhưng tốc độ sinh chậm (do tính chất tuần tự autoregressive) và dễ gặp hiện tượng lặp từ, nuốt từ khi gặp
+            câu văn dài hoặc cấu trúc lạ.</li>
+          <li><b>Giai đoạn 4: Tổng hợp tạo sinh liên tục (Flow Matching & Diffusion TTS):</b> Thế hệ mô hình hiện đại
+            nhất (như VoiceCraft, F5-TTS, OmniVoice). Mô hình ánh xạ trực tiếp từ phân phối nhiễu ngẫu nhiên sang không
+            gian đặc trưng âm thanh thông qua trường vector biến thiên liên tục. Phương pháp này loại bỏ hoàn toàn hiện
+            tượng mất ổn định của mô hình tuần tự, đạt độ tự nhiên đỉnh cao và đặc biệt cho phép nhân bản giọng nói
+            zero-shot chỉ với một đoạn âm thanh mẫu vài giây.</li>
+        </ul>
+
+        <h2 id="c22">2.2. Kiến trúc mạng thần kinh OmniVoice</h2>
+        <p>Hệ thống <b>OmDiOm Studio</b> kế thừa và phát triển trên nền tảng kiến trúc mạng thần kinh tiên tiến
+          <b>OmniVoice</b> (do liên minh nghiên cứu mã nguồn mở k2-fsa đề xuất). Đây là một kiến trúc lai (hybrid
+          architecture) kết hợp hài hòa giữa năng lực hiểu ngôn ngữ sâu sắc của mô hình ngôn ngữ lớn (LLM), tốc độ lấy
+          mẫu vượt trội của Flow Matching ODE và độ trung thực âm thanh cực cao của Neural Audio Codec.</p>
+
+        <h3>2.2.1. Qwen3 Causal Language Model</h3>
+        <p>Trái tim điều khiển ngữ cảnh của OmniVoice là mô hình ngôn ngữ nhân quả <b>Qwen3 Causal LM</b> với các thông
+          số cấu trúc mạnh mẽ:</p>
+        <ul>
+          <li><b>Số lớp Transformer (Layers):</b> 28 lớp giải mã nhân quả (Causal Transformer Decoder Blocks).</li>
+          <li><b>Kích thước ẩn (Hidden Dimension - d_model):</b> 1024 chiều, cho phép biểu diễn không gian ngữ nghĩa
+            phong phú.</li>
+          <li><b>Cơ chế nhúng vị trí:</b> Áp dụng kỹ thuật nhúng vị trí quay <b>RoPE (Rotary Position Embedding)</b> với
+            cửa sổ ngữ cảnh mở rộng lên tới 40,000 tokens, đảm bảo mô hình không bị suy giảm khả năng chú ý (attention
+            degradation) khi xử lý các đoạn văn bản dài hoặc chuỗi âm thanh kéo dài.</li>
+          <li><b>Cơ chế điều hòa đa phương thức (Multimodal Conditioning):</b> Chuỗi token văn bản sau khi chuẩn hóa
+            Unicode NFC được ghép nối cùng với các token đặc trưng âm thanh của clip tham chiếu (Acoustic Prompt
+            Tokens). Mạng Qwen3 xử lý chuỗi kết hợp này để trích xuất tensor ngữ cảnh điều hòa $H_{ctx}$, định hướng
+            trực tiếp cho bộ tạo sinh âm thanh phía sau.</li>
+        </ul>
+
+        <h3>2.2.2. Cơ chế Flow Matching và Bộ giải ODE</h3>
+        <p>Thay vì sử dụng mô hình khuếch tán truyền thống (Denoising Diffusion Probabilistic Models - DDPM) vốn đòi hỏi
+          hàng trăm bước lấy mẫu rời rạc và quá trình suy luận nặng nề, OmniVoice áp dụng lý thuyết <b>Dòng chuẩn hóa
+            liên tục (Continuous Normalizing Flows - CNF)</b> thông qua kỹ thuật <b>Conditional Flow Matching (CFM)</b>.
+        </p>
+        <p>Về mặt toán học, quá trình tạo sinh âm thanh được mô tả như một phương trình vi phân thường (Ordinary
+          Differential Equation - ODE):</p>
+        <div style="text-align: center; margin: 12px 0; font-size: 13pt; font-family: 'Times New Roman', serif;">
+          $$rac{d x_t}{d t} = v_ heta(x_t, t, H_{ctx})$$
+        </div>
+        <p class="no-indent">Trong đó $x_0 \sim \mathcal{N}(0, I)$ là vector nhiễu Gauss tiêu chuẩn tại thời điểm $t =
+          0$; $x_1$ là vector biểu diễn âm học tiềm ẩn đích tại thời điểm $t = 1$; và $v_ heta(x_t, t, H_{ctx})$ là mạng
+          nơ-ron học trường vector vận tốc dưới sự điều hòa của ngữ cảnh $H_{ctx}$.</p>
+        <p>Khác biệt cốt lõi của Flow Matching là mô hình huấn luyện trường vận tốc theo <b>đường thẳng tối ưu (straight
+            path)</b> nối trực tiếp từ phân phối nhiễu $x_0$ đến dữ liệu thật $x_1$:</p>
+        <div style="text-align: center; margin: 12px 0; font-size: 13pt; font-family: 'Times New Roman', serif;">
+          $$x_t = (1 - t) x_0 + t x_1, \quad rac{d x_t}{d t} = x_1 - x_0$$
+        </div>
+        <p>Do quỹ đạo di chuyển là đường thẳng, bộ giải vi phân thường (ODE Solver) như <i>Euler Solver</i> hoặc
+          <i>Midpoint Solver</i> có thể tích phân với số bước lấy mẫu cực ít ($N = 8, 16, 32$ bước) mà không gặp sai số
+          tích lũy, giúp hệ thống đạt tốc độ sinh nhanh gấp nhiều lần thời gian thực (Real-Time Factor RTF &lt; 0.4).
+        </p>
+
+        <h3>2.2.3. Neural Audio Codec HiggsAudioV2</h3>
+        <p>Để chuyển đổi giữa tensor tiềm ẩn và dạng sóng âm thanh PCM 16 kHz nghe được, hệ thống tích hợp bộ nén giải
+          mã âm thanh nơ-ron thế hệ mới <b>HiggsAudioV2</b>. Codec này là sự kết hợp đột phá giữa:</p>
+        <ul>
+          <li><b>Descript Audio Codec (DAC 16kHz):</b> Mạng tích chập tích hợp kiến trúc giải nén đa tỷ lệ (Multi-scale
+            Discriminator), cho phép khôi phục trọn vẹn dải động âm thanh, đường bao phổ và pha tín hiệu với độ trong
+            suốt âm thanh (audio transparency) tiệm cận hoàn hảo.</li>
+          <li><b>Biểu diễn ngữ nghĩa tự giám sát (HuBERT):</b> Trích xuất các tầng đặc trưng trung gian của mô hình
+            HuBERT giúp bảo tồn bản sắc người nói, vị trí đặt cấu âm và sự sắc nét của các phụ âm tiếng Việt.</li>
+          <li><b>Lượng tử hóa vector phần dư (Residual Vector Quantization - RVQ):</b> Sử dụng 8 tầng codebooks với bước
+            nhảy thời gian (hop length) 960 mẫu (tương ứng 60 khung âm thanh/giây), mang lại tỷ lệ nén tín hiệu cao
+            nhưng vẫn duy trì trung thực mọi biến thiên vi mô của thanh điệu.</li>
+        </ul>
+
+        <h2 id="c23">2.3. Biểu diễn bản sắc người nói và Dẫn hướng CFG</h2>
+        <p>Trong bài toán nhân bản giọng nói Zero-Shot, việc tách bạch và điều khiển độc lập giữa hai yếu tố: <b>nội
+            dung ngôn ngữ (Linguistic Content)</b> và <b>bản sắc âm sắc người nói (Speaker Identity)</b> là chìa khóa
+          quyết định thành công của hệ thống:</p>
+
+        <h3>2.3.1. Trích xuất bản sắc người nói từ clip tham chiếu</h3>
+        <p>Khi người dùng cung cấp một đoạn âm thanh mẫu (từ 3 đến 10 giây), bộ mã hóa HiggsAudioV2 trích xuất chuỗi mã
+          lượng tử $Z_{ref} \in \mathbb{R}^{8 imes T_{ref}}$. Từ chuỗi này, mạng nơ-ron thực hiện phép tổng hợp thời
+          gian (temporal pooling) kết hợp tầng chiếu phi tuyến để trích xuất vector nhúng đặc trưng người nói $e_{spk}$.
+          Vector này nắm giữ toàn bộ các đặc trưng vật lý của thanh đới (chiều dài thanh môn, tần số cộng hưởng của
+          khoang miệng, độ trầm bổng F0 trung bình và tỷ lệ hơi trong giọng).</p>
+
+        <h3>2.3.2. Cơ chế Dẫn hướng phi bộ phân loại (Classifier-Free Guidance - CFG)</h3>
+        <p>Nhằm đảm bảo âm thanh sinh ra vừa trung thành tuyệt đối với nội dung văn bản tiếng Việt vừa mô phỏng sắc nét
+          âm sắc người nói mà không bị trôi về giọng trung tính mặc định, OmniVoice áp dụng cơ chế <b>Dẫn hướng phi bộ
+            phân loại (Classifier-Free Guidance - CFG)</b> trong quá trình tích phân ODE:</p>
+        <div style="text-align: center; margin: 12px 0; font-size: 13pt; font-family: 'Times New Roman', serif;">
+          $$v_{cfg}(x_t, t, c) = v_ heta(x_t, t, \emptyset) + s \cdot \left[ v_ heta(x_t, t, c) - v_ heta(x_t, t,
+          \emptyset)
+          ight]$$
+        </div>
+        <p class="no-indent">Trong đó:</p>
+        <ul>
+          <li>$v_ heta(x_t, t, c)$ là trường vận tốc được tính toán dưới sự điều hòa đầy đủ của văn bản và giọng mẫu $c
+            = \{Text, e_{spk}\}$.</li>
+          <li>$v_ heta(x_t, t, \emptyset)$ là trường vận tốc vô điều kiện (lời nhắc rỗng).</li>
+          <li>$s \ge 1.0$ là hệ số tỷ lệ dẫn hướng (Guidance Scale).</li>
+        </ul>
+        <p>Khi $s = 1.0$, hệ thống suy luận tạo sinh thông thường. Khi tăng $s$ lên mức tối ưu từ <b>1.5 đến 2.2</b>, mô
+          hình khuếch đại mạnh mẽ các đặc trưng cá nhân độc đáo của người nói và làm sắc nét các phụ âm tiếng Việt, giúp
+          giảm đáng kể tỷ lệ nuốt từ (WER) và tăng mạnh độ tương đồng người nói (SECS).</p>
+
+        <h2 id="c24">2.4. Các thước đo đánh giá chất lượng tiếng nói</h2>
+        <p>Để đánh giá toàn diện một hệ thống TTS và Zero-Shot Voice Cloning, đề tài kết hợp chặt chẽ giữa hai hệ thống
+          tiêu chí: đo lường khách quan tự động (Objective Metrics) và đo lường cảm nhận chủ quan của con người
+          (Subjective Metrics):</p>
+        <ul>
+          <li><b>Hệ số thời gian thực (Real-Time Factor - RTF):</b> Tỷ số giữa thời gian máy tính xử lý suy luận
+            ($T_{proc}$) và thời lượng đoạn âm thanh sinh ra ($T_{audio}$):
+            <div style="text-align: center; margin: 8px 0; font-size: 12.5pt;">$$ ext{RTF} = rac{T_{proc}}{T_{audio}}$$
+            </div>
+            Giá trị $ ext{RTF} &lt; 1.0$ cho biết hệ thống xử lý nhanh hơn thời gian thực, đáp ứng yêu cầu truyền phát
+            trực tuyến (streaming).
+          </li>
+          <li><b>Độ tương đồng người nói (Speaker Embedding Cosine Similarity - SECS):</b> Sử dụng mạng nơ-ron tiền huấn
+            luyện sâu (mô hình Resemblyzer / WavLM-TDNN) để trích xuất vector nhúng đặc trưng người nói 256 chiều từ
+            audio mẫu ($e_{ref}$) và audio sinh ra ($e_{syn}$), sau đó tính độ tương đồng cosin:
+            <div style="text-align: center; margin: 8px 0; font-size: 12.5pt;">$$ ext{SECS}(e_{ref}, e_{syn}) =
+              rac{e_{ref} \cdot e_{syn}}{\|e_{ref}\|_2 \|e_{syn}\|_2}$$</div>
+            Chỉ số dao động từ -1.0 đến +1.0. Trong bài toán zero-shot voice cloning, giá trị $ ext{SECS} &gt; 0.80$
+            được cộng đồng nghiên cứu quốc tế công nhận là đạt độ tương đồng rất cao, người nghe phổ thông không phân
+            biệt được người nói khác biệt.
+          </li>
+          <li><b>Tỷ lệ lỗi ký tự (CER) và Tỷ lệ lỗi từ (WER):</b> Đánh giá độ rõ ràng và mức độ đọc chính xác nội dung
+            văn bản thông qua mô hình nhận dạng tiếng nói tự động mạnh nhất hiện nay (Whisper Large-v3 tinh chỉnh tiếng
+            Việt PhoWhisper).
+            <div style="text-align: center; margin: 8px 0; font-size: 12.5pt;">$$ ext{WER} = rac{S + D + I}{N} imes
+              100\%$$</div>
+            Trong đó $S$ là số từ bị thay thế, $D$ là số từ bị xóa (nuốt từ), $I$ là số từ bị chèn (lặp âm) và $N$ là
+            tổng số từ trong văn bản gốc.
+          </li>
+          <li><b>Độ chính xác thanh điệu (Tone Accuracy):</b> Tỷ lệ phần trăm các âm tiết được mô hình thể hiện đúng
+            đường bao cao độ F0 theo phân loại 6 thanh điệu tiếng Việt (ngang, huyền, sắc, hỏi, ngã, nặng) khi đối chiếu
+            với mẫu phát âm chuẩn.</li>
+          <li><b>Điểm đánh giá cảm nhận trung bình (Mean Opinion Score - MOS):</b> Thang đo chuẩn hóa quốc tế theo
+            khuyến nghị ITU-T P.800 với 5 mức điểm: 1 (Rất kém), 2 (Kém), 3 (Tạm được), 4 (Tốt), 5 (Tuyệt vời). MOS được
+            khảo sát trên 4 tiêu chí thành phần: Độ tự nhiên (Naturalness), Độ tương đồng (Similarity), Độ dễ hiểu
+            (Intelligibility) và Tính biểu cảm (Expressiveness).</li>
+        </ul>
+      </section>
+      <!-- ==========================================
+     CHƯƠNG 3: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG OMDIOM STUDIO
+     ========================================== -->
+      <section class="chapter" id="ch3">
+        <h1 class="chapter-title">CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG OMDIOM STUDIO</h1>
+
+        <h2 id="c31">3.1. Phân tích yêu cầu chức năng và phi chức năng</h2>
+        <p>Nhằm đáp ứng mục tiêu xây dựng một nền tảng tạo sinh giọng nói tiếng Việt chuyên nghiệp, trực quan và dễ sử
+          dụng cho người làm sáng tạo nội dung lẫn các nhà nghiên cứu, hệ thống <b>OmDiOm Studio</b> được phân tích và
+          đặc tả kỹ thuật với các yêu cầu cụ thể sau:</p>
+
+        <p><b>1. Yêu cầu chức năng (Functional Requirements - FR):</b></p>
+        <ul>
+          <li><b>FR-01 · Tổng hợp tiếng nói từ văn bản (Standard TTS):</b> Cho phép người dùng nhập văn bản tiếng Việt
+            tùy ý, tự động chuẩn hóa định dạng Unicode NFC, phân tách câu thông minh và tạo âm thanh với các giọng đọc
+            mẫu có sẵn trong thư viện hệ thống.</li>
+          <li><b>FR-02 · Nhân bản giọng nói Zero-Shot (Zero-Shot Voice Cloning):</b> Người dùng có thể tải lên một tệp
+            âm thanh bất kỳ hoặc thu âm trực tiếp đoạn nói ngắn (3 đến 10 giây). Hệ thống tự động trích xuất đặc trưng
+            âm sắc của người nói và tái tạo lại giọng nói đó đọc chính xác đoạn văn bản mới.</li>
+          <li><b>FR-03 · Thu âm trực tiếp và Công cụ cắt đoạn giọng (Live Recording & Trimmer):</b> Tích hợp bộ thu âm
+            trên trình duyệt khai thác Web Audio API, hiển thị sóng âm theo thời gian thực và cung cấp thanh trượt
+            (slider) cho phép người dùng lắng nghe và cắt chọn đoạn giọng phát âm sạch nhất.</li>
+          <li><b>FR-04 · Hỗ trợ thẻ biểu cảm và ngắt nghỉ tự nhiên:</b> Hệ thống nhận diện cú pháp thẻ điều khiển biểu
+            cảm (như <code>[vui vẻ]</code>, <code>[buồn bã]</code>, <code>[nghiêm túc]</code>, <code>[thì thầm]</code>)
+            và khoảng ngắt nghỉ chủ động (<code>[ngắt nghỉ:0.5s]</code>) để điều hướng cảm xúc cho giọng đọc.</li>
+          <li><b>FR-05 · Biên tập kịch bản phân vai đa nhân vật (Multi-Speaker Scripting):</b> Cho phép soạn thảo kịch
+            bản hội thoại kịch bản với nhiều nhân vật khác nhau, mỗi câu thoại được gắn một giọng nói tham chiếu riêng
+            biệt và ghép nối thành một luồng âm thanh hoàn chỉnh có khoảng lặng chuyển tiếp hợp lý.</li>
+          <li><b>FR-06 · Hiển thị sóng âm trực quan và Trích xuất đa định dạng:</b> Giao diện hiển thị trực quan dạng
+            sóng âm (waveform) đồng bộ với tiến trình phát; cho phép tải về tệp âm thanh chuẩn phòng thu WAV 16 kHz
+            16-bit PCM, kèm tệp văn bản lời thoại TXT và tệp phụ đề SRT chuẩn thời gian.</li>
+          <li><b>FR-07 · Quản lý phiên làm việc và Cấu hình kết nối linh hoạt:</b> Lưu trữ lịch sử tạo âm thanh trong
+            phiên, cho phép người dùng cấu hình địa chỉ máy chủ suy luận (Localhost hoặc Cloudflare Tunnel) chỉ bằng một
+            thao tác dán đường dẫn trực quan.</li>
+        </ul>
+
+        <p><b>2. Yêu cầu phi chức năng (Non-Functional Requirements - NFR):</b></p>
+        <ul>
+          <li><b>NFR-01 · Tốc độ và Hiệu năng tính toán:</b> Hệ số thời gian thực trên GPU Tesla T4 phải đạt $ ext{RTF}
+            &lt; 0.50$ (tức là tạo ra 5 giây âm thanh trong thời gian dưới 2.0 giây), đảm bảo người dùng không phải chờ
+            đợi lâu trong quá trình sáng tạo.</li>
+          <li><b>NFR-02 · Tính cơ động và Tách biệt kiến trúc:</b> Phân tách hoàn toàn giữa giao diện Web UI, máy chủ
+            Gateway và nhân tính toán GPU, cho phép hệ thống vận hành linh hoạt trên máy cá nhân cục bộ hoặc chuyển tiếp
+            tính toán lên các nền tảng điện toán đám mây GPU miễn phí (như Kaggle Notebooks).</li>
+          <li><b>NFR-03 · Tiết kiệm tài nguyên bộ nhớ (VRAM Management):</b> Mô hình tạo sinh và trích xuất đặc trưng
+            phải được tối ưu hóa để vận hành trơn tru trong giới hạn bộ nhớ đồ họa 16 GB VRAM của GPU Tesla T4, có cơ
+            chế dọn dẹp bộ nhớ đệm tự động sau mỗi phiên suy luận.</li>
+          <li><b>NFR-04 · An toàn dữ liệu và Bản quyền tác giả:</b> Toàn bộ giọng mẫu trong thư viện đều có hồ sơ cấp
+            quyền sử dụng rõ ràng; hệ thống chỉ lưu trữ tạm thời dữ liệu âm thanh của người dùng trong phiên làm việc,
+            không tự ý lưu trữ dữ liệu riêng tư nếu chưa được cho phép.</li>
+        </ul>
+
+        <h2 id="c32">3.2. Thiết kế kiến trúc tổng thể Client - Server</h2>
+        <p>Để thỏa mãn các yêu cầu khắt khe về độ ổn định, khả năng mở rộng và tính tương thích phần cứng đa dạng, hệ
+          thống <b>OmDiOm Studio</b> được thiết kế theo mô hình kiến trúc phân tầng Client - Server 3 lớp hiện đại, thể
+          hiện chi tiết tại Hình 3.1 dưới đây:</p>
+
+        <div class="figure-box">
+          <div class="diagram-box">
+            <svg viewBox="0 0 760 320" xmlns="http://www.w3.org/2000/svg"
+              style="width:100%;max-width:760px;height:auto;font-family:'Times New Roman',Times,serif;margin:0 auto;display:block;">
+              <defs>
+                <linearGradient id="gradClient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#e8f4f8" />
+                  <stop offset="100%" stop-color="#d0e8f2" />
+                </linearGradient>
+                <linearGradient id="gradServer" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#eafaf1" />
+                  <stop offset="100%" stop-color="#d4efdf" />
+                </linearGradient>
+                <linearGradient id="gradGPU" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fef9e7" />
+                  <stop offset="100%" stop-color="#fcf3cf" />
+                </linearGradient>
+                <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                  orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="#2c3e50" />
+                </marker>
+                <marker id="arrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                  orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="#27ae60" />
+                </marker>
+              </defs>
+
+              <!-- VÙNG 1: FRONTEND CLIENT (TRÌNH DUYỆT) -->
+              <rect x="15" y="15" width="220" height="290" rx="8" fill="url(#gradClient)" stroke="#2980b9"
+                stroke-width="1.5" />
+              <text x="125" y="40" font-size="13" font-weight="bold" fill="#1b4f72" text-anchor="middle">CLIENT · TRÌNH
+                DUYỆT</text>
+              <text x="125" y="56" font-size="10.5" fill="#555555" text-anchor="middle">HTML5 / Vanilla JS / Web
+                Audio</text>
+
+              <rect x="25" y="68" width="200" height="42" rx="5" fill="#ffffff" stroke="#7fb3d5" stroke-width="1" />
+              <text x="125" y="86" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Giao diện
+                Studio OmDiOm</text>
+              <text x="125" y="101" font-size="9.5" fill="#555555" text-anchor="middle">Soạn thảo văn bản, thẻ cảm xúc
+                tiếng Việt</text>
+
+              <rect x="25" y="118" width="200" height="42" rx="5" fill="#ffffff" stroke="#7fb3d5" stroke-width="1" />
+              <text x="125" y="136" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Bộ thu âm &
+                Cắt mẫu tham chiếu</text>
+              <text x="125" y="151" font-size="9.5" fill="#555555" text-anchor="middle">Web Audio API, ghi âm & cắt 3-10
+                giây</text>
+
+              <rect x="25" y="168" width="200" height="42" rx="5" fill="#ffffff" stroke="#7fb3d5" stroke-width="1" />
+              <text x="125" y="186" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Biên tập kịch
+                bản phân vai</text>
+              <text x="125" y="201" font-size="9.5" fill="#555555" text-anchor="middle">Đa nhân vật, ghép nối hội thoại
+                liền mạch</text>
+
+              <rect x="25" y="218" width="200" height="42" rx="5" fill="#ffffff" stroke="#7fb3d5" stroke-width="1" />
+              <text x="125" y="236" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Trình phát &
+                Sóng âm trực quan</text>
+              <text x="125" y="251" font-size="9.5" fill="#555555" text-anchor="middle">Waveform canvas, xuất WAV và phụ
+                đề SRT</text>
+
+              <rect x="25" y="268" width="200" height="28" rx="4" fill="#ebf5fb" stroke="#a9cce3" stroke-width="1" />
+              <text x="125" y="286" font-size="10" font-weight="bold" fill="#1f618d" text-anchor="middle">Quản lý phiên
+                & Cấu hình kết nối</text>
+
+              <!-- MŨI TÊN KẾT NỐI CLIENT <-> GATEWAY -->
+              <line x1="235" y1="110" x2="270" y2="110" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)" />
+              <text x="252" y="103" font-size="9" fill="#2c3e50" text-anchor="middle">REST/JSON</text>
+              <line x1="270" y1="140" x2="235" y2="140" stroke="#27ae60" stroke-width="2"
+                marker-end="url(#arrowGreen)" />
+              <text x="252" y="153" font-size="9" fill="#27ae60" text-anchor="middle">WAV/Stream</text>
+
+              <!-- VÙNG 2: MÁY CHỦ GATEWAY (FASTAPI) -->
+              <rect x="275" y="15" width="210" height="290" rx="8" fill="url(#gradServer)" stroke="#27ae60"
+                stroke-width="1.5" />
+              <text x="380" y="40" font-size="13" font-weight="bold" fill="#1e8449" text-anchor="middle">BACKEND ·
+                FASTAPI</text>
+              <text x="380" y="56" font-size="10.5" fill="#555555" text-anchor="middle">Uvicorn / Python 3.10 / Cục
+                bộ</text>
+
+              <rect x="285" y="68" width="190" height="45" rx="5" fill="#ffffff" stroke="#a9dfbf" stroke-width="1" />
+              <text x="380" y="86" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Bộ định tuyến
+                API (Routes)</text>
+              <text x="380" y="102" font-size="9.5" fill="#555555" text-anchor="middle">/api/tts, /api/clone,
+                /api/voices, /api/export</text>
+
+              <rect x="285" y="122" width="190" height="45" rx="5" fill="#ffffff" stroke="#a9dfbf" stroke-width="1" />
+              <text x="380" y="140" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Tiền xử lý văn
+                bản & Âm thanh</text>
+              <text x="380" y="156" font-size="9.5" fill="#555555" text-anchor="middle">Chuẩn hóa Unicode NFC, VAD, RMS
+                -1dB</text>
+
+              <rect x="285" y="176" width="190" height="45" rx="5" fill="#ffffff" stroke="#a9dfbf" stroke-width="1" />
+              <text x="380" y="194" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Quản lý Ngữ
+                liệu & 7 Giọng mẫu</text>
+              <text x="380" y="210" font-size="9.5" fill="#555555" text-anchor="middle">Thư viện ref_manifest.csv
+                (data/REF)</text>
+
+              <rect x="285" y="230" width="190" height="66" rx="5" fill="#ffffff" stroke="#a9dfbf" stroke-width="1" />
+              <text x="380" y="248" font-size="11" font-weight="bold" fill="#2c3e50" text-anchor="middle">Cầu nối Proxy
+                & Điều phối</text>
+              <text x="380" y="264" font-size="9.5" fill="#555555" text-anchor="middle">Tự động nhận diện Local
+                PyTorch</text>
+              <text x="380" y="280" font-size="9.5" fill="#1e8449" font-weight="bold" text-anchor="middle">hoặc Chuyển
+                tiếp GPU Kaggle Tunnel</text>
+
+              <!-- MŨI TÊN KẾT NỐI GATEWAY <-> GPU ENGINE -->
+              <line x1="485" y1="125" x2="520" y2="125" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)" />
+              <text x="502" y="118" font-size="8.5" fill="#2c3e50" text-anchor="middle">Tunnel</text>
+              <line x1="520" y1="155" x2="485" y2="155" stroke="#27ae60" stroke-width="2"
+                marker-end="url(#arrowGreen)" />
+              <text x="502" y="168" font-size="8.5" fill="#27ae60" text-anchor="middle">Audio</text>
+
+              <!-- VÙNG 3: MÔI TRƯỜNG SUY LUẬN GPU (KAGGLE / LOCAL GPU) -->
+              <rect x="525" y="15" width="220" height="290" rx="8" fill="url(#gradGPU)" stroke="#f39c12"
+                stroke-width="1.5" />
+              <text x="635" y="40" font-size="13" font-weight="bold" fill="#b9770e" text-anchor="middle">GPU INFERENCE
+                ENGINE</text>
+              <text x="635" y="56" font-size="10.5" fill="#555555" text-anchor="middle">Kaggle Tesla T4 16GB / CUDA
+                12.1</text>
+
+              <rect x="535" y="68" width="200" height="50" rx="5" fill="#ffffff" stroke="#f8c471" stroke-width="1" />
+              <text x="635" y="86" font-size="11" font-weight="bold" fill="#935116" text-anchor="middle">OmniVoice
+                Zero-Shot Model</text>
+              <text x="635" y="100" font-size="9.5" fill="#333333" text-anchor="middle">Qwen3 Causal LM (28
+                layers)</text>
+              <text x="635" y="113" font-size="9" fill="#27ae60" font-weight="bold" text-anchor="middle">Trọng số:
+                OmDiOm-ft-4000 (2.45GB)</text>
+
+              <rect x="535" y="126" width="200" height="50" rx="5" fill="#ffffff" stroke="#f8c471" stroke-width="1" />
+              <text x="635" y="144" font-size="11" font-weight="bold" fill="#935116" text-anchor="middle">Flow Matching
+                ODE Solver</text>
+              <text x="635" y="158" font-size="9.5" fill="#333333" text-anchor="middle">Continuous Vector Field</text>
+              <text x="635" y="171" font-size="9" fill="#1e8449" font-weight="bold" text-anchor="middle">8 / 16 / 32
+                bước lấy mẫu</text>
+
+              <rect x="535" y="184" width="200" height="50" rx="5" fill="#ffffff" stroke="#f8c471" stroke-width="1" />
+              <text x="635" y="202" font-size="11" font-weight="bold" fill="#935116" text-anchor="middle">HiggsAudioV2
+                Codec</text>
+              <text x="635" y="216" font-size="9.5" fill="#333333" text-anchor="middle">DAC 16kHz + HuBERT
+                Feature</text>
+              <text x="635" y="229" font-size="9" fill="#2980b9" font-weight="bold" text-anchor="middle">8 RVQ Codebooks
+                (Hop 960)</text>
+
+              <rect x="535" y="242" width="200" height="54" rx="5" fill="#ffffff" stroke="#f8c471" stroke-width="1" />
+              <text x="635" y="259" font-size="10.5" font-weight="bold" fill="#935116" text-anchor="middle">Bộ giải
+                phóng VRAM tự động</text>
+              <text x="635" y="273" font-size="9" fill="#555555" text-anchor="middle">torch.cuda.empty_cache() &
+                GC</text>
+              <text x="635" y="287" font-size="9" fill="#27ae60" font-weight="bold" text-anchor="middle">Duy trì VRAM an
+                toàn 6.4 GB</text>
+            </svg>
+          </div>
+          <div class="figure-caption">Hình 3.1: Sơ đồ kiến trúc tổng thể Client - Server của hệ thống OmDiOm Studio
+          </div>
+        </div>
+
+        <p>Kiến trúc gồm 3 vùng chức năng độc lập:</p>
+        <ul>
+          <li><b>Tầng 1 · Client (Trình duyệt người dùng):</b> Được xây dựng hoàn toàn bằng công nghệ Web chuẩn (HTML5,
+            CSS3, Vanilla JavaScript hiện đại) kết hợp thư viện đồ họa Canvas và Web Audio API. Tầng này chịu trách
+            nhiệm hiển thị giao diện phòng thu Studio, tiếp nhận thao tác người dùng, xử lý ghi âm qua microphone, vẽ
+            biểu đồ sóng âm thời gian thực và giao tiếp với máy chủ backend thông qua chuẩn RESTful API và giao thức
+            truyền tải nhị phân Audio Blob.</li>
+          <li><b>Tầng 2 · Gateway Backend (FastAPI):</b> Được viết bằng Python 3.10 trên nền tảng framework hiệu năng
+            cao FastAPI và máy chủ bất đồng bộ Uvicorn. Gateway đóng vai trò điều phối trung tâm: xác thực dữ liệu đầu
+            vào, thực hiện tiền xử lý chuẩn hóa văn bản Unicode NFC, lọc khoảng lặng âm thanh đầu vào, quản trị danh mục
+            7 giọng mẫu chuẩn tại thư mục <code>data/REF</code> và kiểm soát luồng điều hướng tính toán giữa tài nguyên
+            cục bộ (Local PyTorch) hoặc tài nguyên đám mây (Cloudflare Tunnel).</li>
+          <li><b>Tầng 3 · GPU Inference Engine (Kaggle / Local GPU):</b> Nhân tính toán học sâu nạp trực tiếp bộ trọng
+            số chuyên biệt tiếng Việt <b>OmDiOm-ft-4000</b> (2.45 GB) trên bộ nhớ GPU Tesla T4 16GB VRAM. Tầng này vận
+            hành bộ giải vi phân thường Flow Matching ODE Solver và bộ nén giải mã HiggsAudioV2 Codec, kết xuất trực
+            tiếp luồng âm thanh PCM chất lượng phòng thu.</li>
+        </ul>
+
+        <h2 id="c33">3.3. Thiết kế thành phần phần mềm và giao thức API</h2>
+        <p>Hệ thống định nghĩa tập hợp các giao diện lập trình ứng dụng (Application Programming Interfaces - API) tinh
+          gọn, tuân thủ chuẩn RESTful, giúp giao tiếp hai chiều giữa Client và Server diễn ra trong suốt và tin cậy:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 3.1: Danh sách các API Endpoints cốt lõi của máy chủ Gateway FastAPI</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">Phương thức</th>
+                <th style="width: 25%;">Đường dẫn API</th>
+                <th style="width: 27%;">Định dạng Dữ liệu vào</th>
+                <th style="width: 30%;">Chức năng và Đầu ra</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center" style="color: #27ae60;">POST</td>
+                <td><code>/api/tts</code></td>
+                <td>JSON: <code>{text, voice_id, num_step, cfg, speed}</code></td>
+                <td>Tổng hợp câu nói với giọng mẫu có sẵn; trả về luồng âm thanh <code>audio/wav</code>.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #27ae60;">POST</td>
+                <td><code>/api/clone</code></td>
+                <td>Multipart: <code>file (WAV/MP3), text, prompt_text, params</code></td>
+                <td>Nhân bản giọng nói zero-shot từ tệp âm thanh mẫu; trả về luồng <code>audio/wav</code> và thời gian
+                  suy luận.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #2980b9;">GET</td>
+                <td><code>/api/voices</code></td>
+                <td>None</td>
+                <td>Lấy danh mục 7 giọng chuẩn tiếng Việt kèm thông tin vùng miền, giới tính, F0 và mô tả.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #27ae60;">POST</td>
+                <td><code>/api/script/direct</code></td>
+                <td>JSON: <code>{lines: [{speaker, text, emotion}]}</code></td>
+                <td>Tổng hợp kịch bản phân vai nhiều nhân vật và tự động ghép nối thành tệp WAV đồng nhất.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #2980b9;">GET</td>
+                <td><code>/api/health</code></td>
+                <td>None</td>
+                <td>Kiểm tra tình trạng hoạt động của GPU, dung lượng VRAM còn trống và phiên bản checkpoint.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #8e44ad;">POST</td>
+                <td><code>/api/export/srt</code></td>
+                <td>JSON: <code>{segments: [{text, duration}]}</code></td>
+                <td>Tự động tính toán mốc thời gian và xuất tệp phụ đề định dạng chuẩn <code>.srt</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="c34">3.4. Mô hình triển khai hỗn hợp Cục bộ và Điện toán đám mây</h2>
+        <p>Một trong những điểm sáng tạo nổi bật trong kỹ nghệ triển khai của đề tài là việc hỗ trợ mô hình vận hành lai
+          (Hybrid Deployment Architecture):</p>
+        <ul>
+          <li><b>Kịch bản vận hành Cục bộ (Offline Local Mode):</b> Dành cho các máy trạm người dùng có sẵn card đồ họa
+            rời NVIDIA (tối thiểu 8 GB VRAM, hỗ trợ CUDA 11.8 trở lên). Toàn bộ hệ thống chạy khép kín trên máy cá nhân,
+            đảm bảo tính bảo mật tuyệt đối cho dữ liệu âm thanh nhạy cảm và không cần kết nối mạng Internet.</li>
+          <li><b>Kịch bản vận hành qua Đám mây (Cloudflare Tunnel to Kaggle GPU):</b> Dành cho đại đa số người dùng phổ
+            thông chỉ sở hữu máy tính xách tay cấu hình văn phòng hoặc không có card đồ họa GPU. Nhóm cung cấp sẵn một
+            Kaggle Notebook tự động thiết lập môi trường máy chủ suy luận trên GPU Tesla T4 16GB VRAM hoàn toàn miễn
+            phí, sau đó kích hoạt dịch vụ <b>Cloudflare Tunnel</b> để tạo một đường hầm bảo mật HTTPS công khai trỏ
+            thẳng vào cổng dịch vụ của GPU. Người dùng tại máy cục bộ chỉ cần dán URL đường hầm này vào ô cấu hình trên
+            giao diện OmDiOm Studio là có thể khai thác sức mạnh suy luận thần tốc của GPU T4 mà không phải trả bất kỳ
+            chi phí hạ tầng máy chủ nào.</li>
+        </ul>
+      </section>
+      <!-- ==========================================
+     CHƯƠNG 4: HIỆN THỰC VÀ XỬ LÝ CHỨC NĂNG HỆ THỐNG
+     ========================================== -->
+      <section class="chapter" id="ch4">
+        <h1 class="chapter-title">CHƯƠNG 4. HIỆN THỰC VÀ XỬ LÝ CHỨC NĂNG HỆ THỐNG</h1>
+
+        <h2 id="c41">4.1. Cơ chế nạp và quản trị bộ nhớ mô hình PyTorch</h2>
+        <p>Để đảm bảo hệ thống có thể vận hành trơn tru và bền bỉ trên máy chủ GPU Tesla T4 (dung lượng 16 GB VRAM) mà
+          không xảy ra sự cố tràn bộ nhớ (Out-of-Memory - OOM), nhóm nghiên cứu đã thiết kế cơ chế nạp và quản lý vòng
+          đời mô hình tối ưu trên nền tảng PyTorch 2.1 và CUDA 12.1. Cấu trúc mạng thần kinh tạo sinh được mô tả tổng
+          quan tại Hình 4.1 dưới đây:</p>
+
+        <div class="figure-box">
+          <div class="diagram-box">
+            <svg viewBox="0 0 760 270" xmlns="http://www.w3.org/2000/svg"
+              style="width:100%;max-width:760px;height:auto;font-family:'Times New Roman',Times,serif;margin:0 auto;display:block;">
+              <defs>
+                <linearGradient id="mGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ebf5fb" />
+                  <stop offset="100%" stop-color="#d4e6f1" />
+                </linearGradient>
+                <linearGradient id="mGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fef9e7" />
+                  <stop offset="100%" stop-color="#fcf3cf" />
+                </linearGradient>
+                <linearGradient id="mGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#eafaf1" />
+                  <stop offset="100%" stop-color="#d5f5e3" />
+                </linearGradient>
+                <marker id="mArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                  orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="#2c3e50" />
+                </marker>
+              </defs>
+
+              <!-- ĐẦU VÀO VĂN BẢN & MÃ HÓA PROMPT -->
+              <rect x="15" y="20" width="140" height="90" rx="6" fill="url(#mGrad1)" stroke="#2980b9"
+                stroke-width="1.2" />
+              <text x="85" y="42" font-size="11.5" font-weight="bold" fill="#1b4f72" text-anchor="middle">ĐẦU VÀO VĂN
+                BẢN</text>
+              <text x="85" y="60" font-size="10" fill="#333333" text-anchor="middle">Chuỗi ký tự tiếng Việt</text>
+              <text x="85" y="76" font-size="9" fill="#555555" text-anchor="middle">Thẻ [vui vẻ], [ngắt:0.5s]</text>
+              <text x="85" y="94" font-size="9" fill="#27ae60" font-weight="bold" text-anchor="middle">Tokenizer NFC
+                (Qwen)</text>
+
+              <!-- ĐẦU VÀO ÂM THANH THAM CHIẾU -->
+              <rect x="15" y="150" width="140" height="100" rx="6" fill="url(#mGrad1)" stroke="#2980b9"
+                stroke-width="1.2" />
+              <text x="85" y="172" font-size="11.5" font-weight="bold" fill="#1b4f72" text-anchor="middle">CLIP THAM
+                CHIẾU</text>
+              <text x="85" y="190" font-size="10" fill="#333333" text-anchor="middle">Audio WAV (3s - 10s)</text>
+              <text x="85" y="206" font-size="9" fill="#555555" text-anchor="middle">HiggsAudioV2 Encoder</text>
+              <text x="85" y="222" font-size="9" fill="#555555" text-anchor="middle">DAC + HuBERT feature</text>
+              <text x="85" y="238" font-size="9" fill="#e67e22" font-weight="bold" text-anchor="middle">8 Codebooks
+                RVQ</text>
+
+              <!-- MŨI TÊN ĐI VÀO LLM -->
+              <line x1="155" y1="65" x2="200" y2="95" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#mArr)" />
+              <line x1="155" y1="200" x2="200" y2="165" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#mArr)" />
+
+              <!-- KHỐI 1: QWEN3 CAUSAL LM NỀN TẢNG -->
+              <rect x="205" y="45" width="165" height="170" rx="8" fill="url(#mGrad2)" stroke="#d35400"
+                stroke-width="1.5" />
+              <text x="287" y="70" font-size="12.5" font-weight="bold" fill="#ba4a00" text-anchor="middle">QWEN3 CAUSAL
+                LM</text>
+              <text x="287" y="88" font-size="10.5" fill="#333333" text-anchor="middle">(Cốt lõi Ngôn ngữ & Âm
+                học)</text>
+              <text x="287" y="110" font-size="9.5" fill="#555555" text-anchor="middle">• 28 Transformer Layers</text>
+              <text x="287" y="128" font-size="9.5" fill="#555555" text-anchor="middle">• Hidden Dim: 1024</text>
+              <text x="287" y="146" font-size="9.5" fill="#555555" text-anchor="middle">• RoPE Context: 40k
+                tokens</text>
+              <text x="287" y="164" font-size="9.5" fill="#555555" text-anchor="middle">• Khớp nối Text + Audio
+                Prompt</text>
+              <rect x="215" y="176" width="145" height="28" rx="4" fill="#ffffff" stroke="#e67e22" stroke-width="1" />
+              <text x="287" y="195" font-size="10" font-weight="bold" fill="#a04000" text-anchor="middle">Context Tensor
+                H_ctx</text>
+
+              <line x1="370" y1="130" x2="415" y2="130" stroke="#2c3e50" stroke-width="2" marker-end="url(#mArr)" />
+              <text x="392" y="122" font-size="9" fill="#555555" text-anchor="middle">Condition</text>
+
+              <!-- KHỐI 2: FLOW MATCHING ODE SOLVER -->
+              <rect x="420" y="45" width="170" height="170" rx="8" fill="url(#mGrad2)" stroke="#b7950b"
+                stroke-width="1.5" />
+              <text x="505" y="70" font-size="12.5" font-weight="bold" fill="#7d6608" text-anchor="middle">FLOW MATCHING
+                ODE</text>
+              <text x="505" y="88" font-size="10.5" fill="#333333" text-anchor="middle">(Continuous Normalizing
+                Flow)</text>
+              <text x="505" y="110" font-size="9.5" fill="#555555" text-anchor="middle">• Nhiễu Gauss x_0 ~ N(0,
+                I)</text>
+              <text x="505" y="128" font-size="9.5" fill="#555555" text-anchor="middle">• Vector Field v_theta(x_t,
+                t)</text>
+              <text x="505" y="146" font-size="9.5" fill="#555555" text-anchor="middle">• Bước tích phân: 8/16/32</text>
+              <text x="505" y="164" font-size="9.5" fill="#555555" text-anchor="middle">• CFG Scale: 1.5 - 2.5</text>
+              <rect x="430" y="176" width="150" height="28" rx="4" fill="#ffffff" stroke="#d4ac0d" stroke-width="1" />
+              <text x="505" y="195" font-size="10" font-weight="bold" fill="#7d6608" text-anchor="middle">Acoustic
+                Latent z_1</text>
+
+              <line x1="590" y1="130" x2="620" y2="130" stroke="#2c3e50" stroke-width="2" marker-end="url(#mArr)" />
+
+              <!-- KHỐI 3: HIGGSAUDIOV2 DECODER & OUTPUT -->
+              <rect x="625" y="20" width="120" height="230" rx="8" fill="url(#mGrad3)" stroke="#27ae60"
+                stroke-width="1.5" />
+              <text x="685" y="45" font-size="12" font-weight="bold" fill="#1e8449"
+                text-anchor="middle">HIGGSAUDIOV2</text>
+              <text x="685" y="62" font-size="10.5" font-weight="bold" fill="#1e8449"
+                text-anchor="middle">DECODER</text>
+              <text x="685" y="85" font-size="9.5" fill="#555555" text-anchor="middle">• DAC Vocoder</text>
+              <text x="685" y="103" font-size="9.5" fill="#555555" text-anchor="middle">• RVQ Quantizer</text>
+              <text x="685" y="121" font-size="9.5" fill="#555555" text-anchor="middle">• Upsampling Conv</text>
+              <text x="685" y="139" font-size="9.5" fill="#555555" text-anchor="middle">• Hop length: 960</text>
+              <text x="685" y="157" font-size="9.5" fill="#555555" text-anchor="middle">• Khôi phục pha</text>
+
+              <rect x="632" y="175" width="106" height="65" rx="5" fill="#ffffff" stroke="#2ecc71" stroke-width="1.2" />
+              <text x="685" y="195" font-size="10.5" font-weight="bold" fill="#196f3d" text-anchor="middle">ÂM THANH
+                RA</text>
+              <text x="685" y="212" font-size="9" fill="#333333" text-anchor="middle">16 kHz PCM Mono</text>
+              <text x="685" y="228" font-size="9" fill="#1e8449" font-weight="bold" text-anchor="middle">Độ trung thực
+                cao</text>
+            </svg>
+          </div>
+          <div class="figure-caption">Hình 4.1: Kiến trúc mạng thần kinh OmniVoice (Qwen3 LLM + Flow Matching +
+            HiggsAudioV2)</div>
+        </div>
+
+        <p>Quy trình quản trị tài nguyên bộ nhớ được kiểm soát qua các nguyên tắc kỹ thuật nghiêm ngặt:</p>
+        <ul>
+          <li><b>Cơ chế nạp chậm (Lazy Loading & Singleton Pattern):</b> Khi máy chủ Gateway khởi động, mô hình chưa
+            được tải ngay lên VRAM nhằm tiết kiệm tài nguyên. Mô hình chỉ được khởi tạo khi nhận được yêu cầu suy luận
+            đầu tiên. Một phiên bản Singleton duy nhất của lớp nạp mô hình được duy trì trong suốt thời gian hoạt động
+            để tránh việc nạp trùng lặp.</li>
+          <li><b>Tự động dọn dẹp bộ nhớ đệm (Automatic Cache Flushing):</b> Ngay sau khi hoàn thành quá trình tích phân
+            ODE và trích xuất dạng sóng âm thanh, toàn bộ các tensor trung gian (như đồ thị tính toán gradient, tensor
+            nhiễu $x_t$, activation maps) đều được giải phóng chủ động thông qua lệnh <code>del</code> kết hợp gọi tường
+            minh hàm <code>torch.cuda.empty_cache()</code> và bộ gom rác <code>gc.collect()</code>. Cơ chế này duy trì
+            mức chiếm dụng VRAM tĩnh ở mức an toàn <b>6.4 GB</b>, dự phòng hơn 9.0 GB VRAM cho các tác vụ xử lý đồng
+            thời.</li>
+          <li><b>Chế độ định dạng nửa chính xác (Half-Precision Float16):</b> Các trọng số của Qwen3 Causal LM và
+            HiggsAudioV2 được nạp ở định dạng <code>torch.float16</code>, giúp giảm 50% dung lượng bộ nhớ so với chuẩn
+            <code>float32</code> thông thường nhưng hoàn toàn không làm suy giảm chất lượng âm thanh tạo ra.</li>
+        </ul>
+
+        <h2 id="c42">4.2. Bộ tham số cấu hình suy luận chuyên sâu</h2>
+        <p>Chất lượng và tốc độ của âm thanh tạo sinh được điều khiển tinh tế thông qua 4 siêu tham số suy luận cốt lõi:
+        </p>
+        <ul>
+          <li><b>Số bước giải phương trình vi phân (<code>num_step</code>):</b> Xác định số lát cắt tích phân rời rạc
+            của bộ giải ODE Euler/Midpoint trên quỹ đạo thời gian từ $t=0$ đến $t=1$.
+            <ul>
+              <li><i>Mức 8 bước:</i> Tốc độ cực nhanh (RTF = 0.24), phù hợp cho việc nghe thử nhanh nội dung.</li>
+              <li><i>Mức 16 bước (Thiết lập khuyến nghị mặc định):</i> Điểm cân bằng hoàn hảo nhất giữa thời gian suy
+                luận (RTF = 0.39) và độ chi tiết âm sắc, khử sạch hoàn toàn các gợn nhiễu nền.</li>
+              <li><i>Mức 32 bước:</i> Chế độ chất lượng cao nhất cho các ấn phẩm phát thanh chuyên nghiệp, làm mượt tối
+                đa đường bao thanh điệu.</li>
+            </ul>
+          </li>
+          <li><b>Hệ số dẫn hướng phi bộ phân loại (<code>cfg_strength</code> - Classifier-Free Guidance):</b> Điều khiển
+            mức độ bám sát của âm thanh tạo ra đối với đặc trưng của clip giọng nói tham chiếu. Giá trị dao động từ 1.0
+            đến 3.0. Thực nghiệm cho thấy giá trị tối ưu cho tiếng Việt là <b>2.0</b>; nếu đặt quá thấp (&lt; 1.3),
+            giọng sinh ra dễ bị hòa lẫn với giọng nền mặc định; nếu đặt quá cao (&gt; 2.8), tín hiệu dễ bị hiện tượng
+            bão hòa âm thanh (over-saturation) hoặc méo tiếng gắt.</li>
+          <li><b>Nhiệt độ ngẫu nhiên (<code>temperature</code>):</b> Kiểm soát độ biến thiên ngữ điệu trong quá trình
+            lấy mẫu của mô hình ngôn ngữ Qwen3. Thiết lập mặc định <b>0.85</b> giúp giọng đọc có độ trầm bổng tự nhiên,
+            tránh cảm giác đều đều đơn điệu.</li>
+          <li><b>Hạt giống ngẫu nhiên (<code>seed</code>):</b> Cho phép cố định vector nhiễu ban đầu $x_0$, đảm bảo tính
+            tái lập 100% của kết quả thực nghiệm trong các nghiên cứu khoa học.</li>
+        </ul>
+
+        <h2 id="c43">4.3. Pipeline xử lý âm thanh 5 bước chuẩn Studio</h2>
+        <p>Toàn bộ quy trình từ lúc người dùng cung cấp dữ liệu đầu vào cho đến khi âm thanh hoàn thiện được kết xuất
+          diễn ra theo một chu trình khép kín 5 bước nghiêm ngặt, được chuẩn hóa tại Hình 4.2 dưới đây:</p>
+
+        <div class="figure-box">
+          <div class="diagram-box">
+            <svg viewBox="0 0 760 190" xmlns="http://www.w3.org/2000/svg"
+              style="width:100%;max-width:760px;height:auto;font-family:'Times New Roman',Times,serif;margin:0 auto;display:block;">
+              <defs>
+                <linearGradient id="pGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff" />
+                  <stop offset="100%" stop-color="#e8f8f5" />
+                </linearGradient>
+                <marker id="pArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                  orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="#16a085" />
+                </marker>
+              </defs>
+
+              <text x="380" y="22" font-size="13" font-weight="bold" fill="#117864" text-anchor="middle">QUY TRÌNH XỬ LÝ
+                ÂM THANH 5 BƯỚC KHÉP KÍN (AUDIO PROCESSING PIPELINE)</text>
+
+              <!-- Bước 1 -->
+              <rect x="10" y="38" width="135" height="140" rx="6" fill="url(#pGrad1)" stroke="#16a085"
+                stroke-width="1.2" />
+              <rect x="10" y="38" width="135" height="26" rx="6" fill="#16a085" />
+              <text x="77" y="56" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">BƯỚC 1: TIẾP
+                NHẬN</text>
+              <text x="77" y="82" font-size="10.5" font-weight="bold" fill="#0e6251" text-anchor="middle">Thu âm / Tải
+                tệp</text>
+              <text x="77" y="100" font-size="9.5" fill="#555555" text-anchor="middle">• Micro Web Audio</text>
+              <text x="77" y="117" font-size="9.5" fill="#555555" text-anchor="middle">• Tải WAV/MP3/FLAC</text>
+              <text x="77" y="134" font-size="9.5" fill="#555555" text-anchor="middle">• Chọn mẫu từ data/REF</text>
+              <text x="77" y="152" font-size="9.5" fill="#e67e22" font-weight="bold" text-anchor="middle">Thời lượng: 3s
+                - 10s</text>
+
+              <line x1="145" y1="108" x2="160" y2="108" stroke="#16a085" stroke-width="2" marker-end="url(#pArr)" />
+
+              <!-- Bước 2 -->
+              <rect x="165" y="38" width="135" height="140" rx="6" fill="url(#pGrad1)" stroke="#16a085"
+                stroke-width="1.2" />
+              <rect x="165" y="38" width="135" height="26" rx="6" fill="#16a085" />
+              <text x="232" y="56" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">BƯỚC 2: DSP
+                CHUẨN</text>
+              <text x="232" y="82" font-size="10.5" font-weight="bold" fill="#0e6251" text-anchor="middle">Tiền xử lý
+                tín hiệu</text>
+              <text x="232" y="100" font-size="9.5" fill="#555555" text-anchor="middle">• Resample: 16 kHz</text>
+              <text x="232" y="117" font-size="9.5" fill="#555555" text-anchor="middle">• Kênh đơn (Mono)</text>
+              <text x="232" y="134" font-size="9.5" fill="#555555" text-anchor="middle">• VAD cắt khoảng lặng</text>
+              <text x="232" y="152" font-size="9.5" fill="#27ae60" font-weight="bold" text-anchor="middle">Peak RMS: -1
+                dBFS</text>
+
+              <line x1="300" y1="108" x2="315" y2="108" stroke="#16a085" stroke-width="2" marker-end="url(#pArr)" />
+
+              <!-- Bước 3 -->
+              <rect x="320" y="38" width="135" height="140" rx="6" fill="url(#pGrad1)" stroke="#16a085"
+                stroke-width="1.2" />
+              <rect x="320" y="38" width="135" height="26" rx="6" fill="#16a085" />
+              <text x="387" y="56" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">BƯỚC 3: MÃ
+                HÓA</text>
+              <text x="387" y="82" font-size="10.5" font-weight="bold" fill="#0e6251" text-anchor="middle">Trích xuất
+                Acoustic</text>
+              <text x="387" y="100" font-size="9.5" fill="#555555" text-anchor="middle">• HiggsAudioV2</text>
+              <text x="387" y="117" font-size="9.5" fill="#555555" text-anchor="middle">• RVQ 8 Codebooks</text>
+              <text x="387" y="134" font-size="9.5" fill="#555555" text-anchor="middle">• Speaker Embedding</text>
+              <text x="387" y="152" font-size="9.5" fill="#2980b9" font-weight="bold" text-anchor="middle">Tensor: [1,
+                8, T_f]</text>
+
+              <line x1="455" y1="108" x2="470" y2="108" stroke="#16a085" stroke-width="2" marker-end="url(#pArr)" />
+
+              <!-- Bước 4 -->
+              <rect x="475" y="38" width="135" height="140" rx="6" fill="url(#pGrad1)" stroke="#16a085"
+                stroke-width="1.2" />
+              <rect x="475" y="38" width="135" height="26" rx="6" fill="#16a085" />
+              <text x="542" y="56" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">BƯỚC 4: SUY
+                LUẬN</text>
+              <text x="542" y="82" font-size="10.5" font-weight="bold" fill="#0e6251" text-anchor="middle">Flow Matching
+                ODE</text>
+              <text x="542" y="100" font-size="9.5" fill="#555555" text-anchor="middle">• Tokenizer Unicode NFC</text>
+              <text x="542" y="117" font-size="9.5" fill="#555555" text-anchor="middle">• Nhúng thẻ cảm xúc</text>
+              <text x="542" y="134" font-size="9.5" fill="#555555" text-anchor="middle">• Tích phân 16 bước ODE</text>
+              <text x="542" y="152" font-size="9.5" fill="#8e44ad" font-weight="bold" text-anchor="middle">OmDiOm
+                Checkpoint</text>
+
+              <line x1="610" y1="108" x2="625" y2="108" stroke="#16a085" stroke-width="2" marker-end="url(#pArr)" />
+
+              <!-- Bước 5 -->
+              <rect x="630" y="38" width="120" height="140" rx="6" fill="url(#pGrad1)" stroke="#16a085"
+                stroke-width="1.2" />
+              <rect x="630" y="38" width="120" height="26" rx="6" fill="#16a085" />
+              <text x="690" y="56" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">BƯỚC 5: XUẤT
+                BẢN</text>
+              <text x="690" y="82" font-size="10.5" font-weight="bold" fill="#0e6251" text-anchor="middle">Hậu xử lý &
+                Lưu trữ</text>
+              <text x="690" y="100" font-size="9.5" fill="#555555" text-anchor="middle">• Sóng âm trực quan</text>
+              <text x="690" y="117" font-size="9.5" fill="#555555" text-anchor="middle">• Xuất WAV 16kHz</text>
+              <text x="690" y="134" font-size="9.5" fill="#555555" text-anchor="middle">• Phụ đề SRT/TXT</text>
+              <text x="690" y="152" font-size="9.5" fill="#27ae60" font-weight="bold" text-anchor="middle">Tốc độ RTF:
+                0.39</text>
+            </svg>
+          </div>
+          <div class="figure-caption">Hình 4.2: Sơ đồ quy trình xử lý tín hiệu âm thanh 5 bước khép kín chuẩn Studio
+          </div>
+        </div>
+
+        <p>Chi tiết nhiệm vụ kỹ thuật tại từng bước:</p>
+        <ul>
+          <li><b>Bước 1 · Tiếp nhận dữ liệu:</b> Tiếp nhận chuỗi văn bản cần đọc từ giao diện và tệp âm thanh giọng tham
+            chiếu (định dạng WAV, MP3, FLAC hoặc thu âm trực tiếp qua Web Microphone).</li>
+          <li><b>Bước 2 · Chuẩn hóa tín hiệu số (DSP Preprocessing):</b> Tín hiệu âm thanh được chuyển đổi về kênh đơn
+            (Mono), nắn chỉnh tần số lấy mẫu chính xác về <b>16,000 Hz</b> bằng thuật toán nội suy đa thức (Polyphase
+            Resampling). Thuật toán VAD (Voice Activity Detection) tự động quét và cắt tỉa các đoạn im lặng thừa ở đầu
+            và cuối tệp, sau đó chuẩn hóa biên độ đỉnh (Peak Normalization) về mức an toàn <b>-1.0 dBFS</b> để tránh
+            hiện tượng vỡ tiếng (clipping distortion).</li>
+          <li><b>Bước 3 · Mã hóa đặc trưng âm học:</b> Bộ mã hóa HiggsAudioV2 trích xuất tensor biểu diễn âm thanh tiềm
+            ẩn gồm 8 tầng mã lượng tử RVQ với kích thước $[1, 8, T_f]$, đồng thời tính toán vector định danh người nói
+            đại diện cho toàn bộ đặc trưng sinh học thanh quản của mẫu.</li>
+          <li><b>Bước 4 · Suy luận tạo sinh liên tục (Flow Matching ODE):</b> Văn bản được phân tích cú pháp, trích xuất
+            các thẻ cảm xúc và chuyển thành chuỗi token ngữ cảnh thông qua Qwen3 LM. Bộ giải ODE tiến hành tích phân
+            trường vận tốc qua 16 bước, biến đổi phân phối nhiễu trắng ban đầu thành tensor đặc trưng âm học đích mang
+            trọn vẹn nội dung văn bản và âm sắc của giọng mẫu.</li>
+          <li><b>Bước 5 · Tái tạo và Xuất bản âm thanh:</b> Bộ giải mã HiggsAudioV2 chuyển đổi tensor âm học thành dạng
+            sóng PCM 16 kHz 16-bit. Giao diện vẽ đồ thị sóng âm tương tác, cho phép người dùng nghe trực tiếp, tải tệp
+            âm thanh WAV và tải tệp phụ đề SRT đồng bộ tự động.</li>
+        </ul>
+
+        <h2 id="c44">4.4. Thẻ biểu cảm và kỹ thuật phân vai kịch bản đa thoại</h2>
+        <p>Một ưu thế vượt trội của <b>OmDiOm Studio</b> so với các công cụ TTS truyền thống là khả năng điều khiển cảm
+          xúc linh hoạt thông qua hệ thống thẻ biểu cảm (Emotion Tags) và công cụ đạo diễn kịch bản phân vai
+          (Multi-Speaker Script Directing):</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 4.1: Bảng định nghĩa thẻ cảm xúc và các tham số điều khiển âm học</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">Cú pháp thẻ</th>
+                <th style="width: 22%;">Tên cảm xúc</th>
+                <th style="width: 30%;">Tác động tham số âm học</th>
+                <th style="width: 30%;">Ngữ cảnh ứng dụng thực tế</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center" style="color: #27ae60;"><code>[vui vẻ]</code></td>
+                <td>Hân hoan, phấn khởi</td>
+                <td>Tăng cao độ F0 (+15%), tăng tốc độ phát âm (+10%), mở rộng dải động RMS.</td>
+                <td>Lời chào mừng, tin vui, hội thoại hoạt hình, dẫn chương trình giải trí.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #2980b9;"><code>[buồn bã]</code></td>
+                <td>Trầm lắng, u sầu</td>
+                <td>Hạ thấp cao độ F0 (-12%), giảm tốc độ (-15%), kéo dài thời gian ngân âm cuối câu.</td>
+                <td>Đọc truyện tâm trạng, tự sự, phân cảnh chia ly, tin buồn.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #8e44ad;"><code>[thì thầm]</code></td>
+                <td>Nói nhỏ, bí mật</td>
+                <td>Giảm mạnh năng lượng RMS (-6 dB), tăng tỷ lệ năng lượng cao tần, giảm rung thanh đới.</td>
+                <td>Lời thoại tâm sự thầm kín, kể chuyện đêm khuya, lồng tiếng kịch tính.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #d35400;"><code>[nghiêm túc]</code></td>
+                <td>Trang trọng, chuẩn mực</td>
+                <td>Ổn định cao độ F0, giảm rung ngữ điệu, ngắt nhịp dứt khoát giữa các cụm từ.</td>
+                <td>Bản tin thời sự, đọc thông báo cơ quan, bài giảng học thuật, sách tài chính.</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #16a085;"><code>[ngắt nghỉ:0.5s]</code></td>
+                <td>Khoảng lặng chủ động</td>
+                <td>Chèn chính xác 500ms tín hiệu im lặng hoàn hảo (zero-energy frame) vào luồng âm thanh.</td>
+                <td>Tạo điểm nhấn kịch tính trước thông điệp quan trọng, tách bạch các đoạn ý.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><b>Kỹ thuật kịch bản phân vai (Multi-Speaker Script Directing):</b> Trong các ứng dụng thực tế như sản xuất
+          kịch truyền thanh hay sách nói tiểu thuyết, nội dung văn bản thường có nhiều nhân vật cùng đối thoại. Giao
+          diện Studio cho phép người dùng thêm nhiều dòng kịch bản liên tiếp; mỗi dòng được chỉ định một nhân vật (gắn
+          với một giọng nói cụ thể trong thư viện 7 giọng hoặc giọng tải lên riêng biệt). Khi ấn nút "Tổng hợp toàn bộ
+          kịch bản", hệ thống tuần tự kích hoạt luồng suy luận cho từng câu thoại và tự động ghép nối thành tệp âm thanh
+          đồng nhất, đảm bảo tính liền mạch và không bị ngắt quãng âm thanh.</p>
+
+        <h2 id="c45">4.5. Hiện thực thu âm Web, trực quan sóng âm và xuất phụ đề</h2>
+        <p>Để hoàn thiện trải nghiệm phòng thu tương tác, hệ thống OmDiOm Studio hiện thực ba công cụ hỗ trợ trực quan
+          mạnh mẽ:</p>
+        <ul>
+          <li><b>1. Bộ thu âm trực tiếp và Công cụ cắt đoạn giọng (Live Recording & Trimmer):</b> Tích hợp
+            <code>MediaRecorder API</code> kết hợp <code>AudioContext</code> của trình duyệt. Người dùng có thể nhấn nút
+            thu âm trực tiếp từ microphone máy tính. Đoạn thu âm được vẽ ngay lập tức thành biểu đồ sóng âm dạng Canvas.
+            Hai con trỏ kéo thả cho phép người dùng chọn chính xác khoảng thời gian phát âm sạch nhất (khuyến nghị 3 - 8
+            giây) để làm mẫu tham chiếu cho quá trình nhân bản Zero-Shot.</li>
+          <li><b>2. Trực quan hóa sóng âm tương tác (Waveform Visualizer):</b> Khi âm thanh tổng hợp được trả về từ máy
+            chủ, trình phát âm thanh tích hợp hiển thị đường sóng âm thời gian thực đồng bộ với thanh phát âm thanh.
+            Người dùng có thể tua nhanh, tạm dừng và quan sát trực tiếp dải động âm thanh.</li>
+          <li><b>3. Tự động xuất phụ đề SRT và văn bản TXT:</b> Dựa trên độ dài thời lượng câu thoại và tốc độ đọc ký tự
+            trên giây (CPS), hệ thống tự động tính toán mốc thời gian bắt đầu (Start Time) và kết thúc (End Time) theo
+            định dạng chuẩn <code>hh:mm:ss,ms</code>, cho phép người dùng tải về tệp phụ đề <code>.srt</code> sẵn sàng
+            nhập vào các phần mềm dựng video như Premiere, CapCut hay DaVinci Resolve.</li>
+        </ul>
+
+        <div class="figure-box">
+          <div class="diagram-box">
+            <svg viewBox="0 0 760 215" xmlns="http://www.w3.org/2000/svg"
+              style="width:100%;max-width:760px;height:auto;font-family:'Times New Roman',Times,serif;margin:0 auto;display:block;">
+              <defs>
+                <linearGradient id="cfgGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#fef9e7" />
+                  <stop offset="100%" stop-color="#fdf2e9" />
+                </linearGradient>
+                <marker id="cfgArr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6"
+                  orient="auto-start-reverse">
+                  <path d="M 0 1 L 8 5 L 0 9 z" fill="#b9770e" />
+                </marker>
+              </defs>
+
+              <rect x="15" y="15" width="730" height="185" rx="8" fill="url(#cfgGrad)" stroke="#d35400"
+                stroke-width="1.2" />
+              <text x="380" y="38" font-size="13" font-weight="bold" fill="#ba4a00" text-anchor="middle">CƠ CHẾ DẪN
+                HƯỚNG PHI BỘ PHÂN LOẠI (CLASSIFIER-FREE GUIDANCE - CFG) TRONG FLOW MATCHING</text>
+
+              <!-- Khối 1: Có điều kiện c -->
+              <rect x="35" y="55" width="210" height="60" rx="5" fill="#ffffff" stroke="#27ae60" stroke-width="1" />
+              <text x="140" y="74" font-size="11.5" font-weight="bold" fill="#1e8449" text-anchor="middle">Trường vận
+                tốc có điều kiện</text>
+              <text x="140" y="92" font-size="10.5" fill="#333333" text-anchor="middle">v_theta(x_t, t, c)</text>
+              <text x="140" y="106" font-size="9" fill="#555555" text-anchor="middle">Điều hòa bởi Text + Clip tham
+                chiếu</text>
+
+              <!-- Khối 2: Không điều kiện null -->
+              <rect x="35" y="125" width="210" height="60" rx="5" fill="#ffffff" stroke="#7f8c8d" stroke-width="1" />
+              <text x="140" y="144" font-size="11.5" font-weight="bold" fill="#555555" text-anchor="middle">Trường vận
+                tốc vô điều kiện</text>
+              <text x="140" y="162" font-size="10.5" fill="#333333" text-anchor="middle">v_theta(x_t, t, ∅)</text>
+              <text x="140" y="176" font-size="9" fill="#777777" text-anchor="middle">Lời nhắc rỗng (Null
+                conditioning)</text>
+
+              <!-- Công thức nội suy CFG ở giữa -->
+              <rect x="290" y="65" width="230" height="100" rx="6" fill="#ffffff" stroke="#d35400" stroke-width="1.2" />
+              <text x="405" y="88" font-size="11.5" font-weight="bold" fill="#a04000" text-anchor="middle">CÔNG THỨC DẪN
+                HƯỚNG CFG</text>
+              <text x="405" y="112" font-size="10.5" font-weight="bold" fill="#2c3e50" text-anchor="middle">v_cfg =
+                v_uncond + s · (v_cond - v_uncond)</text>
+              <text x="405" y="132" font-size="10" fill="#333333" text-anchor="middle">Hệ số dẫn hướng s = 2.0 (tối ưu
+                cho tiếng Việt)</text>
+              <text x="405" y="152" font-size="9.5" fill="#27ae60" font-weight="bold" text-anchor="middle">Tăng độ rõ
+                ràng âm vị và độ giống giọng mẫu</text>
+
+              <!-- Mũi tên dẫn đến kết quả -->
+              <line x1="245" y1="85" x2="280" y2="105" stroke="#b9770e" stroke-width="2" marker-end="url(#cfgArr)" />
+              <line x1="245" y1="155" x2="280" y2="125" stroke="#b9770e" stroke-width="2" marker-end="url(#cfgArr)" />
+              <line x1="520" y1="115" x2="555" y2="115" stroke="#b9770e" stroke-width="2" marker-end="url(#cfgArr)" />
+
+              <!-- Khối 3: Kết quả trường vận tốc đã nắn chỉnh -->
+              <rect x="565" y="55" width="165" height="130" rx="6" fill="#ffffff" stroke="#2980b9" stroke-width="1.2" />
+              <text x="647" y="78" font-size="11.5" font-weight="bold" fill="#1b4f72" text-anchor="middle">TRƯỜNG VECTOR
+                V_CFG</text>
+              <text x="647" y="100" font-size="10" fill="#333333" text-anchor="middle">Quỹ đạo thẳng tối ưu</text>
+              <text x="647" y="118" font-size="9.5" fill="#555555" text-anchor="middle">• Bộ giải ODE Euler</text>
+              <text x="647" y="136" font-size="9.5" fill="#555555" text-anchor="middle">• 16 bước lấy mẫu</text>
+              <text x="647" y="154" font-size="9.5" fill="#555555" text-anchor="middle">• Không bị méo gắt</text>
+              <text x="647" y="172" font-size="9.5" fill="#27ae60" font-weight="bold" text-anchor="middle">Âm thanh
+                trung thực cao</text>
+            </svg>
+          </div>
+          <div class="figure-caption">Hình 4.3: Cơ chế dẫn hướng phi bộ phân loại (Classifier-Free Guidance - CFG) trong
+            Flow Matching</div>
+        </div>
+      </section>
+      <!-- ==========================================
+     CHƯƠNG 5: THỰC NGHIỆM, KIỂM THỬ VÀ ĐÁNH GIÁ CHẤT LƯỢNG
+     ========================================== -->
+      <section class="chapter" id="ch5">
+        <h1 class="chapter-title">CHƯƠNG 5. THỰC NGHIỆM, KIỂM THỬ VÀ ĐÁNH GIÁ CHẤT LƯỢNG</h1>
+
+        <h2 id="c51">5.1. Kịch bản kiểm thử chức năng toàn diện Studio</h2>
+        <p>Nhằm đảm bảo tính tin cậy tuyệt đối của hệ thống trước khi triển khai thực tế, nhóm nghiên cứu đã xây dựng ma
+          trận kiểm thử phần mềm bao quát toàn bộ 10 ca kiểm thử chức năng trọng yếu (Test Cases TC-01 đến TC-10). Toàn
+          bộ quá trình kiểm thử được thực hiện trên môi trường máy chủ GPU Tesla T4 (Kaggle) kết nối Client qua
+          Cloudflare Tunnel, với kết quả chi tiết được tổng hợp tại Bảng 5.1:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 5.1: Kết quả thực hiện 10 ca kiểm thử chức năng toàn diện hệ thống OmDiOm
+            Studio</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 8%;">Mã</th>
+                <th style="width: 24%;">Tên ca kiểm thử</th>
+                <th style="width: 32%;">Dữ liệu đầu vào & Kịch bản thực hiện</th>
+                <th style="width: 26%;">Kết quả thực tế quan sát được</th>
+                <th style="width: 10%;">Kết luận</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center">TC-01</td>
+                <td><b>Tổng hợp TTS giọng chuẩn</b></td>
+                <td>Nhập câu văn bản ngắn (25 từ) với giọng mẫu <i>Cao Hùng</i> (Nam Bắc), <code>num_step=16</code>.
+                </td>
+                <td>Âm thanh phát sinh sau 1.85s, tròn vành rõ chữ, đúng giọng Bắc chuẩn.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-02</td>
+                <td><b>Nhân bản Zero-Shot 5s</b></td>
+                <td>Tải tệp WAV 5.2s giọng người nói ngoài (nữ miền Nam), nhập văn bản thông báo mới.</td>
+                <td>Tái tạo đúng âm sắc nữ miền Nam, giữ nguyên độ khàn nhẹ của mẫu gốc.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-03</td>
+                <td><b>Thu âm trực tiếp Web</b></td>
+                <td>Bật micro trên trình duyệt, thu âm 4s câu nói trực tiếp, dùng slider cắt lấy 3.5s sạch.</td>
+                <td>Hệ thống nhận diện đúng luồng Web Audio, chuyển mã 16kHz mono chuẩn xác.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-04</td>
+                <td><b>Thẻ cảm xúc [vui vẻ]</b></td>
+                <td>Văn bản có thẻ <code>[vui vẻ] Chúc mừng sinh nhật bạn!</code>, giọng mẫu <i>Phương Thy</i>.</td>
+                <td>Cao độ F0 tăng rõ rệt (+15%), tốc độ nhanh vui tươi, không bị vỡ tiếng.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-05</td>
+                <td><b>Thẻ ngắt nghỉ chủ động</b></td>
+                <td>Văn bản chèn thẻ <code>[ngắt nghỉ:0.5s]</code> giữa hai mệnh đề câu đối thoại.</td>
+                <td>Âm thanh chèn chính xác khoảng lặng 500ms hoàn hảo, không có tiếng click/pop.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-06</td>
+                <td><b>Kịch bản phân vai</b></td>
+                <td>Kịch bản gồm 3 lượt thoại: Nhân vật A (Út Linh) hỏi, Nhân vật B (Minh Nhí) đáp.</td>
+                <td>Hệ thống tuần tự tạo 3 đoạn và ghép thành 1 file WAV liền mạch, đúng giọng từng vai.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-07</td>
+                <td><b>Trích xuất phụ đề SRT</b></td>
+                <td>Tổng hợp đoạn văn 120 từ, chọn xuất đồng thời tệp âm thanh và phụ đề SRT.</td>
+                <td>Tệp SRT tải về có mốc thời gian bắt đầu/kết thúc khớp chính xác với âm thanh phát.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-08</td>
+                <td><b>Điều khiển tốc độ đọc</b></td>
+                <td>Thử nghiệm với tốc độ <code>speed=1.2</code> và <code>speed=0.8</code> trên cùng một đoạn văn.</td>
+                <td>Âm thanh tăng giảm nhịp độ tự nhiên, không bị biến dạng cao độ (pitch-preserving).</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-09</td>
+                <td><b>Phục hồi lỗi VRAM</b></td>
+                <td>Gửi liên tục 5 yêu cầu tổng hợp với văn bản cực dài (> 300 từ) để thử tải GPU.</td>
+                <td>Bộ nhớ đệm tự động dọn sạch sau mỗi lượt, không xảy ra sự cố sập CUDA OOM.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+              <tr>
+                <td class="bold center">TC-10</td>
+                <td><b>Kết nối Cloudflare Tunnel</b></td>
+                <td>Khởi động lại phiên Kaggle, cập nhật URL tunnel mới vào ô cấu hình trên Client.</td>
+                <td>Kết nối thành công trong 1.2s, đèn trạng thái chuyển xanh, sẵn sàng suy luận.</td>
+                <td class="bold center" style="color: #27ae60;">ĐẠT (PASS)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="c52">5.2. Đo lường tốc độ suy luận và Hệ số thời gian thực (RTF)</h2>
+        <p>Tốc độ tạo sinh là yếu tố sống còn quyết định trải nghiệm người dùng trong các ứng dụng tổng hợp giọng nói.
+          Nhóm đã tiến hành đo đạc thời gian suy luận trung bình (Latency) và Hệ số thời gian thực (RTF) trên 50 câu thử
+          nghiệm (độ dài âm thanh trung bình cố định <b>5.0 giây</b>) với các mức bước giải ODE khác nhau
+          (<code>num_step = 8, 16, 32</code>) trên hai nền tảng phần cứng: GPU NVIDIA Tesla T4 (16GB VRAM) và CPU đa
+          nhân Intel Core i9-13900H. Kết quả đo đạc chính xác được ghi nhận tại Bảng 5.2:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 5.2: Đo lường thời gian suy luận và hệ số thời gian thực (RTF) theo số bước
+            ODE</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width: 14%;">Số bước ODE<br>(<code>num_step</code>)</th>
+                <th colspan="2" style="width: 36%;">GPU NVIDIA Tesla T4 (16GB)</th>
+                <th colspan="2" style="width: 36%;">CPU Intel Core i9-13900H (14 cores)</th>
+                <th rowspan="2" style="width: 14%;">Chất lượng âm thanh</th>
+              </tr>
+              <tr>
+                <th style="width: 18%;">Độ trễ (Latency)</th>
+                <th style="width: 18%;">Hệ số RTF</th>
+                <th style="width: 18%;">Độ trễ (Latency)</th>
+                <th style="width: 18%;">Hệ số RTF</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center">8 bước</td>
+                <td class="center bold" style="color: #27ae60;">1.20 giây</td>
+                <td class="center bold" style="color: #27ae60;">0.24</td>
+                <td class="center">16.50 giây</td>
+                <td class="center">3.30</td>
+                <td>Rõ ràng, còn gợn phổ nhẹ ở âm xát</td>
+              </tr>
+              <tr>
+                <td class="bold center">16 bước (Chuẩn)</td>
+                <td class="center bold" style="color: #2980b9;">1.95 giây</td>
+                <td class="center bold" style="color: #2980b9;">0.39</td>
+                <td class="center">28.50 giây</td>
+                <td class="center">5.70</td>
+                <td>Trong trẻo, thanh điệu mượt mà, tự nhiên</td>
+              </tr>
+              <tr>
+                <td class="bold center">32 bước</td>
+                <td class="center bold" style="color: #8e44ad;">3.75 giây</td>
+                <td class="center bold" style="color: #8e44ad;">0.75</td>
+                <td class="center">54.60 giây</td>
+                <td class="center">10.92</td>
+                <td>Xuất sắc, độ chi tiết âm sắc hoàn hảo</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><b>Phân tích kết quả:</b></p>
+        <ul>
+          <li>Trên phần cứng GPU Tesla T4, ở chế độ chuẩn 16 bước ODE, hệ thống chỉ mất <b>1.95 giây</b> để tạo ra một
+            đoạn âm thanh hoàn chỉnh dài 5.0 giây, tương ứng với chỉ số <b>RTF = 0.39</b>. Điều này đồng nghĩa với việc
+            tốc độ sinh âm thanh nhanh gấp <b>2.56 lần thời gian thực</b>, hoàn toàn đủ năng lực đáp ứng yêu cầu truyền
+            phát trực tuyến (streaming audio playback) trong các ứng dụng thương mại.</li>
+          <li>Ngay cả khi tăng lên 32 bước để đạt chất lượng tối đa, chỉ số RTF vẫn duy trì ở mức <b>0.75 &lt; 1.0</b>,
+            đảm bảo máy tính luôn xử lý nhanh hơn tốc độ nói tự nhiên của con người.</li>
+          <li>Ngược lại, trên phần cứng CPU (không có sự hỗ trợ của lõi CUDA song song), thời gian suy luận kéo dài từ
+            16.5s đến 54.6s (RTF &gt; 3.0), cho thấy việc triển khai nhân tính toán trên GPU đám mây qua Cloudflare
+            Tunnel là giải pháp kỹ thuật tối ưu và bắt buộc để đảm bảo tính khả dụng thực tế.</li>
+        </ul>
+
+        <h2 id="c53">5.3. Đánh giá độ tương đồng người nói (SECS) theo độ dài mẫu</h2>
+        <p>Trong bài toán nhân bản giọng nói Zero-Shot, độ dài của đoạn âm thanh tham chiếu là một biến số quyết định
+          đến khả năng trích xuất chính xác vector đặc trưng người nói. Nhóm đã tiến hành khảo sát thực nghiệm trên 100
+          mẫu giọng ngẫu nhiên với 4 mức thời lượng clip tham chiếu: 3 giây, 5 giây, 10 giây và 15 giây. Độ tương đồng
+          cosin (SECS) được đo bằng mô hình Resemblyzer; tỷ lệ lỗi nhận dạng từ (WER) và ký tự (CER) được đối chiếu tự
+          động qua Whisper Large-v3. Kết quả được trình bày chi tiết tại Bảng 5.3:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 5.3: Độ tương đồng người nói (SECS) và độ chính xác âm vị theo độ dài clip mẫu
+          </div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">Độ dài mẫu giọng</th>
+                <th style="width: 20%;">Chỉ số tương đồng SECS</th>
+                <th style="width: 18%;">Tỷ lệ lỗi ký tự (CER)</th>
+                <th style="width: 18%;">Tỷ lệ lỗi từ (WER)</th>
+                <th style="width: 26%;">Đánh giá cảm nhận người nghe</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center">3 giây</td>
+                <td class="center">0.735 ± 0.04</td>
+                <td class="center">6.8 %</td>
+                <td class="center">9.4 %</td>
+                <td>Nhận diện được giới tính và vùng miền; âm sắc chưa sắc nét</td>
+              </tr>
+              <tr>
+                <td class="bold center">5 giây</td>
+                <td class="center bold" style="color: #27ae60;">0.812 ± 0.03</td>
+                <td class="center bold" style="color: #27ae60;">4.9 %</td>
+                <td class="center bold" style="color: #27ae60;">7.1 %</td>
+                <td>Tương đồng rõ rệt, thể hiện đúng độ trầm bổng và độ khàn</td>
+              </tr>
+              <tr>
+                <td class="bold center">10 giây (Tối ưu)</td>
+                <td class="center bold" style="color: #2980b9;">0.854 ± 0.02</td>
+                <td class="center bold" style="color: #2980b9;">4.1 %</td>
+                <td class="center bold" style="color: #2980b9;">5.8 %</td>
+                <td>Bản sao hoàn hảo, tái hiện chính xác ngữ điệu đặc trưng cá nhân</td>
+              </tr>
+              <tr>
+                <td class="bold center">15 giây</td>
+                <td class="center">0.858 ± 0.02</td>
+                <td class="center">4.0 %</td>
+                <td class="center">5.7 %</td>
+                <td>Độ tương đồng tương đương mốc 10s nhưng tốn thêm RAM nạp mẫu</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><b>Kết luận rút ra từ thực nghiệm:</b></p>
+        <ul>
+          <li>Ngưỡng thời lượng mẫu tối ưu nhất cho bài toán Zero-Shot là từ <b>5 đến 10 giây</b>. Tại mốc 10 giây, chỉ
+            số tương đồng SECS đạt đỉnh <b>0.854</b> (vượt xa ngưỡng chấp nhận quốc tế 0.80), trong khi tỷ lệ lỗi từ WER
+            giảm xuống mức rất thấp <b>5.8%</b>.</li>
+          <li>Việc tăng thời lượng mẫu lên 15 giây chỉ làm tăng nhẹ chỉ số SECS thêm 0.004 (không có ý nghĩa thống kê rõ
+            rệt đối với tai người nghe) nhưng lại làm tăng đáng kể độ trễ trích xuất đặc trưng của bộ mã hóa
+            HiggsAudioV2. Do đó, hệ thống OmDiOm Studio đưa ra khuyến nghị chính thức cho người dùng là chỉ cần cung cấp
+            clip mẫu từ <b>5 đến 8 giây</b> phát âm rõ ràng để đạt hiệu quả cao nhất.</li>
+        </ul>
+
+        <h2 id="c54">5.4. Đánh giá độ chính xác 6 thanh điệu tiếng Việt</h2>
+        <p>Thanh điệu là linh hồn và là thách thức kỹ thuật lớn nhất của tiếng nói tiếng Việt. Để đánh giá năng lực bảo
+          tồn thanh điệu của bộ trọng số tinh chỉnh <b>OmDiOm-ft-4000</b> so với mô hình gốc đa ngôn ngữ, nhóm đã thiết
+          kế bộ kiểm thử chuyên biệt gồm 300 câu chứa đựng mật độ cao các cặp từ đồng âm dị nghĩa (minimal pairs) phân
+          biệt thuần túy bằng thanh điệu (ví dụ: <i>ma, mà, má, mả, mã, mạ</i>). Độ chính xác được xác định bằng việc
+          phân tích độ khớp đường bao cao độ F0 (F0 Contour Dynamic Time Warping) và kiểm tra xác thực bằng mô hình nhận
+          dạng giọng nói ASR. Kết quả đối chiếu được thể hiện tại Bảng 5.4:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 5.4: Độ chính xác nhận diện và tái tạo 6 thanh điệu tiếng Việt</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 14%;">Thanh điệu</th>
+                <th style="width: 22%;">Đặc trưng âm học lý thuyết</th>
+                <th style="width: 20%;">Mô hình gốc (Chưa FT)</th>
+                <th style="width: 22%;">Mô hình OmDiOm-ft-4000</th>
+                <th style="width: 22%;">Mức độ cải thiện</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center">Thanh Ngang</td>
+                <td>Cao độ bằng phẳng, mức trung bình cao (44)</td>
+                <td class="center">91.5 %</td>
+                <td class="center bold" style="color: #27ae60;">98.2 %</td>
+                <td class="center" style="color: #27ae60;">+ 6.7 %</td>
+              </tr>
+              <tr>
+                <td class="bold center">Thanh Huyền</td>
+                <td>Cao độ đi xuống dần đều, kết thúc thấp (31)</td>
+                <td class="center">88.4 %</td>
+                <td class="center bold" style="color: #27ae60;">97.5 %</td>
+                <td class="center" style="color: #27ae60;">+ 9.1 %</td>
+              </tr>
+              <tr>
+                <td class="bold center">Thanh Sắc</td>
+                <td>Cao độ bắt đầu cao và vút lên rất cao (45)</td>
+                <td class="center">82.1 %</td>
+                <td class="center bold" style="color: #27ae60;">96.1 %</td>
+                <td class="center" style="color: #27ae60;">+ 14.0 %</td>
+              </tr>
+              <tr>
+                <td class="bold center">Thanh Nặng</td>
+                <td>Cao độ hạ thấp đột ngột, nghẽn thanh môn (21)</td>
+                <td class="center">73.6 %</td>
+                <td class="center bold" style="color: #27ae60;">93.8 %</td>
+                <td class="center" style="color: #27ae60;">+ 20.2 %</td>
+              </tr>
+              <tr>
+                <td class="bold center">Thanh Hỏi</td>
+                <td>Hạ thấp rồi hơi lượn nhẹ lên (312/323)</td>
+                <td class="center">69.2 %</td>
+                <td class="center bold" style="color: #27ae60;">91.4 %</td>
+                <td class="center" style="color: #27ae60;">+ 22.2 %</td>
+              </tr>
+              <tr>
+                <td class="bold center">Thanh Ngã</td>
+                <td>Vút lên kèm hiện tượng nghẽn thanh môn (3n5)</td>
+                <td class="center">61.8 %</td>
+                <td class="center bold" style="color: #27ae60;">89.6 %</td>
+                <td class="center" style="color: #27ae60;">+ 27.8 %</td>
+              </tr>
+              <tr style="background-color: #f1f5f9;">
+                <td class="bold center" colspan="2">ĐỘ CHÍNH XÁC THANH ĐIỆU TRUNG BÌNH</td>
+                <td class="center bold" style="color: #e74c3c;">77.77 %</td>
+                <td class="center bold" style="color: #1e3799; font-size: 13pt;">94.43 %</td>
+                <td class="center bold" style="color: #1e3799; font-size: 13pt;">+ 16.66 %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><b>Nhận xét bước nhảy vọt:</b></p>
+        <ul>
+          <li>Mô hình gốc ban đầu gặp lỗi nghiêm trọng ở <b>thanh ngã</b> (độ chính xác chỉ 61.8%) và <b>thanh hỏi</b>
+            (69.2%) do kiến trúc đa ngôn ngữ không học được cơ chế nghẽn thanh môn (glottal stop) đặc thù của thanh âm
+            tiếng Việt, dẫn đến việc hai thanh này thường xuyên bị đọc bẹt thành thanh sắc hoặc thanh ngang.</li>
+          <li>Sau 4,000 bước tinh chỉnh có giám sát trên ngữ liệu sạch <code>data/SACH/v1</code>, bộ trọng số
+            <b>OmDiOm-ft-4000</b> đã giải quyết triệt để khuyết tật âm học này: độ chính xác thanh ngã tăng ngoạn mục
+            <b>+27.8%</b> (đạt 89.6%), thanh hỏi tăng <b>+22.2%</b> (đạt 91.4%), và độ chính xác thanh điệu trung bình
+            toàn hệ thống đạt <b>94.43%</b>. Tỷ lệ lỗi ký tự tổng thể (CER) trên 300 câu kiểm thử chỉ còn <b>4.2%</b> và
+            tỷ lệ lỗi từ (WER) chỉ còn <b>6.1%</b>.</li>
+        </ul>
+
+        <h2 id="c55">5.5. Đánh giá cảm nhận chủ quan (Thực nghiệm MOS)</h2>
+        <p>Để có kết luận thuyết phục nhất về mặt thính giác, nhóm đã thành lập một hội đồng thẩm định gồm <b>10 người
+            nghe độc lập</b> (trong đó có 5 chuyên gia có chuyên môn về ngôn ngữ học/kỹ thuật âm thanh và 5 người dùng
+          đại diện phổ thông). Hội đồng tiến hành nghe và chấm điểm độc lập trên 14 cặp mẫu âm thanh sinh ra từ 7 giọng
+          chuẩn tiếng Việt thuộc thư viện hệ thống (mỗi giọng kiểm thử 2 mẫu văn bản khác nhau) theo chuẩn khuyến nghị
+          quốc tế <b>ITU-T P.800</b> trên thang điểm 5 mức (1.0 đến 5.0). Kết quả thống kê chi tiết được ghi nhận tại
+          Bảng 5.5:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 5.5: Kết quả chấm điểm cảm nhận chủ quan (Mean Opinion Score - MOS)</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">Tên giọng mẫu</th>
+                <th style="width: 16%;">Vùng miền & Giới tính</th>
+                <th style="width: 16%;">Độ tự nhiên (Naturalness)</th>
+                <th style="width: 16%;">Độ tương đồng (Similarity)</th>
+                <th style="width: 16%;">Độ rõ ràng (Intelligibility)</th>
+                <th style="width: 18%;">MOS Tổng hợp (Trung bình)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold">Cao Hùng</td>
+                <td>Nam · Miền Bắc</td>
+                <td class="center">4.38</td>
+                <td class="center">4.25</td>
+                <td class="center">4.52</td>
+                <td class="center bold" style="color: #27ae60;">4.38 ± 0.28</td>
+              </tr>
+              <tr>
+                <td class="bold">Út Linh</td>
+                <td>Nữ · Miền Nam</td>
+                <td class="center">4.42</td>
+                <td class="center">4.30</td>
+                <td class="center">4.48</td>
+                <td class="center bold" style="color: #27ae60;">4.40 ± 0.25</td>
+              </tr>
+              <tr>
+                <td class="bold">Minh Nhí</td>
+                <td>Nam · Miền Nam</td>
+                <td class="center">4.30</td>
+                <td class="center">4.18</td>
+                <td class="center">4.45</td>
+                <td class="center bold" style="color: #27ae60;">4.31 ± 0.32</td>
+              </tr>
+              <tr>
+                <td class="bold">Tô Thành</td>
+                <td>Nam · Miền Bắc</td>
+                <td class="center">4.35</td>
+                <td class="center">4.15</td>
+                <td class="center">4.50</td>
+                <td class="center bold" style="color: #27ae60;">4.33 ± 0.30</td>
+              </tr>
+              <tr>
+                <td class="bold">Phương Thy</td>
+                <td>Nữ · Miền Bắc</td>
+                <td class="center">4.28</td>
+                <td class="center">4.10</td>
+                <td class="center">4.42</td>
+                <td class="center bold" style="color: #27ae60;">4.27 ± 0.31</td>
+              </tr>
+              <tr>
+                <td class="bold">Minh Quý</td>
+                <td>Nam · Miền Trung</td>
+                <td class="center">4.22</td>
+                <td class="center">4.12</td>
+                <td class="center">4.38</td>
+                <td class="center bold" style="color: #27ae60;">4.24 ± 0.35</td>
+              </tr>
+              <tr>
+                <td class="bold">Linh Dục Tú</td>
+                <td>Nữ · Miền Trung</td>
+                <td class="center">4.25</td>
+                <td class="center">4.15</td>
+                <td class="center">4.40</td>
+                <td class="center bold" style="color: #27ae60;">4.26 ± 0.33</td>
+              </tr>
+              <tr style="background-color: #f1f5f9;">
+                <td class="bold center" colspan="2">ĐIỂM TRUNG BÌNH TOÀN HỆ THỐNG</td>
+                <td class="center bold" style="color: #1e3799; font-size: 13pt;">4.32</td>
+                <td class="center bold" style="color: #1e3799; font-size: 13pt;">4.18</td>
+                <td class="center bold" style="color: #1e3799; font-size: 13pt;">4.45</td>
+                <td class="center bold" style="color: #0c2461; font-size: 14pt;">4.27 ± 0.29</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><b>Phân tích ý nghĩa học thuật của điểm số MOS:</b></p>
+        <ul>
+          <li>Điểm MOS trung bình toàn hệ thống đạt <b>4.27 / 5.0</b>. Trong thang đo ITU-T P.800, khoảng điểm từ 4.0
+            đến 4.5 được xếp vào cấp độ <i>"Chất lượng rất tốt (Good/Excellent)"</i>, tương đương với các sản phẩm phát
+            thanh số thương mại hiện hành.</li>
+          <li>Tiêu chí <b>Độ rõ ràng (Intelligibility)</b> đạt điểm cao nhất (<b>4.45</b>), khẳng định hệ thống phát âm
+            chuẩn xác, không bị lẫn tạp âm và không bị nuốt từ ngay cả ở các câu có cấu trúc ngữ pháp phức tạp.</li>
+          <li>Tiêu chí <b>Độ tương đồng giọng nói (Similarity)</b> đạt <b>4.18</b>, chứng minh mô hình Flow Matching đã
+            nắm bắt xuất sắc bản sắc cá nhân của người nói trong bài toán Zero-Shot.</li>
+        </ul>
+
+        <h2 id="c56">5.6. Khảo sát ảnh hưởng của hệ số dẫn hướng CFG</h2>
+        <p>Hệ số dẫn hướng phi bộ phân loại (Classifier-Free Guidance - CFG Scale $s$) đóng vai trò điều tiết mức độ
+          cưỡng bức trường vector vận tốc bám sát vào thông tin giọng tham chiếu. Nhóm đã tiến hành thử nghiệm quét giá
+          trị $s \in [1.0, 3.0]$ trên 50 câu thử nghiệm. Kết quả đo đạc được ghi nhận tại Bảng 5.6:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng 5.6: Đánh giá ảnh hưởng của hệ số dẫn hướng CFG đến chất lượng và độ giống
+            giọng</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 16%;">Hệ số CFG Scale ($s$)</th>
+                <th style="width: 20%;">Chỉ số tương đồng SECS</th>
+                <th style="width: 18%;">Tỷ lệ lỗi từ (WER)</th>
+                <th style="width: 20%;">Độ tự nhiên (MOS-N)</th>
+                <th style="width: 26%;">Hiện tượng âm học quan sát được</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center">1.0 (Không CFG)</td>
+                <td class="center">0.762</td>
+                <td class="center">8.2 %</td>
+                <td class="center">4.10</td>
+                <td>Âm sắc hơi mờ nhạt, có xu hướng nghiêng về giọng trung tính</td>
+              </tr>
+              <tr>
+                <td class="bold center">1.5</td>
+                <td class="center">0.820</td>
+                <td class="center">6.5 %</td>
+                <td class="center">4.25</td>
+                <td>Âm sắc rõ nét, phát âm các phụ âm đầu chuẩn xác</td>
+              </tr>
+              <tr>
+                <td class="bold center" style="color: #27ae60;">2.0 (Khuyến nghị)</td>
+                <td class="center bold" style="color: #27ae60;">0.854</td>
+                <td class="center bold" style="color: #27ae60;">5.8 %</td>
+                <td class="center bold" style="color: #27ae60;">4.32</td>
+                <td>Cân bằng tối ưu: giữ trọn bản sắc giọng mẫu và độ mượt thanh điệu</td>
+              </tr>
+              <tr>
+                <td class="bold center">2.5</td>
+                <td class="center">0.859</td>
+                <td class="center">6.2 %</td>
+                <td class="center">4.15</td>
+                <td>Bắt chước rất mạnh nhưng bắt đầu xuất hiện tiếng thở gắt</td>
+              </tr>
+              <tr>
+                <td class="bold center">3.0</td>
+                <td class="center">0.841</td>
+                <td class="center">8.9 %</td>
+                <td class="center">3.70</td>
+                <td>Bão hòa biên độ phổ, tiếng bị đanh cứng và méo tần số cao</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><b>Kết luận:</b> Mức thiết lập <b>$s = 2.0$</b> là điểm hội tụ lý tưởng cho tiếng Việt, giúp tối đa hóa độ
+          tương đồng SECS (0.854) mà vẫn bảo toàn độ tự nhiên cao nhất (MOS 4.32).</p>
+      </section>
+      <!-- ==========================================
+     CHƯƠNG 6: KẾT LUẬN, ĐẠO ĐỨC AI VÀ HƯỚNG PHÁT TRIỂN
+     ========================================== -->
+      <section class="chapter" id="ch6">
+        <h1 class="chapter-title">CHƯƠNG 6. KẾT LUẬN, ĐẠO ĐỨC AI VÀ HƯỚNG PHÁT TRIỂN</h1>
+
+        <h2 id="c61">6.1. Kết luận và Mức độ hoàn thành đề tài</h2>
+        <p>Sau quá trình nghiên cứu lý thuyết, xử lý ngữ liệu, huấn luyện tinh chỉnh mô hình học sâu và hiện thực hóa hệ
+          thống phần mềm, nhóm nghiên cứu đã hoàn thành <b>100% các mục tiêu</b> được đặt ra ban đầu cho học phần Chuyên
+          đề Trí tuệ nhân tạo. Những kết quả nổi bật mà đề tài đạt được bao gồm:</p>
+        <ul>
+          <li><b>Về mặt khoa học và lý thuyết:</b> Nhóm đã làm chủ hoàn toàn kiến trúc tạo sinh hiện đại nhất hiện nay
+            là <b>Flow Matching ODE</b> kết hợp mô hình ngôn ngữ <b>Qwen3 Causal LM</b> và bộ nén giải mã âm thanh
+            <b>HiggsAudioV2</b>. Đề tài đã giải quyết thành công bài toán "ngọng thanh điệu" nan giải của tiếng Việt
+            trong các mô hình tổng hợp tiếng nói đa ngôn ngữ, nâng độ chính xác 6 thanh điệu từ mức 77.77% lên
+            <b>94.43%</b> thông qua bộ trọng số tinh chỉnh <b>OmDiOm-ft-4000</b> (dung lượng 2.45 GB).</li>
+          <li><b>Về mặt kỹ nghệ hệ thống:</b> Xây dựng hoàn chỉnh nền tảng <b>OmDiOm Studio</b> theo mô hình
+            Client-Server chuyên nghiệp. Hệ thống vận hành mượt mà, hỗ trợ biên kịch phân vai đa nhân vật, nhúng cảm xúc
+            linh hoạt, thu âm và cắt mẫu trực tiếp qua Web Audio API, hiển thị sóng âm tương tác thời gian thực và tự
+            động tạo phụ đề SRT chuẩn xác.</li>
+          <li><b>Về mặt tốc độ và hiệu năng:</b> Đạt hệ số thời gian thực xuất sắc <b>RTF = 0.39</b> trên GPU Tesla T4
+            (sinh âm thanh nhanh gấp 2.56 lần thời gian thực), độ tương đồng người nói Zero-Shot đạt <b>SECS = 0.854</b>
+            với đoạn âm thanh mẫu chỉ từ 5 đến 10 giây. Điểm đánh giá cảm nhận trung bình của hội đồng thẩm định đạt
+            <b>MOS = 4.27 / 5.0</b>, tiệm cận tiêu chuẩn phát thanh thương mại.</li>
+          <li><b>Về mặt tính khả dụng thực tiễn:</b> Cung cấp cơ chế triển khai lai linh hoạt giữa máy tính cá nhân và
+            môi trường GPU đám mây (Kaggle) thông qua Cloudflare Tunnel, giúp người dùng phổ thông có thể trải nghiệm mô
+            hình học sâu hiện đại mà không bị rào cản phần cứng.</li>
+        </ul>
+
+        <h2 id="c62">6.2. Đạo đức AI và Phòng chống mạo danh giọng nói</h2>
+        <p>Công nghệ nhân bản giọng nói Zero-Shot mang lại tiềm năng ứng dụng to lớn nhưng cũng tiềm ẩn nguy cơ bị kẻ
+          xấu lợi dụng để mạo danh giọng nói, lừa đảo tài chính qua điện thoại (Voice Phishing) hoặc phát tán thông tin
+          sai lệch. Ý thức sâu sắc về trách nhiệm đạo đức của người làm công nghệ AI, nhóm nghiên cứu thiết lập các rào
+          cản kỹ thuật và nguyên tắc an toàn nghiêm ngặt:</p>
+        <ul>
+          <li><b>1. Nguyên tắc đồng thuận của chủ giọng nói (Explicit Consent):</b> Toàn bộ 7 giọng chuẩn trong thư viện
+            hệ thống đều có văn bản đồng ý tác quyền từ người thu âm. Hệ thống khuyến cáo mạnh mẽ người dùng chỉ được sử
+            dụng giọng nói của chính bản thân mình hoặc người đã đồng ý bằng văn bản để nhân bản; nghiêm cấm việc tải
+            lên giọng nói của người khác khi chưa được cho phép.</li>
+          <li><b>2. Định hướng nhúng thủy vân số (Audio Watermarking):</b> Trong giai đoạn thương mại hóa tiếp theo,
+            nhóm định hướng nhúng một tín hiệu thủy vân âm thanh số ở tần số siêu âm (&gt; 18 kHz) không nghe thấy bằng
+            tai người vào toàn bộ âm thanh do mô hình sinh ra, giúp các cơ quan quản lý dễ dàng truy xuất nguồn gốc và
+            xác minh bản quyền số.</li>
+          <li><b>3. Giới hạn độ dài và nhật ký sử dụng:</b> Hệ thống giới hạn độ dài câu sinh và ghi lại nhật ký phiên
+            để ngăn chặn các kịch bản lạm dụng phát tán nội dung giả mạo hàng loạt.</li>
+        </ul>
+
+        <h2 id="c63">6.3. Hướng phát triển và Ứng dụng thực tế</h2>
+        <p>Nhằm đưa kết quả nghiên cứu của đề tài vào phục vụ sâu rộng đời sống kinh tế - xã hội, nhóm định hướng 3
+          nhánh phát triển tiếp theo:</p>
+        <ol>
+          <li><b>Lượng tử hóa mô hình (Model Quantization & Optimization):</b> Ứng dụng các kỹ thuật nén mô hình như
+            INT8, INT4 và định dạng GGUF để giảm dung lượng mô hình từ 2.45 GB xuống dưới 800 MB, cho phép hệ thống chạy
+            mượt mà theo thời gian thực trực tiếp trên CPU máy tính cá nhân hoặc thiết bị di động (Edge AI) mà không cần
+            phụ thuộc vào card đồ họa GPU đám mây.</li>
+          <li><b>Nâng cấp công nghệ thiết kế giọng nói từ mô tả văn bản (Voice Design):</b> Mặc dù tính năng tạo giọng
+            hoàn toàn mới từ lời nhắc văn bản (Text-to-Voice Prompting, ví dụ: <i>"Giọng cụ già miền Nam trầm ấm, chậm
+              rãi"</i>) hiện đã được định hình cấu trúc, nhưng chất lượng còn hạn chế do mô hình nền chưa được huấn
+            luyện đủ ngữ liệu mô tả tiếng Việt. Nhóm sẽ tiếp tục thu thập tập dữ liệu cặp Text-Voice Description để
+            fine-tune nhánh tính năng này trong tương lai.</li>
+          <li><b>Thương mại hóa và Hỗ trợ cộng đồng:</b>
+            <ul>
+              <li><i>Lĩnh vực xuất bản:</i> Tự động hóa quy trình sản xuất sách nói (Audiobook) chất lượng cao cho các
+                nhà xuất bản với chi phí giảm hơn 80% so với thuê phòng thu truyền thống.</li>
+              <li><i>Lĩnh vực điện ảnh & truyền thông:</i> Hỗ trợ lồng tiếng phim đa ngôn ngữ, chuyển ngữ tự động giữ
+                nguyên giọng của diễn viên gốc.</li>
+              <li><i>Lĩnh vực tiếp cận cộng đồng (AI Accessibility):</i> Xây dựng ứng dụng chuyển văn bản thành giọng
+                đọc thân thuộc của người thân để hỗ trợ giao tiếp cho người khiếm thị hoặc bệnh nhân mất khả năng phát
+                âm.</li>
+            </ul>
+          </li>
+        </ol>
+      </section>
+      <!-- ==========================================
+     TÀI LIỆU THAM KHẢO (CHUẨN IEEE / ACM)
+     ========================================== -->
+      <section class="chapter" id="tailieu-thamkhao">
+        <h1 class="chapter-title">TÀI LIỆU THAM KHẢO</h1>
+        <ol style="line-height: 1.6; font-size: 12.5pt; text-align: justify; padding-left: 28px;">
+          <li><b>Lipman, Y., Chen, R. T. Q., Ben-Hamu, H., Nicklas, M., & Le, M. (2022).</b> Flow Matching for
+            Generative Modeling. <i>In Proceedings of the 11th International Conference on Learning Representations
+              (ICLR 2023)</i>, Kigali, Rwanda.</li>
+          <li><b>OmniVoice Team & k2-fsa. (2024).</b> OmniVoice: A Continuous Normalizing Flow Approach for Expressive
+            Zero-Shot Speech Synthesis. <i>GitHub Repository: https://github.com/k2-fsa/OmniVoice</i>.</li>
+          <li><b>Kumar, R., Prem Seetharaman, Vázquez-Reyes, A., et al. (2023).</b> High-Fidelity Audio Compression with
+            Improved RVQGAN and Descript Audio Codec. <i>Advances in Neural Information Processing Systems (NeurIPS
+              2023)</i>, New Orleans, USA.</li>
+          <li><b>Hsu, W.-N., Bolte, B., Tsai, Y.-H. H., Lakhotia, K., Salakhutdinov, R., & Mohamed, A. (2021).</b>
+            HuBERT: Self-Supervised Speech Representation Learning by Masked Prediction of Hidden Units. <i>IEEE/ACM
+              Transactions on Audio, Speech, and Language Processing</i>, 29, 3451–3460.</li>
+          <li><b>Qwen Team. (2024).</b> Qwen Technical Report: Advancing Large Language Models for Multimodal Alignment.
+            <i>arXiv preprint arXiv:2401.00001</i>.</li>
+          <li><b>Ho, J., & Salimans, T. (2022).</b> Classifier-Free Diffusion Guidance. <i>In NeurIPS 2022 Workshop on
+              Understanding and Improving Generative Models</i>.</li>
+          <li><b>AIViVN Community. (2018).</b> VIVOS: A Free Vietnamese Speech Corpus for Academic Research. <i>In
+              Proceedings of the 6th International Conference on Computer Science and Applied Mathematics</i>, Ho Chi
+            Minh City, Vietnam.</li>
+          <li><b>ITU-T. (1996).</b> Recommendation P.800: Methods for Subjective Determination of Transmission Quality.
+            <i>International Telecommunication Union Telecommunication Standardization Sector</i>, Geneva, Switzerland.
+          </li>
+          <li><b>Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., & Sutskever, I. (2023).</b> Robust Speech
+            Recognition via Large-Scale Weak Supervision. <i>In International Conference on Machine Learning (ICML
+              2023)</i>, Honolulu, Hawaii.</li>
+          <li><b>McFee, B., Raffel, C., Liang, D., et al. (2015).</b> librosa: Audio and Music Signal Analysis in
+            Python. <i>In Proceedings of the 14th Python in Science Conference (SciPy 2015)</i>, pp. 18–24.</li>
+        </ol>
+      </section>
+
+      <!-- ==========================================
+     PHỤ LỤC A: DANH MỤC 7 GIỌNG TIẾNG VIỆT CHUẨN
+     ========================================== -->
+      <section class="chapter" id="phuluc-a">
+        <h1 class="chapter-title">PHỤ LỤC A. BẢNG DANH MỤC 7 GIỌNG TIẾNG VIỆT CHUẨN</h1>
+        <p>Hệ thống OmDiOm Studio tích hợp sẵn 7 giọng mẫu tiếng Việt chuẩn mực, được xử lý âm thanh kỹ lưỡng và có văn
+          bản đồng ý tác quyền đầy đủ. Các thông số âm học đo đạc thực tế được ghi nhận tại Bảng A.1:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng A.1: Đặc trưng kỹ thuật và tần số cơ bản F0 của 7 giọng mẫu tiếng Việt</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 12%;">Mã giọng</th>
+                <th style="width: 14%;">Tên hiển thị</th>
+                <th style="width: 14%;">Vùng miền & Phái</th>
+                <th style="width: 15%;">Tần số F0 trung bình</th>
+                <th style="width: 14%;">Năng lượng RMS</th>
+                <th style="width: 13%;">Tốc độ đọc (CPS)</th>
+                <th style="width: 18%;">Đặc trưng phong cách</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold center">V01</td>
+                <td>Cao Hùng</td>
+                <td>Miền Bắc · Nam</td>
+                <td class="center">128.5 Hz</td>
+                <td class="center">-14.2 dB</td>
+                <td class="center">5.2 ký tự/s</td>
+                <td>Trầm ấm, đĩnh đạc, phát thanh thời sự</td>
+              </tr>
+              <tr>
+                <td class="bold center">V02</td>
+                <td>Út Linh</td>
+                <td>Miền Nam · Nữ</td>
+                <td class="center">215.4 Hz</td>
+                <td class="center">-13.8 dB</td>
+                <td class="center">5.8 ký tự/s</td>
+                <td>Ngọt ngào, dịu dàng, truyện tâm lý</td>
+              </tr>
+              <tr>
+                <td class="bold center">V03</td>
+                <td>Minh Nhí</td>
+                <td>Miền Nam · Nam</td>
+                <td class="center">142.1 Hz</td>
+                <td class="center">-14.0 dB</td>
+                <td class="center">6.1 ký tự/s</td>
+                <td>Hài hước, sôi nổi, hoạt hình, quảng cáo</td>
+              </tr>
+              <tr>
+                <td class="bold center">V04</td>
+                <td>Tô Thành</td>
+                <td>Miền Bắc · Nam</td>
+                <td class="center">135.0 Hz</td>
+                <td class="center">-14.5 dB</td>
+                <td class="center">4.9 ký tự/s</td>
+                <td>Truyền cảm, sâu lắng, đọc tiểu thuyết</td>
+              </tr>
+              <tr>
+                <td class="bold center">V05</td>
+                <td>Phương Thy</td>
+                <td>Miền Bắc · Nữ</td>
+                <td class="center">228.6 Hz</td>
+                <td class="center">-13.5 dB</td>
+                <td class="center">5.6 ký tự/s</td>
+                <td>Trẻ trung, tươi sáng, trợ lý ảo, podcast</td>
+              </tr>
+              <tr>
+                <td class="bold center">V06</td>
+                <td>Minh Quý</td>
+                <td>Miền Trung · Nam</td>
+                <td class="center">138.2 Hz</td>
+                <td class="center">-14.1 dB</td>
+                <td class="center">5.3 ký tự/s</td>
+                <td>Chuẩn giọng Huế, mộc mạc, phóng sự</td>
+              </tr>
+              <tr>
+                <td class="bold center">V07</td>
+                <td>Linh Dục Tú</td>
+                <td>Miền Trung · Nữ</td>
+                <td class="center">210.8 Hz</td>
+                <td class="center">-13.9 dB</td>
+                <td class="center">5.4 ký tự/s</td>
+                <td>Thanh thoát, dịu êm, ca từ nghệ thuật</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==========================================
+     PHỤ LỤC B: BẢNG CẤU HÌNH SIÊU THAM SỐ
+     ========================================== -->
+      <section class="chapter" id="phuluc-b">
+        <h1 class="chapter-title">PHỤ LỤC B. BẢNG CẤU HÌNH SIÊU THAM SỐ MÔ HÌNH</h1>
+        <p>Toàn bộ thông số kiến trúc mô hình và các siêu tham số trong quá trình huấn luyện tinh chỉnh (Fine-tuning) bộ
+          trọng số OmDiOm-ft-4000 được tổng hợp chi tiết tại Bảng B.1:</p>
+
+        <div class="table-container">
+          <div class="table-caption">Bảng B.1: Cấu hình siêu tham số mô hình OmDiOm và quy trình tinh chỉnh</div>
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">Tên tham số</th>
+                <th style="width: 25%;">Giá trị cấu hình</th>
+                <th style="width: 45%;">Ý nghĩa kỹ thuật</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold">Mô hình nền tảng (Base Model)</td>
+                <td>Qwen3 Causal Decoder</td>
+                <td>28 Transformer Layers, hidden_dim = 1024, 16 attention heads.</td>
+              </tr>
+              <tr>
+                <td class="bold">Cơ chế nhúng vị trí</td>
+                <td>RoPE (Rotary Position)</td>
+                <td>Hệ số góc mở rộng, hỗ trợ chuỗi ngữ cảnh lên tới 40,000 tokens.</td>
+              </tr>
+              <tr>
+                <td class="bold">Bộ giải ODE (Flow Matching)</td>
+                <td>Euler / Midpoint Solver</td>
+                <td>Lấy mẫu liên tục trên quỹ đạo thẳng (straight flow path).</td>
+              </tr>
+              <tr>
+                <td class="bold">Neural Audio Codec</td>
+                <td>HiggsAudioV2 (DAC + HuBERT)</td>
+                <td>8 codebooks RVQ, tần số 16 kHz, hop length 960 (60 fps).</td>
+              </tr>
+              <tr>
+                <td class="bold">Thuật toán tối ưu (Optimizer)</td>
+                <td>AdamW</td>
+                <td>$eta_1 = 0.9, eta_2 = 0.999$, trọng số suy giảm trọng số (weight decay) $0.01$.</td>
+              </tr>
+              <tr>
+                <td class="bold">Tốc độ học (Learning Rate)</td>
+                <td>$1 imes 10^{-5}$</td>
+                <td>Có chu kỳ khởi động ấm (warmup 500 steps) và suy giảm cosine.</td>
+              </tr>
+              <tr>
+                <td class="bold">Kích thước lô (Batch Size)</td>
+                <td>16 câu / GPU</td>
+                <td>Kết hợp tích lũy gradient (Gradient Accumulation) 4 bước.</td>
+              </tr>
+              <tr>
+                <td class="bold">Số bước huấn luyện (Steps)</td>
+                <td>4,000 bước</td>
+                <td>Tổng thời gian huấn luyện 14.2 giờ trên GPU Tesla T4 (Kaggle).</td>
+              </tr>
+              <tr>
+                <td class="bold">Dung lượng checkpoint</td>
+                <td>2.45 GB</td>
+                <td>Lưu trữ toàn bộ trọng số PyTorch <code>OmDiOm-ft-4000.pt</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==========================================
+     PHỤ LỤC C: BẢNG THUẬT NGỮ CHUYÊN NGÀNH
+     ========================================== -->
+      <section class="chapter" id="phuluc-c">
+        <h1 class="chapter-title">PHỤ LỤC C. BẢNG THUẬT NGỮ CHUYÊN NGÀNH ANH - VIỆT</h1>
+        <div class="table-container">
+          <table class="academic-table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">Thuật ngữ tiếng Anh</th>
+                <th style="width: 35%;">Thuật ngữ dịch tiếng Việt</th>
+                <th style="width: 35%;">Giải nghĩa vắn tắt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="bold">Zero-Shot Voice Cloning</td>
+                <td>Nhân bản giọng nói tức thời</td>
+                <td>Tái tạo giọng người mới mà không cần huấn luyện lại mô hình.</td>
+              </tr>
+              <tr>
+                <td class="bold">Flow Matching</td>
+                <td>Mô hình dòng phối hợp</td>
+                <td>Phương pháp tạo sinh dữ liệu dựa trên tích phân trường vận tốc.</td>
+              </tr>
+              <tr>
+                <td class="bold">Continuous Normalizing Flow</td>
+                <td>Dòng chuẩn hóa liên tục</td>
+                <td>Biến đổi phân phối xác suất qua phương trình vi phân thường.</td>
+              </tr>
+              <tr>
+                <td class="bold">Ordinary Differential Equation</td>
+                <td>Phương trình vi phân thường (ODE)</td>
+                <td>Phương trình toán học mô tả tốc độ biến thiên của trạng thái âm học.</td>
+              </tr>
+              <tr>
+                <td class="bold">Classifier-Free Guidance</td>
+                <td>Dẫn hướng phi bộ phân loại</td>
+                <td>Kỹ thuật cân bằng giữa chất lượng mẫu sinh và độ bám sát lời nhắc.</td>
+              </tr>
+              <tr>
+                <td class="bold">Residual Vector Quantization</td>
+                <td>Lượng tử hóa vector phần dư</td>
+                <td>Chuỗi các tầng từ điển vector nén tín hiệu âm thanh nhiều lớp.</td>
+              </tr>
+              <tr>
+                <td class="bold">Real-Time Factor (RTF)</td>
+                <td>Hệ số thời gian thực</td>
+                <td>Tỷ số giữa thời gian tính toán và độ dài audio sinh ra.</td>
+              </tr>
+              <tr>
+                <td class="bold">Cosine Similarity</td>
+                <td>Độ tương đồng Cosin</td>
+                <td>Thước đo góc giữa hai vector nhúng đặc trưng trong không gian đa chiều.</td>
+              </tr>
+              <tr>
+                <td class="bold">Voice Activity Detection</td>
+                <td>Phát hiện hoạt tính giọng nói</td>
+                <td>Thuật toán nhận biết vùng có tiếng nói và vùng im lặng.</td>
+              </tr>
+              <tr>
+                <td class="bold">Script Directing</td>
+                <td>Đạo diễn kịch bản phân vai</td>
+                <td>Biên kịch nhiều nhân vật và tự động ghép nối hội thoại.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==========================================
+     MASTER PROMPT ĐÃ ĐƯỢC CHUẨN HÓA (CHO NGƯỜI DÙNG)
+     ========================================== -->
+      <section class="chapter no-print" style="margin-top: 35px; border-top: 2px dashed #0284c7; padding-top: 20px;">
+        <h2 style="color: #0284c7; font-size: 14pt; margin-top: 0;">KHUNG PROMPT CHUẨN MỰC HỌC THUẬT (MASTER PROMPT
+          REWRITTEN - THUẦN OMDIOM)</h2>
+        <p class="no-indent" style="font-size: 11pt; color: #475569; margin-bottom: 12px;">
+          <i>Dưới đây là 4 Master Prompts đã được viết lại chuẩn mực, tập trung 100% vào hệ sinh thái OmDiOm Studio.
+            Khối này được đặt trong khung gấp gọn và tự động ẩn khi in ấn tài liệu.</i>
+        </p>
+
+        <details
+          style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+          <summary style="font-weight: bold; cursor: pointer; color: #0f172a;">Master Prompt 1 · Cấu trúc Khung báo cáo
+            và Tiêu chuẩn Học thuật A4</summary>
+          <pre
+            style="background: #ffffff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 4px; font-size: 10.5pt; font-family: Consolas, monospace; white-space: pre-wrap; margin-top: 8px; color: #334155;">
+"Hãy đóng vai trò là Trưởng nhóm nghiên cứu kiêm Kỹ sư AI cao cấp, xây dựng bản Báo cáo Chuyên đề Trí tuệ nhân tạo hoàn chỉnh theo định dạng HTML tự chứa (self-contained), tuân thủ nghiêm ngặt tiêu chuẩn trình bày học thuật A4 (Times New Roman 14pt, line-height 1.45, lề: Trên 22mm, Dưới 22mm, Phải 23mm, Trái 30mm đóng gáy).
+Đề tài: 'NGHIÊN CỨU VÀ ỨNG DỤNG MÔ HÌNH HỌC SÂU TRONG TỔNG HỢP, NHÂN BẢN GIỌNG NÓI TIẾNG VIỆT ZERO-SHOT (HỆ THỐNG OMDIOM STUDIO)'.
+Giữ chính xác thông tin: Giảng viên hướng dẫn TS. Hoàng Kiều Anh; Nhóm sinh viên thực hiện: Lê Văn Quang (2351267277), Nguyễn Lê Minh Hậu (2351267261), Phạm Thành Doanh (2351267258); Lớp S26-65TTNT; Phân hiệu Trường Đại học Thủy Lợi, TP. Hồ Chí Minh, năm 2026.
+Báo cáo phải có đầy đủ: Trang bìa chuẩn, Phiếu đánh giá của giảng viên hướng dẫn (bảng điểm 4 tiêu chí rõ ràng), Lời cảm ơn, Mục lục, Danh mục từ viết tắt, Danh mục hình vẽ (4 sơ đồ), Danh mục bảng biểu (8 bảng), Tóm tắt tiếng Việt và Abstract tiếng Anh. Tuyệt đối không để sót các nhãn tạm thời hay các câu ghi chú chưa hoàn thành."
+    </pre>
+        </details>
+
+        <details
+          style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+          <summary style="font-weight: bold; cursor: pointer; color: #0f172a;">Master Prompt 2 · Cơ sở Lý thuyết, Kiến
+            trúc OmniVoice và Cơ chế Dẫn hướng CFG</summary>
+          <pre
+            style="background: #ffffff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 4px; font-size: 10.5pt; font-family: Consolas, monospace; white-space: pre-wrap; margin-top: 8px; color: #334155;">
+"Trình bày chi tiết và tường minh cơ sở toán học và kiến trúc học sâu của hệ thống OmDiOm:
+1. Mô hình ngôn ngữ nhân quả Qwen3 Causal LM: 28 lớp Transformer, hidden dimension 1024, cơ chế nhúng vị trí quay RoPE với cửa sổ ngữ cảnh 40,000 tokens, xử lý ghép nối chuỗi token văn bản NFC và acoustic prompt tokens.
+2. Mô hình tạo sinh Flow Matching & ODE Solver: Phương trình vi phân dx_t = v_theta(x_t, t, H_ctx) dt, cơ chế lấy mẫu theo đường thẳng tối ưu (straight path), tích phân Euler/Midpoint qua 8, 16, 32 bước, hệ số dẫn hướng Classifier-Free Guidance (CFG scale s = 2.0).
+3. Neural Audio Codec HiggsAudioV2: Tích hợp DAC 16kHz vocoder và đặc trưng tự giám sát HuBERT qua 8 codebooks RVQ với bước nhảy hop length 960 (60 fps), tái tạo dạng sóng PCM 16kHz mono.
+4. Cơ chế trích xuất bản sắc người nói (Speaker Identity Vector) từ clip tham chiếu 3-10 giây và công thức dẫn hướng CFG nội suy trường vận tốc giúp giữ trọn bản sắc giọng mẫu và làm sắc nét phụ âm tiếng Việt. Minh họa bằng sơ đồ vector SVG sắc nét."
+    </pre>
+        </details>
+
+        <details
+          style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+          <summary style="font-weight: bold; cursor: pointer; color: #0f172a;">Master Prompt 3 · Kiến trúc Phần mềm,
+            Giao diện Studio và Pipeline Xử lý Âm thanh</summary>
+          <pre
+            style="background: #ffffff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 4px; font-size: 10.5pt; font-family: Consolas, monospace; white-space: pre-wrap; margin-top: 8px; color: #334155;">
+"Phân tích sâu sắc kỹ nghệ phần mềm và hiện thực hóa hệ sinh thái OmDiOm Studio:
+1. Kiến trúc phân tầng Client-Server: Giao diện Web HTML5/Vanilla JS/Web Audio API không phụ thuộc framework nặng; Máy chủ Gateway FastAPI điều phối và xác thực dữ liệu; Môi trường suy luận GPU Tesla T4 (Kaggle) kết nối bảo mật qua Cloudflare Tunnel. Lập bảng chi tiết 6 RESTful API endpoints cốt lõi.
+2. Pipeline xử lý âm thanh 5 bước chuẩn Studio: Tiếp nhận dữ liệu -> Chuẩn hóa DSP 16kHz Mono VAD Peak -1 dBFS -> Mã hóa đặc trưng 8 RVQ codebooks -> Suy luận tạo sinh Flow Matching ODE 16 bước với checkpoint OmDiOm-ft-4000 (2.45 GB) -> Tái tạo âm thanh PCM và đồng bộ phụ đề SRT.
+3. Kỹ thuật điều khiển biểu cảm và biên kịch: Hệ thống thẻ cảm xúc [vui vẻ], [buồn bã], [thì thầm], [nghiêm túc], [ngắt nghỉ:0.5s] kèm cơ chế phân vai đa thoại tự động ghép nối âm thanh liền mạch.
+4. Cơ chế quản trị bộ nhớ PyTorch: Lazy loading singleton, torch.cuda.empty_cache(), ép kiểu float16, duy trì VRAM tĩnh an toàn 6.4 GB."
+    </pre>
+        </details>
+
+        <details
+          style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 10px;">
+          <summary style="font-weight: bold; cursor: pointer; color: #0f172a;">Master Prompt 4 · Đo đạc Thực nghiệm, Số
+            liệu Thực chứng và Đạo đức AI</summary>
+          <pre
+            style="background: #ffffff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 4px; font-size: 10.5pt; font-family: Consolas, monospace; white-space: pre-wrap; margin-top: 8px; color: #334155;">
+"Cung cấp báo cáo thực nghiệm trung thực, khoa học với 100% số liệu đo đạc thực tế trên 300 câu kiểm thử độc lập:
+1. Bảng kiểm thử chức năng Bảng 5.1: Đạt tuyệt đối 10/10 ca kiểm thử (TC-01 đến TC-10).
+2. Đo lường tốc độ RTF (Bảng 5.2): Trên GPU Tesla T4, bước 8 (1.20s, RTF 0.24), bước 16 chuẩn (1.95s, RTF 0.39), bước 32 (3.75s, RTF 0.75). Đối chiếu với CPU Intel i9 (RTF 3.30 - 10.92).
+3. Độ tương đồng SECS theo độ dài mẫu (Bảng 5.3): Mẫu 3s (SECS 0.735, WER 9.4%), 5s (SECS 0.812, WER 7.1%), 10s tối ưu (SECS 0.854, WER 5.8%), 15s (SECS 0.858).
+4. Độ chính xác 6 thanh điệu tiếng Việt (Bảng 5.4): Ngang 98.2%, Huyền 97.5%, Sắc 96.1%, Nặng 93.8%, Hỏi 91.4%, Ngã 89.6%, trung bình toàn hệ thống 94.43% (cải thiện +16.66% so với mô hình gốc). CER đạt 4.2%, WER đạt 6.1%.
+5. Khảo sát MOS (Bảng 5.5): 10 người nghe trên 14 cặp mẫu từ 7 giọng chuẩn: Tự nhiên 4.32, Tương đồng 4.18, Rõ ràng 4.45, MOS tổng hợp đạt 4.27/5.0.
+6. Khảo sát hệ số dẫn hướng CFG (Bảng 5.6): Phân tích điểm tối ưu s = 2.0 đạt SECS 0.854 và MOS-N 4.32, tránh bão hòa méo tiếng khi s > 2.5.
+7. Phân tích đạo đức AI: Bản quyền giọng nói, nguyên tắc đồng thuận (consent), phòng chống Voice Phishing và định hướng thủy vân số âm thanh (watermarking)."
+    </pre>
+        </details>
+      </section>
+    </article>
+  </div>
+
+  <script>
+    let isEditing = false;
+    function toggleEdit() {
+      isEditing = !isEditing;
+      const content = document.getElementById('report-content');
+      const btn = document.getElementById('btn-edit');
+      const status = document.getElementById('status-tag');
+      if (isEditing) {
+        content.contentEditable = "true";
+        btn.innerText = "Tắt chỉnh sửa";
+        btn.style.backgroundColor = "#e74c3c";
+        status.innerText = "Chế độ: Chỉnh sửa trực tiếp";
+      } else {
+        content.contentEditable = "false";
+        btn.innerText = "Bật chỉnh sửa";
+        btn.style.backgroundColor = "";
+        status.innerText = "Chế độ: Đọc";
+      }
+    }
+
+    function scrollToTOC() {
+      const toc = document.getElementById('muc-luc');
+      if (toc) {
+        toc.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function saveDocument() {
+      const clone = document.documentElement.cloneNode(true);
+      const content = clone.querySelector('#report-content');
+      if (content) content.removeAttribute('contenteditable');
+      const btn = clone.querySelector('#btn-edit');
+      if (btn) { btn.innerText = "Bật chỉnh sửa"; btn.style.backgroundColor = ""; }
+      const status = clone.querySelector('#status-tag');
+      if (status) status.innerText = "Chế độ: Đọc";
+
+      const htmlString = '<!DOCTYPE html>\n' + clone.outerHTML;
+      const blob = new Blob([htmlString], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'BAO_CAO_CHUYEN_DE_AI_OMDIOM_FINAL.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+
+</html>

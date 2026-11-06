@@ -1,0 +1,304 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Đặc tả chức năng v2.0 — OmniVoice VN</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#12161f; --ink2:#39424f; --mut:#68717f; --dim:#98a1ae;
+  --line:#e2e6ec; --line2:#c9d0da; --bg:#ffffff; --soft:#f6f8fa;
+  --acc:#4b3bbf; --accbg:#f0edff;
+  --ok:#0a7d55; --okbg:#e8f8f1; --warn:#8a5a00; --warnbg:#fff6e2;
+  --bad:#b3261e; --badbg:#fdeceb; --info:#0b5f8a; --infobg:#e9f5fb;
+}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-size:14.2px;line-height:1.66;
+  font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:40px 26px 90px}
+
+/* bìa */
+.cover{border:1px solid var(--line);border-radius:14px;padding:30px 30px 26px;background:
+  linear-gradient(180deg,#fbfaff,#fff 60%)}
+.eyebrow{display:inline-block;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:750;color:var(--acc);background:var(--accbg);padding:5px 11px;border-radius:999px}
+.cover h1{font-size:26px;font-weight:790;line-height:1.24;letter-spacing:-.02em;margin:14px 0 6px}
+.cover h1 small{display:block;font-size:15px;font-weight:600;color:var(--ink2);letter-spacing:0;margin-top:8px}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 26px;
+  margin-top:20px;padding-top:18px;border-top:1px dashed var(--line2);font-size:13px;color:var(--ink2)}
+.meta b{color:var(--ink);font-weight:680}
+.meta div span{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dim);font-weight:740;margin-bottom:2px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin:24px 0 6px}
+.stat{background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+.stat b{display:block;font-size:22px;font-weight:790;letter-spacing:-.02em;line-height:1.2;color:var(--ink)}
+.stat span{font-size:11px;color:var(--mut);line-height:1.35;display:block;margin-top:2px}
+.stat.ok b{color:var(--ok)} .stat.warn b{color:var(--warn)}
+.stat.bad b{color:var(--bad)} .stat.acc b{color:var(--acc)}
+
+/* đề mục */
+h1{font-size:20px;font-weight:780;letter-spacing:-.015em;margin:44px 0 4px;
+  padding-bottom:9px;border-bottom:2px solid var(--ink);color:var(--ink)}
+h1:first-of-type{margin-top:34px}
+h2{font-size:16px;font-weight:740;letter-spacing:-.01em;margin:26px 0 6px;color:var(--ink)}
+h3{font-size:14.2px;font-weight:720;color:var(--acc);margin:20px 0 4px}
+p{margin:8px 0;color:var(--ink2)}
+p b,li b,td b{color:var(--ink)}
+code{font-family:"Cascadia Mono",Consolas,Menlo,monospace;font-size:12.4px;
+  background:#f1f3f6;border:1px solid #e6e9ee;border-radius:4px;padding:1px 4px;color:#2b2f38}
+kbd{font-family:inherit;font-size:11.5px;font-weight:700;background:#fff;border:1px solid var(--line2);
+  border-bottom-width:2px;border-radius:4px;padding:0 5px}
+ul,ol{margin:8px 0 8px 20px;color:var(--ink2)}
+li{margin:3px 0}
+
+/* bảng */
+.tw{overflow-x:auto;margin:12px 0 6px;border:1px solid var(--line);border-radius:11px;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:13.2px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:none}
+th{font-size:10.4px;letter-spacing:.09em;text-transform:uppercase;color:var(--mut);
+  font-weight:760;background:var(--soft);white-space:nowrap}
+tbody tr:nth-child(even){background:#fcfdfe}
+td{color:var(--ink2)}
+table.small{font-size:12.4px}
+table.small th,table.small td{padding:7px 10px}
+
+/* chú thích */
+.note{border-radius:10px;padding:12px 15px;margin:14px 0;font-size:13.3px;border:1px solid}
+.note .t{display:block;font-weight:760;font-size:12.8px;margin-bottom:3px}
+.note.ok{background:var(--okbg);border-color:#bfe6d5;color:#0a5b40}
+.note.warn{background:var(--warnbg);border-color:#f0d9a8;color:#6d4700}
+.note.bad{background:var(--badbg);border-color:#f3c5c2;color:#8c1d17}
+.note.info{background:var(--infobg);border-color:#c3e2f2;color:#084b6d}
+.note.ok .t{color:var(--ok)} .note.warn .t{color:var(--warn)}
+.note.bad .t{color:var(--bad)} .note.info .t{color:var(--info)}
+
+pre{background:#12161f;color:#dfe6f2;border-radius:11px;padding:15px 17px;overflow-x:auto;
+  font-family:"Cascadia Mono",Consolas,Menlo,monospace;font-size:12.2px;line-height:1.62;margin:12px 0}
+pre code{background:none;border:none;color:inherit;padding:0;font-size:inherit}
+
+.ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)} .dim{color:var(--dim)}
+
+hr{border:none;border-top:1px solid var(--line);margin:34px 0}
+.foot{margin-top:52px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
+
+@media print{
+  @page{size:A4;margin:16mm 14mm}
+  body{font-size:10.6pt;line-height:1.5}
+  .wrap{max-width:none;padding:0}
+  .cover{page-break-after:always;border:none;padding:0}
+  h1{page-break-after:avoid;font-size:14pt;margin-top:16mm}
+  h2,h3{page-break-after:avoid}
+  .tw,pre,.note{page-break-inside:avoid}
+  th{position:static}
+  a{color:inherit;text-decoration:none}
+}
+</style></head><body><div class='wrap'>
+<div class='cover'>
+<span class='eyebrow'>Chuyên đề Trí tuệ nhân tạo · Đặc tả chức năng v2.0</span>
+<h1>ĐẶC TẢ CHỨC NĂNG HỆ THỐNG — OmniVoice VN<small>Dựng lại quy trình tổng hợp và nhân bản giọng nói tiếng Việt zero-shot với một mô hình duy nhất</small></h1>
+<div class='meta'>
+<div><span>Đề tài</span><b>Nghiên cứu và ứng dụng mô hình học sâu trong tổng hợp, nhân bản giọng nói tiếng Việt zero-shot</b></div>
+<div><span>Học phần</span><b>Chuyên đề Trí tuệ nhân tạo</b></div>
+<div><span>Đơn vị</span><b>Trường Đại học Thủy Lợi — Phân hiệu TP. Hồ Chí Minh</b><br>Khoa Kỹ thuật Hạ tầng và Công nghệ thông tin</div>
+<div><span>Giảng viên hướng dẫn</span><b>TS. Hoàng Văn Quý</b></div>
+<div><span>Sinh viên thực hiện</span><b>Nguyễn Hữu Duy — 2389403542 — 23DODA3<br>Đỗ Viết Thạch — 2389400193 — 23DODA2<br>Nguyễn Đức Thắng — 2389401049 — 23DODA2</b></div>
+<div><span>Mô hình sử dụng</span><b><code>k2-fsa/OmniVoice</code> 0.2.1</b></div>
+<div><span>Phiên bản · Ngày</span><b>v2.0 · 26/10/2026</b></div>
+</div></div>
+<div class='stats'>
+<div class='stat acc'><b>76</b><span>chức năng được đặc tả</span></div>
+<div class='stat ok'><b>64</b><span>đã chạy, có kiểm chứng</span></div>
+<div class='stat warn'><b>12</b><span>mới, mới kiểm trên mock</span></div>
+<div class='stat bad'><b>5</b><span>lỗi đã biết, chưa vá</span></div>
+<div class='stat acc'><b>2.100</b><span>file WAV thật đã sinh</span></div>
+</div>
+<h1>1. Mục đích, phạm vi và quy ước của tài liệu</h1>
+<h2>1.1. Mục đích</h2>
+<p>Tài liệu này đặc tả <b>toàn bộ chức năng</b> của hệ thống OmniVoice VN — hệ thống dựng lại quy trình suy luận của một mô hình tổng hợp giọng nói zero-shot duy nhất cho tiếng Việt. Mỗi chức năng được mô tả đủ để: (a) một người khác đọc là dựng lại được; (b) tự kiểm được nó đã đạt hay chưa; (c) biết nó hỏng ở đâu khi hỏng.</p>
+<p>Tài liệu dùng cho môn <b>Chuyên đề Trí tuệ nhân tạo</b>. Khác với một bản đặc tả phần mềm thông thường, tài liệu này dành gần một nửa dung lượng cho nhóm chức năng <b>đo lường và hiệu chuẩn</b> — vì với một đề tài AI, phần khó nhất không phải là chạy được model, mà là <b>biết mình đã đo đúng hay chưa</b>.</p>
+<h2>1.2. Phạm vi</h2>
+<div class='tw'><table><colgroup><col style='width:52%'><col style='width:48%'></colgroup><thead><tr><th>Trong phạm vi</th><th>Ngoài phạm vi</th></tr></thead><tbody><tr><td>Một mô hình duy nhất: <code>k2-fsa/OmniVoice</code></td><td>So sánh nhiều mô hình TTS khác nhau</td></tr><tr><td>Tiếng Việt, 6 thanh điệu, 7 giọng người nói</td><td>Đa ngôn ngữ, giọng vùng miền</td></tr><tr><td>Ba chế độ: TTS · nhân bản giọng (zero-shot) · thiết kế giọng</td><td>Ca hát, chuyển đổi giọng thời gian thực</td></tr><tr><td>Đo chất lượng tự động (CER/WER, thanh điệu, RTF) + người duyệt</td><td>Đánh giá cảm nhận MOS quy mô lớn với người ngoài nhóm</td></tr><tr><td>Chạy trên Kaggle GPU T4, giao diện trên máy cá nhân</td><td>Triển khai sản phẩm, đa người dùng, thanh toán</td></tr></tbody></table></div>
+<h2>1.3. Quy ước mã chức năng</h2>
+<div class='tw'><table><colgroup><col style='width:14%'><col style='width:42%'><col style='width:12%'><col style='width:32%'></colgroup><thead><tr><th>Tiền tố</th><th>Nhóm</th><th>Số lượng</th><th>Nơi thực thi</th></tr></thead><tbody><tr><td><code>G1-xx</code></td><td>Giao diện người dùng (web)</td><td>18</td><td>Trình duyệt, 1 file HTML</td></tr><tr><td><code>G2-xx</code></td><td>Backend API</td><td>12</td><td>FastAPI trên Kaggle</td></tr><tr><td><code>G3-xx</code></td><td>Lõi suy luận mô hình</td><td>8</td><td>Python + OmniVoice 0.2.1</td></tr><tr><td><code>G4-xx</code></td><td>Hạ tầng &amp; kết nối</td><td>6</td><td>Kaggle notebook + cloudflared</td></tr><tr><td><code>G5-xx</code></td><td>Đánh giá sơ bộ (lớp ứng dụng)</td><td>4</td><td>script eval/</td></tr><tr><td><code>G6-xx</code></td><td>Dây chuyền nghiên cứu (notebook v5)</td><td>19</td><td>19 cell, Kaggle</td></tr><tr><td><code>G7-xx</code></td><td>Đo lường &amp; hiệu chuẩn</td><td>9</td><td>Cell 11–12 của notebook</td></tr></tbody></table></div>
+<h2>1.4. Quy ước trạng thái</h2>
+<div class='tw'><table><colgroup><col style='width:22%'><col style='width:42%'><col style='width:36%'></colgroup><thead><tr><th>Ký hiệu</th><th>Nghĩa</th><th>Bằng chứng</th></tr></thead><tbody><tr><td><b class='ok'>●</b> ĐÃ CHẠY THẬT</td><td>Đã chạy trên GPU Kaggle với dữ liệu thật, có file kết quả</td><td>Run <code>C0D51F70</code> (2.100 WAV) và run <code>6050C5B7</code> (phiếu duyệt)</td></tr><tr><td><b class='warn'>●</b> MỚI KIỂM MOCK</td><td>Đã chạy hết 19/19 cell trên môi trường giả lập</td><td>19/19 cell, 0 lỗi cú pháp; <b>chưa chạy trên GPU thật</b></td></tr><tr><td><b class='bad'>●</b> LỖI ĐÃ BIẾT</td><td>Đã xác định nguyên nhân, chưa vá</td><td>Mục 7</td></tr><tr><td><b class='dim'>●</b> CHƯA LÀM</td><td>Đặc tả trước, chưa hiện thực</td><td>Mục 8, 9</td></tr></tbody></table></div>
+<div class='note warn'><span class='t'>Điều quan trọng nhất cần đọc đúng</span>Nhóm <code>G6</code> và <code>G7</code> mô tả notebook phiên bản v5. Phiên bản này <b>mới chỉ chạy trên môi trường giả lập</b> (mock), chưa chạy lại trên GPU thật. Các con số trong nhóm <code>G5</code>, <code>G3</code> là số đo <b>thật</b> từ run <code>C0D51F70</code>. Không được trộn hai loại bằng chứng này vào cùng một câu.</div>
+<h1>2. Tác nhân và bối cảnh sử dụng</h1>
+<div class='tw'><table><colgroup><col style='width:20%'><col style='width:30%'><col style='width:50%'></colgroup><thead><tr><th>Tác nhân</th><th>Là ai</th><th>Tương tác với hệ thống để làm gì</th></tr></thead><tbody><tr><td><b>Người dùng cuối</b></td><td>Sinh viên, giảng viên muốn tạo giọng nói</td><td>Nhập văn bản, chọn giọng mẫu, nghe và tải WAV</td></tr><tr><td><b>Người duyệt</b></td><td>Người nghe và chấm điểm từng câu</td><td>Mở <code>PHIEU_DUYET.html</code>, nghe, bấm 1–5, xuất <code>NGUOI_CHAM.json</code></td></tr><tr><td><b>Người nghiên cứu</b></td><td>Nhóm thực hiện đề tài</td><td>Chạy notebook, đọc bảng kết quả, quyết định bước tiếp theo</td></tr><tr><td><b>Máy chủ Kaggle</b></td><td>GPU T4, 16 GB VRAM</td><td>Nạp model, sinh audio, chạy ASR, đóng gói ZIP</td></tr><tr><td><b>Bộ nhận dạng tiếng nói</b></td><td>Whisper (<code>small</code>)</td><td>Nghe lại audio do hệ thống sinh ra và chép thành chữ — <b>đây là dụng cụ đo, và chính nó là nguồn sai số lớn nhất</b></td></tr><tr><td><b>Mô hình OmniVoice</b></td><td><code>k2-fsa/OmniVoice</code> 0.2.1</td><td>Sinh dạng sóng từ văn bản và lời nhắc giọng</td></tr></tbody></table></div>
+<div class='note info'><span class='t'>Vì sao phải liệt kê “bộ nhận dạng tiếng nói” như một tác nhân</span>Trong hệ thống này, Whisper không phải thành phần phụ — nó là <b>dụng cụ đo chính</b>. Mọi con số CER, WER, tỉ lệ đúng thanh đều đi qua nó. Khi hai dụng cụ đo (Whisper và tai người) lệch nhau, phải điều tra <b>dụng cụ</b> trước khi kết luận về model. Phân tích ở mục 6.3 cho thấy đúng là như vậy.</div>
+<h1>3. Phân rã chức năng</h1>
+<p>Hệ thống chia làm bảy nhóm. Ba nhóm đầu là <b>sản phẩm</b> (dùng thật được), hai nhóm giữa là <b>dây chuyền nghiên cứu</b> (sinh số liệu), hai nhóm cuối là <b>bộ đo và bộ hiệu chuẩn</b> — chính là phần làm nên giá trị học thuật của đề tài.</p>
+<div class='tw'><table><colgroup><col style='width:10%'><col style='width:26%'><col style='width:54%'><col style='width:10%'></colgroup><thead><tr><th>Nhóm</th><th>Tên nhóm</th><th>Vai trò trong đề tài</th><th>SL</th></tr></thead><tbody><tr><td><b>G1</b></td><td>Giao diện người dùng</td><td>Chứng minh hệ thống dùng được, không chỉ chạy được</td><td>18</td></tr><tr><td><b>G2</b></td><td>Backend API</td><td>Tách giao diện khỏi GPU; hợp đồng dữ liệu rõ ràng</td><td>12</td></tr><tr><td><b>G3</b></td><td>Lõi suy luận</td><td>Nơi thực sự gọi mô hình — và nơi mọi lỗi chất lượng sinh ra</td><td>8</td></tr><tr><td><b>G4</b></td><td>Hạ tầng</td><td>Đưa GPU miễn phí tới tay người dùng</td><td>6</td></tr><tr><td><b>G5</b></td><td>Đánh giá sơ bộ</td><td>Vòng đo đầu tiên ở lớp ứng dụng</td><td>4</td></tr><tr><td><b>G6</b></td><td>Dây chuyền nghiên cứu</td><td>Sinh 2.100 file, đo, cắt lỗi, xuất bằng chứng</td><td>19</td></tr><tr><td><b>G7</b></td><td>Đo lường &amp; hiệu chuẩn</td><td>Kiểm tra xem <b>chính thang điểm</b> có đúng không</td><td>9</td></tr></tbody></table></div>
+<p><b>Tổng: 76 chức năng.</b> Trong đó 64 đã chạy có kiểm chứng, 12 mới kiểm trên mock, 5 lỗi đã biết chưa vá (mục 7).</p>
+<h1>4. Đặc tả chi tiết các chức năng</h1>
+<h2>4.1. G1 — Giao diện người dùng (18 chức năng)</h2>
+<p>Một file HTML duy nhất, không cần cài đặt. Bốn khu vực: Văn bản → Giọng · Nhân bản · Thiết kế · Về dự án. Trạng thái: <b class='ok'>●</b> toàn bộ đã chạy.</p>
+<div class='tw'><table class='small'><colgroup><col style='width:7%'><col style='width:17%'><col style='width:19%'><col style='width:27%'><col style='width:24%'><col style='width:6%'></colgroup><thead><tr><th>Mã</th><th>Chức năng</th><th>Đầu vào → Đầu ra</th><th>Quy tắc &amp; xử lý lỗi</th><th>Tiêu chí nghiệm thu</th><th>TT</th></tr></thead><tbody><tr><td>G1-01</td><td>Điều hướng 4 khu vực</td><td>Click tab → đổi khung nội dung</td><td>Giữ trạng thái form khi chuyển tab</td><td>Chuyển tab không mất văn bản đã nhập</td><td>●</td></tr><tr><td>G1-02</td><td>Nhập văn bản + đếm ký tự</td><td>Chuỗi → số ký tự realtime</td><td>Cảnh báo khi thiếu dấu câu cuối câu</td><td>Đếm đúng cả ký tự có dấu tiếng Việt</td><td>●</td></tr><tr><td>G1-03</td><td>Chọn <code>num_step</code></td><td>8 / 16 / 32 → tham số sinh</td><td>Kèm mô tả đánh đổi chất lượng ↔ thời gian</td><td>Chọn xong gửi đúng giá trị</td><td>●</td></tr><tr><td>G1-04</td><td>Chọn tốc độ đọc</td><td>0,85× · 1,0× · 1,15× · 1,3×</td><td>Ánh xạ sang <code>speed</code></td><td>WAV dài/ngắn tương ứng</td><td>●</td></tr><tr><td>G1-05</td><td>Kéo–thả file giọng mẫu</td><td>File → vùng thả</td><td>Chặn nếu không phải audio</td><td>Thả file .wav hiện tên ngay</td><td>●</td></tr><tr><td>G1-06</td><td>Kiểm tra định dạng file</td><td>File → chấp nhận / từ chối</td><td>Đọc <code>type</code> và phần mở rộng</td><td>Từ chối .txt .pdf kèm thông báo rõ</td><td>●</td></tr><tr><td>G1-07</td><td>Hiện tên + dung lượng file</td><td>File → nhãn</td><td>Làm tròn KB/MB</td><td>Hiện đúng trong 1 s</td><td>●</td></tr><tr><td>G1-08</td><td>Ô lời của clip mẫu</td><td>Chuỗi (tuỳ chọn)</td><td>Rỗng thì bỏ qua</td><td>Có/không đều sinh được</td><td>●</td></tr><tr><td>G1-09</td><td>Chips thiết kế giọng</td><td>4 nhóm chip</td><td>giới tính · tuổi · cao độ · phong cách</td><td>Mỗi nhóm chọn được 1 giá trị</td><td>●</td></tr><tr><td>G1-10</td><td>Tự ghép mô tả giọng</td><td>Chip → chuỗi <code>instruct</code></td><td>Ghép xong vẫn sửa tay được</td><td>Sửa tay không bị ghi đè</td><td>●</td></tr><tr><td>G1-11</td><td>Waveform bấm để tua</td><td>Click → đổi vị trí phát</td><td><b>Hình vẽ mô phỏng, không đọc dữ liệu thật</b> (lỗi B04)</td><td>Tua được đúng mốc</td><td>●</td></tr><tr><td>G1-12</td><td>Play / pause + tiến trình</td><td>Nút → trạng thái</td><td>Đồng bộ theo <code>timeupdate</code></td><td>Không lệch quá 0,2 s</td><td>●</td></tr><tr><td>G1-13</td><td>Hiện số đo kết quả</td><td>Header HTTP → nhãn</td><td>Thời lượng · thời gian sinh · RTF</td><td>Khớp header server</td><td>●</td></tr><tr><td>G1-14</td><td>Tải WAV về máy</td><td>Blob → file</td><td>Tên có timestamp</td><td>File mở được bằng trình phát</td><td>●</td></tr><tr><td>G1-15</td><td>Lịch sử phiên</td><td>12 bản gần nhất</td><td>Mất khi F5 (lỗi B03)</td><td>Bấm vào nghe lại được</td><td>●</td></tr><tr><td>G1-16</td><td>Modal cấu hình kết nối</td><td>URL + API key</td><td>Có nút kiểm tra kết nối</td><td>Đổi URL là dùng được ngay</td><td>●</td></tr><tr><td>G1-17</td><td>Lưu cấu hình</td><td><code>localStorage</code></td><td>Mở lại không phải nhập</td><td>Đóng trình duyệt vẫn còn</td><td>●</td></tr><tr><td>G1-18</td><td>Theo dõi backend</td><td>Polling 30 s</td><td>Chấm xanh/đỏ + thời điểm đồng bộ</td><td>Tắt server → đỏ trong ≤ 30 s</td><td>●</td></tr></tbody></table></div>
+<h2>4.2. G2 — Backend API (12 chức năng)</h2>
+<p>FastAPI, 446 dòng. Mọi phản hồi lỗi đều là JSON <code>{"error": "..."}</code> để giao diện hiển thị được nguyên văn.</p>
+<div class='tw'><table class='small'><colgroup><col style='width:7%'><col style='width:22%'><col style='width:38%'><col style='width:33%'></colgroup><thead><tr><th>Mã</th><th>Endpoint / chức năng</th><th>Hợp đồng</th><th>Ghi chú</th></tr></thead><tbody><tr><td>G2-01</td><td><code>GET /health</code></td><td>→ <code>{model, device, mock, loaded, sample_rate}</code></td><td>Giao diện polling 30 s. <code>mock=true</code> nghĩa là không có GPU</td></tr><tr><td>G2-02</td><td><code>GET /info</code></td><td>→ thông số engine + giá trị mặc định</td><td>Dùng để in bảng tham số trong báo cáo</td></tr><tr><td>G2-03</td><td><code>POST /api/tts</code></td><td><code>{text, num_step?, speed?}</code> → <code>audio/wav</code></td><td>Chế độ giọng mặc định</td></tr><tr><td>G2-04</td><td><code>POST /api/clone</code></td><td><code>multipart: text, voice_file, transcript?</code> → <code>audio/wav</code></td><td><b>Có lỗi B01</b>: ghi thẳng bytes upload ra .wav, không chuyển mã</td></tr><tr><td>G2-05</td><td><code>POST /api/design</code></td><td><code>{text, instruct}</code> → <code>audio/wav</code></td><td>Mô tả giọng dạng văn bản</td></tr><tr><td>G2-06</td><td>Xác thực API key</td><td><code>X-API-Key</code> sai → <b>401</b></td><td>Đã kiểm thử cả trường hợp đúng và sai</td></tr><tr><td>G2-07</td><td>CORS mở</td><td>Cho phép origin của giao diện</td><td>Cần vì UI chạy trên máy khác</td></tr><tr><td>G2-08</td><td>Giới hạn upload</td><td>1 KB – 25 MB</td><td>Vượt → 413 kèm thông báo</td></tr><tr><td>G2-09</td><td>Xử lý lỗi thống nhất</td><td>Luôn trả <code>{"error"}</code></td><td>Không trả HTML traceback</td></tr><tr><td>G2-10</td><td>Header đo lường</td><td><code>X-Gen-Time</code> · <code>X-Audio-Duration</code> · <code>X-RTF</code></td><td>Giao diện đọc để hiện số đo</td></tr><tr><td>G2-11</td><td>Chế độ mock</td><td><code>OMNIVOICE_MOCK=1</code></td><td>Sinh sóng sin thay vì gọi model — để kiểm thử không cần GPU</td></tr><tr><td>G2-12</td><td>Preload / lazy load</td><td>Cấu hình lúc khởi động</td><td>Nạp sẵn model hoặc nạp ở lần gọi đầu</td></tr></tbody></table></div>
+<h3>Ví dụ hợp đồng đầy đủ — G2-03</h3>
+<pre><code>POST /api/tts
+X-API-Key: &lt;key&gt;
+Content-Type: application/json
+
+{ &quot;text&quot;: &quot;Ba ra sân sau ngắm hoa.&quot;, &quot;num_step&quot;: 16, &quot;speed&quot;: 1.0 }
+
+── 200 OK ──────────────────────────────────────────────
+Content-Type: audio/wav
+X-Gen-Time: 1.42
+X-Audio-Duration: 3.70
+X-RTF: 0.384
+&lt;binary WAV, PCM 16-bit, mono, 24 kHz&gt;
+
+── 401 ─────────────────────────────────────────────────
+{ &quot;error&quot;: &quot;API key không hợp lệ&quot; }</code></pre>
+<h2>4.3. G3 — Lõi suy luận mô hình (8 chức năng)</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:7%'><col style='width:22%'><col style='width:38%'><col style='width:26%'><col style='width:7%'></colgroup><thead><tr><th>Mã</th><th>Chức năng</th><th>Cách làm</th><th>Tham số / ngưỡng</th><th>TT</th></tr></thead><tbody><tr><td>G3-01</td><td>Tự phát hiện thiết bị</td><td>Thử lần lượt CUDA → MPS → CPU</td><td>In rõ đang chạy trên gì</td><td>●</td></tr><tr><td>G3-02</td><td>Chọn kiểu số theo thiết bị</td><td><code>float16</code> cho GPU, <code>float32</code> cho CPU</td><td>GPU T4: 16 GB VRAM, model ~2,5 GB</td><td>●</td></tr><tr><td>G3-03</td><td>Khoá ngôn ngữ</td><td>Luôn truyền <code>language="vietnamese"</code></td><td>Không cho phép đổi qua UI</td><td>●</td></tr><tr><td>G3-04</td><td>Sáu tham số sinh</td><td><code>num_step · guidance · speed · t_shift · denoise · postprocess</code></td><td>Mặc định: 16 · 2.0 · 1.0 · 0.1</td><td>●</td></tr><tr><td>G3-05</td><td>Lời nhắc nhân bản giọng</td><td><code>create_voice_clone_prompt()</code> từ clip mẫu</td><td>Cần clip 3–15 s</td><td>●</td></tr><tr><td>G3-06</td><td>Mô tả giọng thiết kế</td><td>Truyền <code>instruct</code> trực tiếp</td><td>Tiếng Việt, câu mô tả ngắn</td><td>●</td></tr><tr><td>G3-07</td><td>Đổi đầu ra sang WAV</td><td><code>float32</code> → PCM 16 bit, chuẩn hoá biên độ, 1 kênh</td><td>Đỉnh ≤ 0,99 để tránh vỡ tiếng</td><td>●</td></tr><tr><td>G3-08</td><td>Đo RTF</td><td><code>thời gian sinh / thời lượng audio</code></td><td>Đo thật: <b>RTF = 0,384</b> (nhanh hơn thời gian thực 2,6 lần)</td><td>●</td></tr></tbody></table></div>
+<h2>4.4. G4 — Hạ tầng và kết nối (6 chức năng)</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:7%'><col style='width:22%'><col style='width:38%'><col style='width:26%'><col style='width:7%'></colgroup><thead><tr><th>Mã</th><th>Chức năng</th><th>Cách làm</th><th>Tiêu chí nghiệm thu</th><th>TT</th></tr></thead><tbody><tr><td>G4-01</td><td>Notebook chạy tuần tự</td><td>Mỗi cell idempotent, chạy lại không hỏng</td><td>Chạy từ cell 1 tới hết mà không sửa tay</td><td>●</td></tr><tr><td>G4-02</td><td>Kiểm tra GPU + Internet</td><td>Kiểm trước khi cài đặt</td><td>Báo rõ nếu chưa bật Internet hoặc chưa bật GPU</td><td>●</td></tr><tr><td>G4-03</td><td>Cài tối giản</td><td>5 gói; không đụng vào torch của image Kaggle</td><td>Không có xung đột phiên bản</td><td>●</td></tr><tr><td>G4-04</td><td>Tải model có cache</td><td>Ưu tiên dùng lại từ Kaggle Dataset</td><td>Lần chạy thứ hai không tải lại</td><td>●</td></tr><tr><td>G4-05</td><td>Khởi động + chờ health</td><td>Polling tối đa 6 phút</td><td>In log lỗi nếu không lên</td><td>●</td></tr><tr><td>G4-06</td><td>Đường hầm công khai</td><td>Tải <code>cloudflared</code>, mở tunnel tới cổng 8000</td><td>In ra một URL công khai dùng được</td><td>●</td></tr></tbody></table></div>
+<h2>4.5. G5 — Đánh giá sơ bộ ở lớp ứng dụng (4 chức năng)</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:7%'><col style='width:22%'><col style='width:38%'><col style='width:26%'><col style='width:7%'></colgroup><thead><tr><th>Mã</th><th>Chức năng</th><th>Cách làm</th><th>Kết quả thật</th><th>TT</th></tr></thead><tbody><tr><td>G5-01</td><td>Đo đánh đổi <code>num_step</code></td><td>4 mức × 5 câu × 2 lần, có bước làm nóng</td><td>step 8/16/32 → CER 0,165 / 0,157 / 0,147</td><td>●</td></tr><tr><td>G5-02</td><td>Đo chất lượng nhân bản giọng</td><td>4 độ dài clip mẫu; ECAPA-TDNN (dự phòng MFCC)</td><td>Độ tương đồng giọng giảm khi clip &lt; 3 s</td><td>●</td></tr><tr><td>G5-03</td><td>Xuất CSV + JSON</td><td>Ghi kết quả kèm cấu hình</td><td>Đọc lại được để vẽ bảng</td><td>●</td></tr><tr><td>G5-04</td><td>Đo RTF theo độ dài câu</td><td>Ghi thời gian sinh cho từng câu</td><td>RTF trung bình 0,384</td><td>●</td></tr></tbody></table></div>
+<h2>4.6. G6 — Dây chuyền nghiên cứu: notebook 19 cell (19 chức năng)</h2>
+<p>Notebook v5 gồm 20 cell (1 markdown + 19 code), chạy tuần tự, tổng thời gian khoảng <b>70 phút</b> trên GPU T4. Mỗi cell là một chức năng độc lập, có thể chạy riêng nếu đã có dữ liệu của cell trước.</p>
+<div class='tw'><table class='small'><colgroup><col style='width:7%'><col style='width:5%'><col style='width:30%'><col style='width:42%'><col style='width:6%'></colgroup><thead><tr><th>Mã</th><th>Cell</th><th>Chức năng</th><th>Đầu ra kiểm chứng được</th><th>TT</th></tr></thead><tbody><tr><td>G6-01</td><td>1</td><td>Cấu hình tập trung</td><td>Mọi tham số ở một chỗ, in ra lúc chạy</td><td>●</td></tr><tr><td>G6-02</td><td>2</td><td>Tiền kiểm môi trường</td><td>Dừng ngay nếu thiếu GPU / model / dữ liệu</td><td>●</td></tr><tr><td>G6-03</td><td>3</td><td>Nhận diện đúng 7 file giọng</td><td>Bảng ánh xạ tên giọng → đường dẫn</td><td>●</td></tr><tr><td>G6-04</td><td>4</td><td>Sinh 300 câu phủ 6 thanh</td><td>50 câu/thanh, tự kiểm nhãn thanh</td><td>●</td></tr><tr><td>G6-05</td><td>5</td><td>Nạp model + lời nhắc giọng</td><td>7 lời nhắc, in VRAM đã dùng</td><td>●</td></tr><tr><td>G6-06</td><td>6</td><td>Nạp ASR + <b>smoke test</b></td><td>Sinh 1 câu, nghe lại, chặn nếu CER &gt; 0,6</td><td>●</td></tr><tr><td>G6-07</td><td>7</td><td>Sinh 2.100 WAV</td><td>Có pilot đo tốc độ trước khi chạy hết</td><td>●</td></tr><tr><td>G6-08</td><td>8</td><td>8 WAV nghe so sánh 7 giọng</td><td>Một câu, bảy giọng, nghe liền</td><td>●</td></tr><tr><td>G6-09</td><td>9</td><td>Đánh giá CER · thanh điệu · khoảng tin cậy</td><td>Bootstrap 1.000 lần</td><td>●</td></tr><tr><td>G6-10</td><td>10</td><td>Soi câu sai, cắt đúng đoạn sai</td><td>Xuất WAV riêng cho từng lỗi</td><td>●</td></tr><tr><td>G6-11</td><td>11</td><td>Cảnh báo từng câu + phiếu duyệt HTML</td><td>Xem mục 4.7 và 5</td><td>🟡</td></tr><tr><td>G6-12</td><td>12</td><td>Đồng thuận người–máy + chẩn đoán</td><td>Xem mục 4.7 và 5</td><td>🟡</td></tr><tr><td>G6-13</td><td>13</td><td>Chẩn đoán bộ phát hiện thanh</td><td>Chứng minh F0 không dùng được</td><td>●</td></tr><tr><td>G6-14</td><td>14</td><td>Ablation <code>num_step</code> so cặp</td><td>Cùng câu, khác bước, so trực tiếp</td><td>●</td></tr><tr><td>G6-15</td><td>15</td><td>Đối chứng âm</td><td>Chứng minh thước đo có phản ứng</td><td>●</td></tr><tr><td>G6-16</td><td>16</td><td>Mốc giọng người thật (VIVOS)</td><td>Sàn sai số của dụng cụ</td><td>●</td></tr><tr><td>G6-17</td><td>17</td><td>Báo cáo + bảng nhận định</td><td>8 nhận định, mỗi cái gắn nhãn nguồn</td><td>🟡</td></tr><tr><td>G6-18</td><td>18</td><td>Đóng gói ZIP</td><td>Toàn bộ bằng chứng trong 1 file</td><td>●</td></tr><tr><td>G6-19</td><td>19</td><td>Nút tải</td><td>Tải ZIP từ Kaggle về máy</td><td>●</td></tr></tbody></table></div>
+<div class='note warn'><span class='t'>Vì sao 3 chức năng ở trạng thái 🟡</span>Cell 11, 12, 17 vừa được vá ngày 26/10/2026 (đổi thang đo và thêm dải đối chứng). Đã chạy hết 19/19 cell trên mock và có bài kiểm riêng cho nhánh phán xử, nhưng <b>chưa chạy lại trên GPU thật</b> với dữ liệu thật.</div>
+<h2>4.7. G7 — Đo lường và hiệu chuẩn (9 chức năng)</h2>
+<p>Đây là nhóm chức năng quyết định giá trị học thuật của đề tài. Các nhóm trước trả lời câu hỏi <i>“hệ thống có chạy không”</i>. Nhóm này trả lời câu hỏi khó hơn: <b>“con số mình đang báo cáo có đúng không”</b>.</p>
+<h3>G7-01 · Cảnh báo từng câu theo tỉ lệ âm tiết sai nặng</h3>
+<p><b>Mục đích.</b> Thay vì một con số CER cho cả 2.100 file, chấm từng cặp (giọng × câu) để biết câu nào cần nghe trước.</p>
+<p><b>Cách tính.</b> Căn chuỗi câu gốc với câu ASR nghe được, đếm số âm tiết <i>sai nặng</i>, chia cho số âm tiết của câu gốc. <b>Sai nặng</b> = khác hẳn chữ, hoặc thừa/thiếu âm tiết. Bỏ qua hai loại mà tai người không phân biệt được: khác dấu thanh (<i>nhà / nha</i>) và lệch đúng 1 ký tự (<i>bát / bắt</i>).</p>
+<p><b>Ánh xạ công khai sang thang 1–5:</b></p>
+<div class='tw'><table><colgroup><col style='width:12%'><col style='width:24%'><col style='width:64%'></colgroup><thead><tr><th>Điểm</th><th>% âm tiết sai nặng</th><th>Nghĩa</th></tr></thead><tbody><tr><td>5</td><td>= 0 %</td><td>không có âm tiết nào sai hẳn</td></tr><tr><td>4</td><td>0 – 15 %</td><td>1–2 âm tiết sai, vẫn nghe rõ</td></tr><tr><td>3</td><td>15 – 30 %</td><td>vài âm tiết sai hẳn</td></tr><tr><td>2</td><td>30 – 60 %</td><td>nhiều âm tiết sai, đáng nghe lại</td></tr><tr><td>1</td><td>&gt; 60 %</td><td>coi là hỏng, buộc phải nghe lại</td></tr></tbody></table></div>
+<div class='note bad'><span class='t'>Bắt buộc: đây là CẢNH BÁO, không phải điểm</span>Thang này dùng để <b>xếp hàng câu cần nghe trước</b>. Nó <b>không</b> phải điểm chất lượng. Thang trước đây dựa trên CER đã gọi 23/54 câu là hỏng trong khi tai người chỉ thấy 1 câu hỏng — <b>báo động giả 95,7 %</b>. Chi tiết ở mục 6.3.</div>
+<h3>G7-02 · Hiệu chuẩn “bỏ qua lỗi không nghe ra”</h3>
+<p><b>Vì sao cần.</b> CER đếm ký tự, nên <i>nhà</i>→<i>nha</i> bị tính 1 lỗi và <i>thềm</i>→<i>thêm</i> bị tính 2 lỗi, dù tai người nghe y hệt. Trên câu 22 ký tự, ba bốn lỗi dấu đủ đẩy CER vượt 30 % và câu rơi xuống 1 điểm oan.</p>
+<p><b>Cách làm.</b> Bỏ dấu thanh bằng chuẩn hoá Unicode NFD rồi so khoảng cách Levenshtein cắt sớm trên phần không dấu. Nếu bằng nhau hoặc lệch ≤ 1 ký tự → coi là không sai nặng.</p>
+<p><b>Bằng chứng hiệu chuẩn</b> (294 câu, 1.913 âm tiết, run <code>C0D51F70</code>): khớp chính xác 80,5 % · sai dấu 6,1 % · lệch 1 ký tự 7,0 % · khác hẳn 6,3 % · thừa/thiếu 0,1 %.</p>
+<h3>G7-03 · Chọn bộ duyệt theo mức tệ và phân tầng thanh</h3>
+<p><b>Mục đích.</b> Không ai nghe nổi 2.100 file, cũng không có nghĩa lý nếu chỉ nghe câu tốt.</p>
+<p><b>Quy tắc:</b></p>
+<ul><li><code>REVIEW_WORST_PER_VOICE = 3</code> — 3 câu tệ nhất mỗi giọng (theo % âm tiết sai nặng)</li><li><code>REVIEW_PER_VOICE = 10</code> — thêm mẫu phân tầng theo 6 thanh, để không giọng nào chỉ có một thanh</li><li><code>REVIEW_MAX = 80</code> — chặn trên tổng số câu trong một phiếu</li><li>Toàn bộ câu bị xếp 1 điểm luôn có mặt trong phiếu</li></ul>
+<div class='note info'><span class='t'>Con số cần biết về thiết kế này</span>Vì lấy câu tệ nhất, mẫu duyệt <b>tệ hơn quần thể 4,7 lần</b> (19,1 % so với 4,1 % âm tiết sai nặng). Đây là lựa chọn có chủ đích: nếu câu tệ nhất mà người nghe vẫn thấy đạt thì kết luận mạnh hơn nhiều so với nghe mẫu ngẫu nhiên.</div>
+<h3>G7-04 · Dải đối chứng — chức năng mới, quan trọng nhất</h3>
+<p><b>Vấn đề nó giải.</b> Phiếu cũ chỉ chứa câu <b>máy đã nghi</b>. Người duyệt chỉ mở những câu máy cho điểm thấp. Hệ quả: phiếu đo được <b>báo động giả</b> nhưng <b>về mặt cấu trúc không thể đo máy bỏ sót</b> — nếu máy cho 5 điểm một câu hỏng, không ai biết.</p>
+<p><b>Cách làm.</b> <code>REVIEW_CONTROL_PER_VOICE = 3</code>: đưa vào phiếu một số câu <b>máy cho 5 điểm</b>, và <b>ẩn điểm của máy</b> trên thẻ đó — chỉ hiện nhãn “ĐỐI CHỨNG · điểm máy ẩn”. Nếu người nghe bắt được lỗi trong nhóm này thì đó là bằng chứng máy bỏ sót.</p>
+<p><b>Ước lượng.</b> Với <i>n</i> câu đối chứng và 0 lỗi bắt được, cận trên khoảng tin cậy 95 % cho tỉ lệ bỏ sót là <code>1 − 0,05^(1/n)</code>:</p>
+<div class='tw'><table><colgroup><col style='width:18%'><col style='width:34%'><col style='width:48%'></colgroup><thead><tr><th>n đối chứng</th><th>Cận trên 95 % của tỉ lệ bỏ sót</th><th>Kết luận được gì</th></tr></thead><tbody><tr><td>5</td><td>45 %</td><td>gần như không nói được gì</td></tr><tr><td>10</td><td>26 %</td><td>chỉ loại được khả năng bỏ sót rất cao</td></tr><tr><td>20</td><td>14 %</td><td>mức tối thiểu để báo cáo</td></tr><tr><td>30</td><td>9,5 %</td><td>đủ để viết một câu kết luận có ý nghĩa</td></tr></tbody></table></div>
+<h3>G7-05 · Phiếu duyệt HTML tự chứa</h3>
+<p><b>Đầu ra.</b> Một file <code>PHIEU_DUYET.html</code> mở được bằng trình duyệt, cùng thư mục <code>cham_diem/</code> chứa WAV của mọi câu. Giải nén ZIP rồi mở tại chỗ là nghe được hết.</p>
+<p><b>Thao tác của người duyệt.</b> Nghe → bấm <kbd>1</kbd>–<kbd>5</kbd> → <kbd>Enter</kbd> sang câu kế → bấm <b>Xuất JSON</b> ở thanh dưới cùng.</p>
+<p><b>Đầu ra.</b> <code>NGUOI_CHAM.json</code> với cấu trúc ở Phụ lục B. Tiến độ tự lưu, đóng trình duyệt mở lại không mất.</p>
+<div class='note warn'><span class='t'>Một khuyết điểm đã nhận diện nhưng chưa sửa</span>Câu gốc hiện ngay trên ô audio, khiến người nghe bị <b>dẫn trước</b> — tai tự lấp lỗi nhỏ từ ngữ cảnh. Bản sau cần có chế độ <b>duyệt mù</b>: ẩn câu gốc, người nghe tự gõ lại những gì nghe được. Đó cũng là cách duy nhất đo được WER của con người để so trực tiếp với WER của Whisper trên cùng một file.</div>
+<h3>G7-06 · Tính đồng thuận người – máy</h3>
+<p><b>Khi nào dùng được.</b> Chỉ khi người và máy chấm <b>độc lập</b>. Nếu người chỉ sửa điểm ở những câu máy cho thấp, thì “điểm người” được sinh ra từ “điểm máy” — chỉ có một lần đo, và mọi thống kê đồng thuận đều vô nghĩa.</p>
+<p><b>Các số đo khi phiếu hợp lệ:</b> đồng ý tuyệt đối · lệch ≤ 1 bậc · MAE · bias · κ có trọng số bậc hai · Spearman ρ · ma trận nhầm lẫn 5×5.</p>
+<h3>G7-07 · Phát hiện “phiếu phán xử” và chặn κ</h3>
+<p><b>Quy tắc phát hiện.</b> Nếu <b>100 % câu máy cho 5 điểm được giữ nguyên</b> và <b>100 % câu máy cho dưới 5 điểm bị sửa</b> → phiếu là <i>phán xử</i>, không phải hai lần đo độc lập. Hệ thống in cảnh báo, đặt <code>kappa = None</code>, đổi tiêu đề khối thống kê thành <i>“các số dưới đây KHÔNG DÙNG ĐƯỢC”</i>, và kết luận bằng tỉ lệ báo động giả.</p>
+<div class='note ok'><span class='t'>Đây là bài học phương pháp quan trọng nhất của đề tài</span>Một thang đo có thể <b>chạy đúng</b>, <b>in ra số đẹp</b>, và <b>hoàn toàn sai</b> — nếu người dùng nó không chấm độc lập. Hệ thống phải <b>tự phát hiện</b> tình huống đó chứ không thể trông vào việc người đọc để ý.</div>
+<h3>G7-08 · Tỉ lệ báo động giả và tỉ lệ bỏ sót</h3>
+<p>Hai số đo đúng cho loại phiếu này:</p>
+<div class='tw'><table><colgroup><col style='width:20%'><col style='width:50%'><col style='width:30%'></colgroup><thead><tr><th>Chỉ số</th><th>Định nghĩa</th><th>Cách đọc</th></tr></thead><tbody><tr><td><b>Tỉ lệ báo động giả</b></td><td>Trong số câu máy gắn cờ “có vấn đề”, bao nhiêu phần trăm người nghe thấy là đạt (≥ 4)</td><td>Càng cao thì thang máy càng khắt khe vô căn cứ</td></tr><tr><td><b>Tỉ lệ bỏ sót</b></td><td>Trong số câu máy cho điểm cao (nhóm đối chứng), bao nhiêu phần trăm người nghe thấy hỏng (≤ 3)</td><td>Càng cao thì máy càng dễ bỏ qua lỗi thật</td></tr></tbody></table></div>
+<p><b>Kết quả thật</b> (run <code>6050C5B7</code>, 54 câu): báo động giả trên cờ “hỏng” <b>22/23 = 95,7 %</b>; trên toàn bộ cờ “chưa đạt” <b>48/49 = 98,0 %</b>. Tỉ lệ bỏ sót: <b>chưa đo</b> — phiên bản đó chưa có dải đối chứng.</p>
+<h3>G7-09 · Chẩn đoán thang điểm</h3>
+<p>In ra trước khi tin bất kỳ chỉ số đồng thuận nào: máy gọi hỏng bao nhiêu câu · bao nhiêu trong đó người thấy đạt · người thấy hỏng bao nhiêu câu · máy bỏ sót bao nhiêu · mức điểm nào chiếm nhiều nhất và chiếm bao nhiêu phần trăm.</p>
+<div class='note info'><span class='t'>Vì sao phải kiểm “độ nén” của phiếu</span>Nếu 96 % số câu rơi vào cùng một mức điểm, κ tiến về 0 <b>một cách máy móc</b>, bất kể bên kia chấm thế nào. κ khi đó đo <b>độ phân tán của chính phiếu</b>, không đo chất lượng mô hình. Báo cáo κ trần trụi trong tình huống này là báo cáo sai.</div>
+<h1>5. Yêu cầu phi chức năng</h1>
+<p>Mọi ngưỡng dưới đây đều <b>đo được</b>, và phần lớn đã được đo thật.</p>
+<div class='tw'><table class='small'><colgroup><col style='width:8%'><col style='width:24%'><col style='width:34%'><col style='width:34%'></colgroup><thead><tr><th>Mã</th><th>Thuộc tính</th><th>Ngưỡng yêu cầu</th><th>Đo được</th></tr></thead><tbody><tr><td>NF-01</td><td>Tốc độ sinh</td><td>RTF &lt; 1 trên GPU T4</td><td><b>0,384</b> — đạt, nhanh hơn thời gian thực 2,6×</td></tr><tr><td>NF-02</td><td>Bộ nhớ</td><td>Vừa 16 GB VRAM</td><td>Model ~2,5 GB, còn dư cho ASR</td></tr><tr><td>NF-03</td><td>Thời gian một lượt chạy đầy đủ</td><td>≤ 90 phút cho 2.100 file + đánh giá</td><td>~70 phút</td></tr><tr><td>NF-04</td><td>Tính tái lập</td><td>Cùng cấu hình + cùng seed → cùng kết quả</td><td>Có seed cố định; siêu tham số đóng băng</td></tr><tr><td>NF-05</td><td>Tính tự chứa của bằng chứng</td><td>ZIP mở ra là nghe được mọi câu, không có liên kết chết</td><td>Đã kiểm: 0/280 file thiếu sau khi giải nén</td></tr><tr><td>NF-06</td><td>Kích thước bằng chứng</td><td>≤ 30 MB để gửi qua email</td><td>22,8 MB (chạy giả lập)</td></tr><tr><td>NF-07</td><td>Thời gian nghe của người duyệt</td><td>≤ 20 phút cho một phiếu</td><td>~13 phút cho 67 câu</td></tr><tr><td>NF-08</td><td>Không phụ thuộc dịch vụ trả phí</td><td>Toàn bộ chạy trên hạ tầng miễn phí</td><td>Kaggle T4 + tunnel công khai</td></tr></tbody></table></div>
+<h1>6. Ma trận truy vết và kết quả đo thật</h1>
+<h2>6.1. Chức năng nào trả lời mục tiêu nào</h2>
+<div class='tw'><table><colgroup><col style='width:30%'><col style='width:34%'><col style='width:36%'></colgroup><thead><tr><th>Mục tiêu của đề tài</th><th>Chức năng đảm nhận</th><th>Bằng chứng</th></tr></thead><tbody><tr><td>Dựng lại được pipeline suy luận với một model</td><td>G3-01…G3-08, G6-01…G6-07</td><td>2.100/2.100 file WAV, 7/7 giọng</td></tr><tr><td>Có giao diện dùng được, chạy local</td><td>G1-01…G1-18, G2-01…G2-12, G4-01…G4-06</td><td>48 chức năng đã chạy, có kiểm thử 401/413</td></tr><tr><td>Đánh giá định lượng trên tiếng Việt</td><td>G5-01…G5-04, G6-09, G6-16, G7-06</td><td>CER macro 0,1072 [0,0933; 0,1224] trên 294 câu</td></tr><tr><td>So sánh đánh đổi chất lượng ↔ chi phí</td><td>G5-01, G6-14</td><td>step 8/16/32 → CER 0,165 / 0,157 / 0,147</td></tr><tr><td><b>Kiểm tra chính thang đo</b></td><td><b>G7-01…G7-09</b></td><td>Báo động giả 95,7 %; κ không dùng được</td></tr></tbody></table></div>
+<h2>6.2. Số đo thật của lần chạy đầy đủ (<code>C0D51F70</code>)</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:34%'><col style='width:26%'><col style='width:40%'></colgroup><thead><tr><th>Chỉ số</th><th>Giá trị</th><th>Ghi chú</th></tr></thead><tbody><tr><td>File WAV sinh ra</td><td><b>2.100 / 2.100</b></td><td>7 giọng × 300 câu, 0 lỗi</td></tr><tr><td>RTF trung bình</td><td><b>0,384</b></td><td>GPU T4, <code>num_step</code> = 16</td></tr><tr><td>Số câu được đánh giá</td><td>294</td><td>trên 300 câu thiết kế</td></tr><tr><td>CER macro</td><td><b>0,1072</b></td><td>khoảng tin cậy 95 %: [0,0933; 0,1224]</td></tr><tr><td>CER micro</td><td>0,0978</td><td></td></tr><tr><td>CER sau khi bỏ dấu thanh</td><td>0,0754</td><td>chênh +0,0318 → phần lớn lỗi nằm ở dấu thanh</td></tr><tr><td>Tỉ lệ đúng thanh (qua ASR)</td><td><b>87,9 %</b></td><td>Whisper nghe ra đúng thanh</td></tr><tr><td>Tỉ lệ đúng thanh (qua F0)</td><td>28,6 %</td><td>bộ phân loại F0 — đã loại, xem mục 7</td></tr><tr><td>Ablation <code>num_step</code> 8 / 16 / 32</td><td>0,165 / 0,157 / 0,147</td><td>tăng bước → tốt lên nhưng chậm hơn</td></tr><tr><td>Đối chứng âm A / B / C</td><td>0,0693 / 0,2555 / 1,0886</td><td>thước đo có phản ứng đúng thứ tự</td></tr></tbody></table></div>
+<p><b>Phân bố CER trên 294 câu:</b> bằng 0 → 101 câu (34,4 %) · 7–12 % → 52 · 12–20 % → 39 · 20–35 % → 41 · trên 35 % → 15 câu (chiếm 21 % tổng số lỗi). Trung vị 1,7 ký tự sai trên 26,9 ký tự; phân vị 90 là 0,278.</p>
+<h2>6.3. Kết quả đo lường — phần quan trọng nhất của đề tài</h2>
+<h3>Thí nghiệm 1: hai dụng cụ đo không thống nhất</h3>
+<p>Người duyệt nghe 54 câu và <b>chỉ chấm những câu mình thấy máy chấm sai</b>. Kết quả:</p>
+<div class='tw'><table><colgroup><col style='width:30%'><col style='width:20%'><col style='width:26%'><col style='width:24%'></colgroup><thead><tr><th>Nhóm</th><th>Máy gắn cờ</th><th>Người nghe lại thấy đạt</th><th>Tỉ lệ</th></tr></thead><tbody><tr><td>Máy cho dưới 5 điểm</td><td>49 câu</td><td><b>48 câu</b></td><td><b>98,0 %</b> là báo động giả</td></tr><tr><td>Máy gọi “hỏng” (1 điểm)</td><td>23 câu</td><td><b>22 câu</b></td><td><b>95,7 %</b> là báo động giả</td></tr><tr><td>Máy báo hỏng đúng</td><td>23 câu</td><td><b>1 câu</b></td><td>4,3 %</td></tr></tbody></table></div>
+<h3>Thí nghiệm 2: lỗi do câu hay do giọng?</h3>
+<p>Phân rã phương sai của % âm tiết sai nặng trên 294 câu × 7 giọng:</p>
+<div class='tw'><table><colgroup><col style='width:26%'><col style='width:20%'><col style='width:54%'></colgroup><thead><tr><th>Nguồn biến thiên</th><th>Giải thích được</th><th>Đọc thế nào</th></tr></thead><tbody><tr><td><b>Câu</b> (42 câu)</td><td><b>24,1 %</b></td><td>cùng một câu, cả 7 giọng đều bị chấm tệ như nhau</td></tr><tr><td><b>Giọng</b> (7 giọng)</td><td><b>3,9 %</b></td><td>chênh lệch giữa các giọng gần như không đáng kể</td></tr></tbody></table></div>
+<p>Lỗi do câu gấp <b>6 lần</b> lỗi do giọng. Nghĩa là: <b>thứ hạng giọng mà hệ thống báo cáo không dùng để so sánh giọng được</b> — nó chủ yếu phản ánh câu nào Whisper không thuộc.</p>
+<h3>Thí nghiệm 3: phân loại lỗi ở mức âm tiết</h3>
+<p>Căn chuỗi 1.913 âm tiết trong 294 câu:</p>
+<div class='tw'><table><colgroup><col style='width:34%'><col style='width:16%'><col style='width:12%'><col style='width:38%'></colgroup><thead><tr><th>Loại</th><th>Số âm tiết</th><th>%</th><th>Tai người có phân biệt được không</th></tr></thead><tbody><tr><td>Khớp chính xác</td><td>1.540</td><td>80,5 %</td><td>—</td></tr><tr><td>Sai dấu thanh (<i>nhà / nha</i>)</td><td>117</td><td>6,1 %</td><td>gần như không</td></tr><tr><td>Lệch 1 ký tự (<i>bát / bắt</i>)</td><td>133</td><td>7,0 %</td><td>rất khó</td></tr><tr><td>Khác hẳn (<i>Cửa / Cơ</i>)</td><td>121</td><td>6,3 %</td><td>có</td></tr><tr><td>Thừa / thiếu âm tiết</td><td>2</td><td>0,1 %</td><td>có</td></tr></tbody></table></div>
+<p><b>93,6 % âm tiết khớp hoặc gần khớp.</b> Đây là căn cứ để nói rằng mô hình đúng hơn con số CER gợi ý — và cũng là lý do phải đổi thang đo.</p>
+<h3>Thí nghiệm 4: thiết kế mẫu duyệt</h3>
+<div class='tw'><table><colgroup><col style='width:70%'><col style='width:30%'></colgroup><thead><tr><th>Nhóm</th><th>% âm tiết sai nặng TB</th></tr></thead><tbody><tr><td>54 câu được đưa vào phiếu (câu tệ nhất mỗi giọng)</td><td><b>19,1 %</b></td></tr><tr><td>240 câu còn lại</td><td><b>4,1 %</b></td></tr><tr><td>Mức tệ hơn</td><td><b>× 4,7</b></td></tr></tbody></table></div>
+<p>Kết luận có lợi cho đề tài: <b>ngay cả trên nhóm câu tệ nhất mà máy tìm được, người nghe vẫn thấy 48/49 câu đạt</b>.</p>
+<h1>7. Lỗi đã biết và tình trạng</h1>
+<div class='tw'><table class='small'><colgroup><col style='width:6%'><col style='width:22%'><col style='width:26%'><col style='width:20%'><col style='width:26%'></colgroup><thead><tr><th>Mã</th><th>Lỗi</th><th>Hiện trạng</th><th>Rủi ro</th><th>Xử lý</th></tr></thead><tbody><tr><td>B01</td><td>File giọng mẫu không được chuyển mã</td><td>Nhận bytes → ghi thẳng ra <code>.wav</code> → đưa cho model</td><td><b>Cao</b> — MP3/M4A sẽ lỗi</td><td>Chưa vá. Cần chuẩn hoá về WAV mono 16 kHz</td></tr><tr><td>B02</td><td>Không xử lý văn bản dài</td><td>Gửi nguyên khối</td><td>Trung bình — dễ timeout</td><td>Chưa vá. Cần chia theo câu rồi ghép</td></tr><tr><td>B03</td><td>Lịch sử mất khi tải lại trang</td><td>Chỉ giữ trong biến JavaScript</td><td>Thấp</td><td>Chưa vá</td></tr><tr><td>B04</td><td>Waveform là hình mô phỏng</td><td>Vẽ 64 thanh bằng hàm sin, không đọc dữ liệu thật</td><td>Thấp — chỉ là thẩm mỹ</td><td>Chưa vá</td></tr><tr><td>B05</td><td>Không có điểm dừng / huỷ</td><td>Request treo thì phải chờ hết timeout</td><td>Trung bình</td><td>Chưa vá</td></tr><tr><td>B06</td><td><s>Thang điểm CER gọi oan 96 % số lần</s></td><td><b>Đã vá 26/10/2026</b></td><td>—</td><td>Đổi sang % âm tiết sai nặng; báo động giả 23 → 3 câu</td></tr><tr><td>B07</td><td><s>Phiếu không đo được tỉ lệ bỏ sót</s></td><td><b>Đã vá 26/10/2026</b></td><td>—</td><td>Thêm dải đối chứng, ẩn điểm máy</td></tr><tr><td>B08</td><td><s>Tính κ trên phiếu phán xử</s></td><td><b>Đã vá 26/10/2026</b></td><td>—</td><td>Tự phát hiện và chặn, đặt <code>kappa = None</code></td></tr><tr><td>B09</td><td>Bộ phân loại thanh bằng F0 không dùng được</td><td>Chỉ đúng 28,6 % so với 87,9 % qua ASR</td><td>Trung bình — có thể bị hỏi khi bảo vệ</td><td>Đã loại khỏi mọi kết luận; cell 13 giải thích vì sao</td></tr></tbody></table></div>
+<h1>8. Chức năng cố ý loại bỏ</h1>
+<p>Đây không phải “chưa làm”, mà là quyết định có lý do. Nếu bị hỏi “sao không có?”, cột thứ hai là câu trả lời.</p>
+<div class='tw'><table class='small'><colgroup><col style='width:7%'><col style='width:26%'><col style='width:67%'></colgroup><thead><tr><th>Mã</th><th>Chức năng của bản gốc</th><th>Lý do loại</th></tr></thead><tbody><tr><td>D01</td><td>13 engine TTS khác nhau</td><td>Đề tài giới hạn ở một mô hình. Mỗi engine thêm là thêm phức tạp mà không tăng giá trị nghiên cứu.</td></tr><tr><td>D02</td><td>Lồng tiếng video</td><td>Cần thêm WhisperX + pyannote + lip-sync = 3 mô hình phụ, phá vỡ nguyên tắc một mô hình.</td></tr><tr><td>D03</td><td>Chép lời / đọc chính tả</td><td>Đó là bài toán ASR, không phải TTS. Đưa vào là lẫn phạm vi.</td></tr><tr><td>D04</td><td>Hàng đợi sách nói</td><td>Tiện ích sản phẩm, không phải nội dung học thuật.</td></tr><tr><td>D05</td><td>Đóng dấu bản quyền AI</td><td>Thú vị nhưng là chủ đề riêng, nên tách thành đồ án khác.</td></tr><tr><td>D06</td><td>Electron + React + mobile</td><td>Một file HTML thay thế được toàn bộ. Ít cài đặt = ít lỗi khi bảo vệ.</td></tr><tr><td>D07</td><td>Cơ sở dữ liệu + đa người dùng</td><td>Hạ tầng sản phẩm; đề tài một người dùng không cần.</td></tr></tbody></table></div>
+<h1>9. Kế hoạch tiếp theo</h1>
+<p>Sắp theo <b>thứ tự phải làm</b>, không theo độ khó. Mỗi việc gắn với một chức năng ở trên và một con số cụ thể để biết đã xong.</p>
+<h2>9.1. Giai đoạn 1 — Trả lời câu hỏi còn treo (khoảng 2 giờ)</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:5%'><col style='width:32%'><col style='width:12%'><col style='width:51%'></colgroup><thead><tr><th>#</th><th>Việc</th><th>Chức năng</th><th>Xong khi</th></tr></thead><tbody><tr><td>1</td><td><b>Mở <code>MOC_NGUOI_THAT.csv</code> trong ZIP của run <code>6050C5B7</code>, đọc CER của VIVOS</b></td><td>G6-16</td><td>Đọc được một con số CER trên giọng <b>người thật</b>. Đây là phép thử quyết định: nếu CER người thật cũng ~10–20 %, thì Whisper chính là sàn sai số và mô hình đang ở mức không phân biệt được với người theo dụng cụ này</td></tr><tr><td>2</td><td>Đổi ASR từ <code>small</code> sang <code>medium</code> hoặc <code>large-v3</code>, đo lại 294 câu</td><td>G6-09</td><td>Có bảng so sánh CER của hai bộ ASR trên cùng dữ liệu</td></tr><tr><td>3</td><td>Chạy lại notebook v5 trên GPU thật</td><td>G6-01…G6-19</td><td>19/19 cell, ZIP mới có dải đối chứng</td></tr></tbody></table></div>
+<h2>9.2. Giai đoạn 2 — Duyệt mù (khoảng 1 buổi)</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:5%'><col style='width:32%'><col style='width:12%'><col style='width:51%'></colgroup><thead><tr><th>#</th><th>Việc</th><th>Chức năng</th><th>Xong khi</th></tr></thead><tbody><tr><td>4</td><td>Thêm chế độ duyệt mù: ẩn câu gốc, người nghe tự gõ lại</td><td>G7-05</td><td>Có WER của con người để so trực tiếp với WER của Whisper trên cùng file</td></tr><tr><td>5</td><td>Duyệt 20–30 câu, trong đó ≥ 10 câu máy cho 5 điểm</td><td>G7-04, G7-08</td><td>Có tỉ lệ bỏ sót kèm cận trên 95 % ở mức dưới 15 %</td></tr></tbody></table></div>
+<h2>9.3. Giai đoạn 3 — Vá phần bền (khoảng 1 ngày)</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:5%'><col style='width:32%'><col style='width:12%'><col style='width:51%'></colgroup><thead><tr><th>#</th><th>Việc</th><th>Chức năng</th><th>Xong khi</th></tr></thead><tbody><tr><td>6</td><td>Chuẩn hoá audio mẫu về WAV mono 16 kHz</td><td>B01</td><td>Tải .mp3 lên không lỗi</td></tr><tr><td>7</td><td>Chia văn bản dài theo câu rồi ghép</td><td>B02</td><td>Văn bản 2.000 ký tự sinh được</td></tr><tr><td>8</td><td>Timeout + nút huỷ</td><td>B05</td><td>Huỷ được giữa chừng, không treo giao diện</td></tr><tr><td>9</td><td>Seed cố định lộ ra giao diện</td><td>G1-03, G3-04</td><td>Sinh hai lần ra cùng file</td></tr></tbody></table></div>
+<h2>9.4. Giai đoạn 4 — Viết báo cáo</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:14%'><col style='width:50%'><col style='width:36%'></colgroup><thead><tr><th>Chương</th><th>Nội dung</th><th>Lấy từ</th></tr></thead><tbody><tr><td>Chương 1</td><td>Mở đầu, mục tiêu, phạm vi</td><td>Tài liệu này, mục 1</td></tr><tr><td>Chương 2</td><td>Cơ sở lý thuyết</td><td>Tài liệu này, mục 2–4</td></tr><tr><td>Chương 3</td><td>Phương pháp và kiến trúc</td><td>Mục 3, 4</td></tr><tr><td>Chương 4</td><td>Thực nghiệm và kết quả</td><td>Mục 6.2</td></tr><tr><td>Chương 5</td><td><b>Đo lường và sai số</b></td><td><b>Mục 6.3</b> — chương mạnh nhất</td></tr><tr><td>Chương 6</td><td>Hạn chế và hướng phát triển</td><td>Mục 7, 9</td></tr></tbody></table></div>
+<div class='note ok'><span class='t'>Một câu để mang đi bảo vệ</span>“Hệ thống tự động gắn cờ 49/54 câu là chưa đạt; người nghe lại thấy 48/49 câu đạt — báo động giả 98 %. Riêng nhóm máy gọi hỏng, nó đúng 1/23 lần. Em truy ra nguyên nhân: bộ nhận dạng dùng để chấm quá yếu với tiếng Việt, lỗi do câu gấp 6 lần lỗi do giọng; cộng với việc thang điểm đếm ký tự nên phạt cả chỗ tai người không phân biệt được. Em đã sửa thang đo, sửa cách phiếu ghi nhận, và nói rõ phiếu cũ chỉ đo được báo động giả chứ chưa đo được bỏ sót.”</div>
+<h1>10. Câu hỏi mở cần chốt</h1>
+<div class='tw'><table class='small'><colgroup><col style='width:6%'><col style='width:34%'><col style='width:60%'></colgroup><thead><tr><th>#</th><th>Câu hỏi</th><th>Vì sao quan trọng</th></tr></thead><tbody><tr><td>1</td><td>Có phải so sánh với một mô hình TTS khác không?</td><td>Làm báo cáo mạnh hơn hẳn, nhưng phá nguyên tắc “một mô hình” đã chốt.</td></tr><tr><td>2</td><td>Hội đồng có yêu cầu chạy hoàn toàn ngoại tuyến không?</td><td>Nếu có, phương án Kaggle + đường hầm không đáp ứng được.</td></tr><tr><td>3</td><td>Có cần bản in của phiếu duyệt không?</td><td>Nếu có, phải làm thêm bản giấy có mã câu để đối chiếu.</td></tr><tr><td>4</td><td>Thời hạn nộp chính xác?</td><td>Để chọn đúng giai đoạn ở mục 9, không đề xuất việc không kịp.</td></tr></tbody></table></div>
+<h1>Phụ lục</h1>
+<h2>A. Cấu trúc ZIP bằng chứng</h2>
+<pre><code>TTS_VIET_ZERO_SHOT_7_GIONG_&lt;RUN_ID&gt;.zip
+├── PHIEU_DUYET.html            ← mở file này, cùng thư mục với cham_diem/
+├── cham_diem/&lt;giọng&gt;/&lt;Sxxxx&gt;.wav   ← 294 WAV 16 kHz mono
+├── DIEM_HE_THONG.csv           ← 294 dòng: điểm cảnh báo, % lỗi nặng, CER, câu gốc, ASR nghe
+├── SOI_CAU_SAI.html            ← câu sai kèm đoạn âm thanh cắt riêng
+├── cau_sai/&lt;giọng&gt;/*.wav       ← đúng đoạn sai, không phải cả câu
+├── BANG_DONG_THUAN.csv         ← ghép điểm người với điểm máy
+├── DONG_THUAN_TOM_TAT.txt      ← đồng thuận + khối CHẨN ĐOÁN
+├── KET_QUA_DANH_GIA.csv        ← 294 dòng chỉ số
+├── KET_QUA_7_GIONG.csv · KET_QUA_ABLATION.csv · DOI_CHUNG_AM.csv
+├── MOC_NGUOI_THAT.csv          ← mốc giọng người thật (VIVOS)
+├── BAO_CAO_KIEM_THU.txt · BANG_NHAN_DINH.csv
+└── 300_CAU_6_THANH_VIET.csv/.json</code></pre>
+<h2>B. Cấu trúc <code>NGUOI_CHAM.json</code></h2>
+<pre><code>{
+  &quot;meta&quot;: {
+    &quot;run_id&quot;: &quot;6050C5B7&quot;,
+    &quot;nguoi_duyet&quot;: &quot;Nguyễn Lê Minh Hậu&quot;,
+    &quot;luc&quot;: &quot;2026-10-26T03:33:43.312Z&quot;,
+    &quot;n_item&quot;: 67,
+    &quot;n_da_cham&quot;: 54,
+    &quot;thang_diem&quot;: &quot;1-5&quot;
+  },
+  &quot;items&quot;: [
+    {
+      &quot;key&quot;: &quot;U_LINH|S0053&quot;,
+      &quot;voice&quot;: &quot;U_LINH&quot;,
+      &quot;sid&quot;: &quot;S0053&quot;,
+      &quot;thanh&quot;: &quot;huyen&quot;,
+      &quot;he_thong&quot;: 1,          ← điểm máy (cảnh báo)
+      &quot;nguoi&quot;: 2,             ← điểm người
+      &quot;dong_y&quot;: false,        ← người có đồng ý với máy không
+      &quot;co_audio_hong&quot;: true,  ← cờ người duyệt tự bật
+      &quot;ghi_chu&quot;: &quot;giúp bà bà hà về phòng rồi&quot;,
+      &quot;cer&quot;: 0.8571,
+      &quot;luc&quot;: &quot;2026-10-26T03:31:02.114Z&quot;
+    }
+  ]
+}</code></pre>
+<h2>C. Danh mục tệp chính</h2>
+<div class='tw'><table class='small'><colgroup><col style='width:44%'><col style='width:56%'></colgroup><thead><tr><th>Tệp</th><th>Nội dung</th></tr></thead><tbody><tr><td><code>notebook/OmniVoice_7_Giong_300_Cau_v5_FINAL.ipynb</code></td><td>Notebook 20 cell — dây chuyền G6, G7</td></tr><tr><td><code>notebook/NHAN-XET-KET-QUA-CHAY-v3.md</code></td><td>Nhận xét thẳng kết quả lần chạy đầu</td></tr><tr><td><code>phan-tich/PHAN-TICH-PHIEU-DUYET-THAT.md</code></td><td>Phân tích đầy đủ phiếu duyệt thật</td></tr><tr><td><code>qc/kiem-phieu-duyet.py</code></td><td>Tái lập toàn bộ phân tích phiếu duyệt</td></tr><tr><td><code>phieu/Phieu_giao_de_tai_OmniVoice_v2.docx</code></td><td>Phiếu giao đề tài (1,25 trang)</td></tr><tr><td><code>docs/bao-cao.md</code></td><td>Khung báo cáo</td></tr></tbody></table></div>
+<h2>D. Ba lệnh để dựng lại mọi thứ</h2>
+<pre><code># 1. Kiểm tra toàn bộ notebook chạy được (không cần GPU, dùng môi trường giả lập)
+bash .devtools/mkmocks.sh
+PYTHONPATH=/tmp/mocks python3 .devtools/run_v5.py      # → 19/19
+
+# 2. Tái lập phân tích phiếu duyệt thật
+python3 do-an-omnivoice/qc/kiem-phieu-duyet.py
+
+# 3. Chạy thật trên Kaggle
+#    Mở notebook v5, bật GPU T4 + Internet, Run All (~70 phút), tải ZIP ở cell 19</code></pre>
+<div class='note info'><span class='t'>Kết luận của tài liệu</span>Phần giao diện và API đã <b>vượt yêu cầu</b> một đồ án môn học. Phần còn thiếu không nằm ở tính năng, mà ở <b>độ bền</b> (B01–B05) và ở <b>chiều sâu đo lường</b> (duyệt mù, dải đối chứng đủ lớn). Với một đề tài AI, thứ khiến nó khác một bản demo không phải giao diện đẹp, mà là <b>dám báo cáo cả chỗ thang đo của mình sai</b>.</div>
+<div class='foot'>Đặc tả chức năng v2.0 · 26/10/2026 · Nghiên cứu và ứng dụng mô hình học sâu trong tổng hợp, nhân bản giọng nói tiếng Việt zero-shot<br>Tài liệu này thay thế bản v1.0 (48 chức năng). Bổ sung nhóm G6 (dây chuyền nghiên cứu) và G7 (đo lường &amp; hiệu chuẩn) sau khi phân tích phiếu duyệt thật run 6050C5B7.</div>
+</div></body></html>
